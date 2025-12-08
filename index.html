@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>시제를 넘나둘기 (Verb Dungeon)</title>
+    <title>시제를 넘나둘기 (Verb Dungeon) - Final Fixed</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
@@ -64,7 +64,7 @@
             z-index: 10;
         }
 
-        /* --- 시작 화면 (디자인 업그레이드) --- */
+        /* --- 시작 화면 --- */
         #start-screen {
             justify-content: center;
             background-color: #111;
@@ -74,7 +74,6 @@
             position: relative;
         }
 
-        /* 파티클 효과 */
         .particles-container {
             position: absolute; top:0; left:0; width:100%; height:100%;
             overflow: hidden; pointer-events: none; z-index: 1;
@@ -93,7 +92,6 @@
             100% { transform: translateY(-80vh) scale(1.5); opacity: 0; }
         }
 
-        /* 메인 배너 (주인공) */
         .title-banner {
             width: 180px; height: 180px;
             margin-bottom: 10px;
@@ -107,7 +105,6 @@
             50% { transform: translateY(-15px) rotate(2deg); }
         }
 
-        /* 메인 타이틀 (그라데이션 & 효과) */
         .main-title { 
             font-family: 'Jua', sans-serif;
             font-size: 4rem; 
@@ -140,7 +137,6 @@
             100% { opacity: 1; transform: scale(1.2) rotate(20deg); }
         }
 
-        /* 서브 타이틀 */
         .sub-title {
             color: #8be9fd;
             font-size: 1.2rem;
@@ -172,27 +168,49 @@
         #difficulty-screen { 
             justify-content: center; 
             background-color: #1a1a1d;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('assets/bg_start.png');
-            background-size: cover; background-position: center;
+            background-image: linear-gradient(135deg, rgba(26, 26, 29, 0.85), rgba(42, 42, 53, 0.7), rgba(26, 26, 29, 0.85)), url('assets/bg_start.png');
+            background-size: 400% 400%, cover;
+            background-position: 0% 50%, center;
+            background-repeat: no-repeat;
+            animation: bg-shift 10s ease infinite;
+            position: relative;
         }
-        .select-title { margin-bottom: 30px; font-size: 2rem; color: white; text-shadow: 2px 2px 4px black; }
+        @keyframes bg-shift {
+            0% { background-position: 0% 50%, center; }
+            50% { background-position: 100% 50%, center; }
+            100% { background-position: 0% 50%, center; }
+        }
+
+        .select-title { margin-bottom: 30px; font-size: 2rem; color: white; text-shadow: 2px 2px 4px black; z-index: 2; }
         
         .reset-data-btn {
             background: transparent; border: 1px solid #777; color: #aaa; padding: 5px 12px;
             font-size: 0.8rem; cursor: pointer; margin-bottom: 25px; border-radius: 15px;
-            font-family: inherit; transition: all 0.2s;
+            font-family: inherit; transition: all 0.2s; z-index: 2;
         }
         .reset-data-btn:hover { color: #ff4444; border-color: #ff4444; background: rgba(255, 68, 68, 0.1); }
 
-        .char-container { display: flex; gap: 20px; justify-content: center; width: 100%; margin-bottom: 40px; }
+        .char-container { display: flex; gap: 20px; justify-content: center; width: 100%; margin-bottom: 40px; z-index: 2; }
         .char-card {
             width: 45%; height: 280px; background: rgba(44, 44, 44, 0.9);
             border: 3px solid #555; border-radius: 15px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 10px; cursor: pointer; transition: transform 0.2s;
+            padding: 10px; cursor: pointer; transition: transform 0.2s, border-color 0.2s;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            animation: float-card 3s ease-in-out infinite;
         }
-        .char-card:hover { transform: translateY(-5px); border-color: white; }
+        .char-card:nth-child(2) { animation-delay: 1.5s; }
+
+        @keyframes float-card {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .char-card:hover { 
+            transform: translateY(-12px) scale(1.02);
+            border-color: white; 
+            animation-play-state: paused;
+        }
         
         .char-img-placeholder {
             width: 110px; height: 110px; background: #444; margin-bottom: 20px;
@@ -213,6 +231,7 @@
             color: var(--gold); padding: 15px 40px; border-radius: 10px;
             font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; gap: 10px;
             font-family: 'Jua', sans-serif;
+            z-index: 2;
         }
         .collection-btn:hover { background: rgba(255, 215, 0, 0.2); }
 
@@ -262,7 +281,7 @@
 
         /* --- 도감 화면 --- */
         #collection-screen { 
-            justify-content: center; align-items: center;     
+            justify-content: center; align-items: center;       
             background-color: #1a1a1d; padding: 0; 
         }
 
@@ -324,10 +343,144 @@
             border: 1px solid white; color: white; font-size: 1.5rem; cursor: pointer; z-index: 100;
         }
 
+        /* --- [FIXED] 엔딩 연출용 오버레이 --- */
+        #ending-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none; 
+            flex-direction: column; 
+            justify-content: center; /* 세로 중앙 정렬 */
+            align-items: center; /* 가로 중앙 정렬 */
+            z-index: 999;
+            transition: background 0.5s;
+            padding-bottom: 0; 
+        }
+        
+        .rumble-anim {
+            animation: rumble 0.1s infinite;
+        }
+        @keyframes rumble {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-2px, 2px) rotate(-1deg); }
+            50% { transform: translate(2px, -2px) rotate(1deg); }
+            75% { transform: translate(-2px, -2px) rotate(0deg); }
+            100% { transform: translate(2px, 2px) rotate(-1deg); }
+        }
+
+        .pulse-light {
+            position: absolute; width: 10px; height: 10px;
+            background: radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,215,0,0) 70%);
+            border-radius: 50%;
+            opacity: 0;
+            z-index: 1000;
+        }
+        .light-burst-anim {
+            animation: light-burst 1.5s ease-out forwards;
+        }
+        @keyframes light-burst {
+            0% { transform: scale(1); opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { transform: scale(50); opacity: 0; }
+        }
+
+        /* 짝이 (엔딩용) */
+        .jjagi-character {
+            width: 320px; height: 320px;
+            z-index: 1001;
+            display: none; 
+            filter: drop-shadow(0 0 30px gold);
+            order: 2; /* 캐릭터를 아래로 */
+            margin-top: 10px; /* 말풍선과의 간격 */
+        }
+        .jjagi-pop {
+            display: block;
+            animation: pop-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, float-card 3s 1s infinite ease-in-out;
+        }
+        @keyframes pop-in {
+            0% { transform: scale(0) translateY(50px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* 대사창 (엔딩용) */
+        .ending-bubble {
+            background: white; color: #333; padding: 20px 30px; border-radius: 30px;
+            font-size: 1.3rem; max-width: 90%; text-align: center;
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 30px rgba(255,215,0,0.6);
+            z-index: 2000; opacity: 0; 
+            position: relative;
+            display: none; 
+            cursor: pointer;
+            transition: opacity 0.5s; 
+            order: 1; /* 말풍선을 위로 */
+        }
+        /* 말풍선 꼬리 (아래쪽을 향하게 수정) */
+        .ending-bubble::after {
+            content: ''; position: absolute; 
+            bottom: -15px; /* 아래쪽에 붙임 */
+            top: auto; 
+            left: 50%; transform: translateX(-50%);
+            border-width: 15px 15px 0 15px; /* 역삼각형 */
+            border-style: solid; 
+            border-color: var(--gold) transparent transparent transparent;
+        }
+        
+        .ending-bubble.show { display: block !important; opacity: 1 !important; }
+        
+        .tap-hint {
+            display: block; margin-top: 15px; font-size: 0.9rem; color: #999; font-weight: bold;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        /* [FIXED] 마스코트 - 화면 상단 중앙 정렬 */
+        .mascot-jjagi {
+            position: absolute; 
+            top: 20px; /* 상단 여백 (제목 아래) */
+            left: 50%; /* 가로 중앙 */
+            transform: translateX(-50%); /* 정확한 중앙 정렬 */
+            width: 100px; height: 100px;
+            cursor: pointer; z-index: 500;
+            transition: transform 0.2s;
+            animation: float-card 4s infinite ease-in-out;
+            display: none; 
+        }
+        .mascot-jjagi:hover { transform: translateX(-50%) scale(1.1); }
+        
+        /* 마스코트 말풍선 (캐릭터 아래쪽) */
+        .mascot-bubble {
+            position: absolute; 
+            top: 100%; /* 캐릭터 바로 아래 */
+            left: 50%; 
+            transform: translateX(-50%);
+            margin-top: 10px; /* 간격 */
+            background: white; color: black; padding: 10px 15px; border-radius: 15px;
+            font-size: 0.9rem; border: 3px solid var(--gold);
+            display: none; z-index: 201; width: max-content; max-width: 200px; text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        /* 말풍선 꼬리 (위쪽을 향하게) */
+        .mascot-bubble::after {
+            content: ''; position: absolute; 
+            bottom: 100%; left: 50%; transform: translateX(-50%);
+            border-width: 10px; border-style: solid; 
+            border-color: transparent transparent white transparent; /* 위쪽 뾰족 */
+        }
+        /* 금색 테두리 효과를 위한 가상요소 추가 */
+        .mascot-bubble::before {
+            content: ''; position: absolute; 
+            bottom: 100%; left: 50%; transform: translateX(-50%);
+            border-width: 14px; border-style: solid; 
+            border-color: transparent transparent var(--gold) transparent; 
+            z-index: -1;
+        }
+
+        .mascot-bubble.show { display: block; animation: fade-in 0.3s; }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(-10px) translateX(-50%); } to { opacity: 1; transform: translateY(0) translateX(-50%); } }
+
         /* --- 게임 화면 --- */
         #game-screen { padding: 0; overflow: hidden; }
         
-        /* [NEW] 시제 확인 버튼 스타일 */
         .tense-reveal-btn {
             cursor: pointer;
             border-bottom: 2px dashed var(--gold);
@@ -338,13 +491,8 @@
             color: #fff;
             border-color: #fff;
         }
-        .tense-reveal-btn small {
-            font-size: 0.8rem;
-            color: #777;
-            margin-left: 5px;
-        }
+        .tense-reveal-btn small { font-size: 0.8rem; color: #777; margin-left: 5px; }
         
-        /* [5번 개선] 타격/사망/피격 애니메이션 정의 */
         @keyframes shake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
             10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -360,16 +508,8 @@
         }
 
         @keyframes die {
-            0% { 
-                opacity: 1; 
-                transform: scale(1) translateY(0);
-                filter: grayscale(0);
-            }
-            100% { 
-                opacity: 0; 
-                transform: scale(0.8) translateY(-100px);
-                filter: grayscale(100%); 
-            }
+            0% { opacity: 1; transform: scale(1) translateY(0); filter: grayscale(0); }
+            100% { opacity: 0; transform: scale(0.8) translateY(-100px); filter: grayscale(100%); }
         }
 
         @keyframes redFlash {
@@ -382,29 +522,18 @@
         .monster-die { animation: die 1.2s forwards; }
         .screen-hit { animation: redFlash 0.4s ease-in-out; }
 
-        /* [3번 개선 수정] 정답 근거 하이라이트 스타일 */
-        /* 평소에는 일반 텍스트와 똑같이 보이게 (티 안 나게) */
-        .clue {
-            transition: color 0.3s, text-shadow 0.3s;
-        }
-
-        /* 정답 시 네온 글로우 효과 */
+        .clue { transition: color 0.3s, text-shadow 0.3s; }
         .correct-glow {
-            color: #4caf50;
-            font-weight: bold; /* 정답 공개 시에만 강조 */
+            color: #4caf50; font-weight: bold;
             text-shadow: 0 0 10px #4caf50, 0 0 20px #4caf50;
         }
 
-        /* 오답 시 빨간색 깜빡임 효과 */
         @keyframes blink-red-anim {
             0%, 100% { color: inherit; }
             50% { color: #f44336; text-shadow: 0 0 8px #f44336; font-weight: bold;}
         }
-        .wrong-blink {
-            animation: blink-red-anim 0.5s 3;
-        }
+        .wrong-blink { animation: blink-red-anim 0.5s 3; }
 
-        /* 기존 앵그리 모드 쉐이크 */
         @keyframes angry-shake {
             0% { transform: scale(1.2) rotate(0deg); }
             25% { transform: scale(1.2) rotate(-2deg); }
@@ -545,9 +674,7 @@
                     <button class="book-nav-btn" id="next-page" onclick="changeBookPage(1)">다음 ▶</button>
                 </div>
 
-                <div class="book-content" id="book-content">
-                    <!-- JS로 내용 주입 -->
-                </div>
+                <div class="book-content" id="book-content"></div>
                 
                 <div style="position:absolute; top:30%; bottom:30%; left:0; width:30%; cursor:pointer;" onclick="changeBookPage(-1)"></div>
                 <div style="position:absolute; top:30%; bottom:30%; right:0; width:30%; cursor:pointer;" onclick="changeBookPage(1)"></div>
@@ -556,7 +683,6 @@
 
         <!-- 시작 화면 -->
         <div id="start-screen" class="screen active">
-            <!-- 파티클 효과 -->
             <div class="particles-container">
                 <div class="particle" style="width: 20px; height: 20px; left: 10%; animation-duration: 7s;"></div>
                 <div class="particle" style="width: 30px; height: 30px; left: 30%; animation-duration: 12s; animation-delay: 1s;"></div>
@@ -564,7 +690,6 @@
                 <div class="particle" style="width: 25px; height: 25px; left: 90%; animation-duration: 11s; animation-delay: 0.5s;"></div>
             </div>
 
-            <!-- 메인 캐릭터 (배너) -->
             <div class="title-banner">
                 <img src="assets/hero_hard.png" onerror="this.src='assets/hero_easy.png'; this.onerror=null;" alt="Hero">
             </div>
@@ -576,6 +701,13 @@
 
         <!-- 난이도 선택 -->
         <div id="difficulty-screen" class="screen">
+            <div class="particles-container">
+                <div class="particle" style="width: 20px; height: 20px; left: 15%; animation-duration: 8s;"></div>
+                <div class="particle" style="width: 25px; height: 25px; left: 35%; animation-duration: 13s; animation-delay: 1s;"></div>
+                <div class="particle" style="width: 10px; height: 10px; left: 65%; animation-duration: 10s; animation-delay: 2s;"></div>
+                <div class="particle" style="width: 30px; height: 30px; left: 85%; animation-duration: 12s; animation-delay: 0.5s;"></div>
+            </div>
+
             <h2 class="select-title">난이도 선택</h2>
             <button class="reset-data-btn" onclick="resetGameData()">🔄 데이터 초기화</button>
 
@@ -609,7 +741,6 @@
                 <h2 class="select-title" style="margin:0 auto 0 20px;">던전 선택</h2>
             </div>
             <div class="stage-grid" id="stage-grid"></div>
-            <!-- [NEW] 해금 버튼 분리 -->
             <div class="dev-btn-group">
                 <button class="dev-btn" onclick="unlockStages('easy')">🔓 새내기 해금</button>
                 <button class="dev-btn" onclick="unlockStages('hard')">🔓 졸업반 해금</button>
@@ -621,6 +752,31 @@
             <button class="back-btn" onclick="showScreen('difficulty-screen')">←</button>
             <div id="collection-bg-wrapper">
                 <div class="collection-grid" id="collection-grid"></div>
+                <!-- 마스코트 모드 (엔딩 후) -->
+                <div class="mascot-jjagi" id="mascot-jjagi" style="display:none;" onclick="onMascotClick()">
+                    <img src="assets/jjagi.png" alt="짝이">
+                    <div class="mascot-bubble" id="mascot-bubble">오늘도 파이팅이야!</div>
+                </div>
+            </div>
+            
+            <!-- [NEW] 엔딩 연출 오버레이 (버블이 캐릭터 위로) -->
+            <div id="ending-overlay">
+                <!-- 순서 중요: 말풍선 -> 캐릭터 -> 빛 -->
+                <div class="ending-bubble" id="ending-text">
+                    <span id="dialogue-content">...</span>
+                    <span class="tap-hint">▼ (Touch to Continue)</span>
+                </div>
+                
+                <div class="jjagi-character" id="ending-jjagi">
+                    <img src="assets/jjagi.png" alt="짝이">
+                </div>
+
+                <div class="pulse-light" id="ending-light"></div>
+
+                <div id="suspense-msg" style="position:absolute; bottom:20%; color:white; font-size:1.5rem; font-weight:bold; text-shadow:0 0 10px red; animation:pulse 0.5s infinite; text-align:center;">
+                    도감에서 강력한 기운이 느껴진다!<br>
+                    <span style="font-size:1rem; color:#gold;">(화면을 터치하세요!)</span>
+                </div>
             </div>
         </div>
 
@@ -633,7 +789,7 @@
             </div>
 
             <div class="battle-field" id="battle-bg">
-                <div class="battle-message" id="battle-msg">대사가 여기에 나옵니다</div>
+                <div class="battle-message" id="battle-msg"></div>
 
                 <div class="monster-area" id="monster-container">
                     <div class="hp-bar-container"><div class="hp-fill" id="monster-hp-bar" style="width: 100%;"></div></div>
@@ -671,59 +827,677 @@
     </div>
 
     <script>
+        const highlight = (text) => `<span class="highlight">${text}</span>`;
+        
+        /* 1. 데이터 정의 (총 9개: 0~8번) */
+        const verbsData = [
+            // 0. SEE
+            { 
+                word: "see", meaning: "보다 / 만나다", forms: ["see", "saw", "seen", "seeing", "sees"], wrongForms: ["seed", "sawed", "seen"], monster: "Cyclops", 
+                dialogues: ["You cannot hide from my gaze!", "I see everything...", "I see your weakness!"],
+                questions: [
+                    { t: "과거", q: "I ____ him yesterday.", a: "saw", hint: "yesterday", kor: "나는 어제 그를 보았다.", desc: `문장 속 ${highlight('yesterday(어제)')}는 명확한 과거 시점을 나타냅니다. 따라서 동사의 과거형인 ${highlight('saw')}가 정답입니다.` },
+                    { t: "현재", q: "I ____ my parents every weekend.", a: "see", hint: "every weekend", kor: "나는 매주 주말마다 부모님을 뵌다.", desc: `문장의 ${highlight('every weekend(매주 주말)')}는 반복적인 습관을 나타냅니다. 이럴 때는 동사의 현재형 ${highlight('see')}를 사용합니다.` },
+                    { t: "미래", q: "I will ____ the doctor tomorrow.", a: "see", hint: "will|tomorrow", kor: "나는 내일 의사를 만날 것이다.", desc: `${highlight('tomorrow(내일)')}는 미래를 나타내며, 조동사 will 뒤에는 반드시 동사 원형 ${highlight('see')}가 와야 합니다.` },
+                    { t: "과거진행", q: "I was ____ the sights when it started to rain.", a: "seeing", hint: "was|when", kor: "비가 내리기 시작했을 때, 나는 관광을 하고 있었다.", desc: `과거의 특정 시점(${highlight('when...')})에 진행 중이었던 행동을 묘사하므로 과거진행형 ${highlight('was seeing')}이 적절합니다.` },
+                    { t: "현재진행", q: "I am ____ a friend right now.", a: "seeing", hint: "am|right now", kor: "나는 지금 친구를 만나고 있다.", desc: `${highlight('right now(지금 당장)')} 진행 중인 일은 현재진행형 ${highlight('am seeing')}을 씁니다.` },
+                    { t: "미래진행", q: "I will be ____ him at the party tonight.", a: "seeing", hint: "will be|tonight", kor: "오늘 밤 파티에서 그를 만나고 있을 것이다.", desc: `미래의 특정 시점(${highlight('tonight')})에 진행될 예정인 일을 나타낼 때는 미래진행형 ${highlight('will be seeing')}을 사용합니다.` },
+                    { t: "과거완료", q: "I had ____ the movie before you mentioned it.", a: "seen", hint: "had|before", kor: "네가 말하기 전에 나는 이미 그 영화를 봤었다.", desc: `네가 말한 과거 시점보다 ${highlight('더 이전(대과거)')}에 이미 완료된 일이므로 과거완료 ${highlight('had seen')}을 씁니다.` },
+                    { t: "현재완료", q: "I have ____ this film three times so far.", a: "seen", hint: "have|so far", kor: "나는 지금까지 이 영화를 세 번 봤다.", desc: `과거부터 현재까지(${highlight('so far')})의 경험을 나타낼 때는 현재완료 ${highlight('have seen')}을 사용합니다.` },
+                    { t: "미래완료", q: "I will have ____ all the episodes by next week.", a: "seen", hint: "will have|by next week", kor: "다음 주면 모든 에피소드를 다 봤을 것이다.", desc: `${highlight('by next week(다음 주까지는)')} 미래의 특정 시점에 완료될 것을 예측하므로 미래완료 ${highlight('will have seen')}이 정답입니다.` },
+                    { t: "과거완료진행", q: "I had been ____ her for a year before we broke up.", a: "seeing", hint: "had been|for a year", kor: "우리가 헤어지기 전까지 나는 그녀를 1년 동안 만나오고 있었다.", desc: `과거의 특정 시점(${highlight('broke up')})까지 계속되던 동작의 기간을 강조할 때는 과거완료진행형을 씁니다.` },
+                    { t: "현재완료진행", q: "I have been ____ spots since this morning.", a: "seeing", hint: "have been|since", kor: "오늘 아침부터 눈앞에 점 같은 게 계속 보이고 있다.", desc: `${highlight('since(이후로)')} 지금까지 동작이 계속됨을 강조할 때는 현재완료진행형을 씁니다.` },
+                    { t: "미래완료진행", q: "Next month, I will have been ____ this dentist for 10 years.", a: "seeing", hint: "will have been|for 10 years", kor: "다음 달이면 이 치과에 다닌 지 10년째가 된다.", desc: `미래의 시점(${highlight('Next month')})에 기간이 꽉 차게 됨을 나타낼 때는 미래완료진행형을 사용합니다.` }
+                ],
+                hardQuestions: [
+                    { t: "과거", q: "A: Did you meet Tom?<br>B: No, I ____ no one there.", a: "saw", hint: "Did you meet", kor: "A: 탐 만났어? B: 아니, 거기서 아무도 못 봤어.", desc: "질문이 과거형(Did you meet?)이므로 대답도 과거 시점의 사실을 말해야 합니다." },
+                    { t: "현재", q: "I don't need glasses. I ____ perfectly fine.", a: "see", hint: "don't need", kor: "난 안경 필요 없어. 아주 잘 보여.", desc: "현재의 일반적인 능력이나 상태를 설명하고 있으므로 현재형이 적절합니다." },
+                    { t: "미래", q: "Don't worry. We ____ what happens next.", a: "will see", hint: "next", kor: "걱정 마. 다음에 무슨 일이 일어날지 두고 보자.", desc: "앞으로 일어날 일에 대한 예측이나 의지를 나타내므로 미래형을 사용합니다." },
+                    { t: "과거진행", q: "The police asked what I ____ at 9 PM.", a: "was seeing", hint: "at 9 PM", kor: "경찰은 내가 9시에 무엇을 보고 있었는지 물었다.", desc: "과거의 특정 시점(9 PM)에 진행 중이었던 행동을 묻는 문맥입니다." },
+                    { t: "현재진행", q: "I can't talk right now. I ____ a client.", a: "am seeing", hint: "right now", kor: "지금 통화 못 해. 고객을 만나는 중이야.", desc: "지금 당장(right now) 통화가 불가능한 이유인 현재 진행 중인 약속을 설명합니다." },
+                    { t: "미래진행", q: "This time next year, I ____ the world.", a: "will be seeing", hint: "This time next year", kor: "내년 이맘때쯤이면 난 세상을 구경하고 있을 거야.", desc: "미래의 특정 시점에 하고 있을 것으로 예상되는 진행 상황을 묘사합니다." },
+                    { t: "과거완료", q: "I recognized him because I ____ him before.", a: "had seen", hint: "before", kor: "이전에 그를 본 적이 있어서 그를 알아봤다.", desc: "그를 알아본 과거 시점보다 '더 이전에' 본 경험이 원인이므로 대과거(과거완료)를 씁니다." },
+                    { t: "현재완료", q: "This is the best movie I ____ ever ____.", a: "have seen", hint: "ever", kor: "이건 내가 지금까지 본 영화 중 최고야.", desc: "과거부터 현재까지의 경험 중 최고임을 나타내는 최상급 표현과 함께 쓰이는 현재완료입니다." },
+                    { t: "미래완료", q: "Come at 8. We ____ the sunset by then.", a: "will have seen", hint: "by then", kor: "8시에 와. 그때쯤이면 우린 이미 일몰을 봤을 거야.", desc: "미래의 특정 시점(8시)에는 이미 동작이 완료되어 있을 것임을 나타냅니다." },
+                    { t: "과거완료진행", q: "My eyes hurt because I ____ the screen for too long.", a: "had been seeing", hint: "hurt", kor: "화면을 너무 오래 보고 있어서 눈이 아팠다.", desc: "과거 시점(아팠다) 직전까지 계속된 동작이 원인임을 강조합니다." },
+                    { t: "현재완료진행", q: "I ____ this doctor for 5 years now.", a: "have been seeing", hint: "for 5 years now", kor: "이 의사 선생님께 진료받은 지 5년째다.", desc: "과거부터 현재까지 5년 동안 계속되고 있는 만남/진료 상황을 나타냅니다." },
+                    { t: "미래완료진행", q: "By Christmas, we ____ each other for a year.", a: "will have been seeing", hint: "By Christmas", kor: "크리스마스면 우리가 만난 지 1년이 된다.", desc: "미래의 특정 시점까지 행동이 지속되어 기간이 달성됨을 나타냅니다." }
+                ]
+            },
+            // 1. EAT
+            { 
+                word: "eat", meaning: "먹다",
+                forms: ["eat", "ate", "eaten", "eating", "eats"], 
+                wrongForms: ["eated", "ateing", "eaten"], 
+                monster: "Ogre", 
+                dialogues: ["I'm starving... Arrrgh!", "You're not even a mouthful.", "I'll chew you up!"],
+                questions: [{t:"과거",q:"He ____ a big burger last night.",a:"ate",hint:"last night",kor:"그는 지난밤에 큰 버거를 먹었다",desc:"과거"}, {t:"현재",q:"He ____ breakfast at 7 AM daily.",a:"eats",hint:"daily",kor:"그는 매일 아침 7시에 아침을 먹는다",desc:"현재"}, {t:"미래",q:"He will ____ out tonight.",a:"eat",hint:"will",kor:"그는 오늘 밤 외식할 것이다",desc:"미래"}, {t:"과거진행",q:"He was ____ lunch when I arrived.",a:"eating",hint:"was",kor:"내가 도착했을 때 그는 점심을 먹는 중이었다",desc:"과거진행"}, {t:"현재진행",q:"Look! He is ____ vegetables now.",a:"eating",hint:"is|now",kor:"봐! 그는 지금 야채를 먹고 있어",desc:"현재진행"}, {t:"미래진행",q:"He will be ____ dinner at this time tomorrow.",a:"eating",hint:"will be",kor:"내일 이맘때면 그는 저녁을 먹고 있을 거야",desc:"미래진행"}, {t:"과거완료",q:"He had ____ nothing before he came here.",a:"eaten",hint:"had",kor:"여기 오기 전까지 그는 아무것도 안 먹었었다",desc:"대과거"}, {t:"현재완료",q:"He has ____ snakes before.",a:"eaten",hint:"has|before",kor:"그는 이전에 뱀을 먹어본 적이 있다",desc:"완료"}, {t:"미래완료",q:"He will have ____ everything by the time you come.",a:"eaten",hint:"will have",kor:"네가 올 때쯤이면 그는 다 먹었을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"He had been ____ for 2 hours when the food ran out.",a:"eating",hint:"had been",kor:"음식이 동났을 때 그는 2시간째 먹던 중이었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"He has been ____ only salad since Monday.",a:"eating",hint:"has been",kor:"그는 월요일부터 샐러드만 계속 먹고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"By 2 PM, he will have been ____ for an hour.",a:"eating",hint:"will have been",kor:"2시가 되면 그는 1시간째 먹는 셈이 된다",desc:"미래완료진행"}],
+                hardQuestions: [{t:"과거",q:"The plate was empty. He ____ it all.",a:"ate",hint:"was empty",kor:"접시가 비어 있었다. 그가 다 먹어버렸다",desc:"과거"}, {t:"현재",q:"Vegetarians never ____ meat.",a:"eat",hint:"never",kor:"채식주의자는 고기를 절대 먹지 않는다",desc:"현재"}, {t:"미래",q:"If you are hungry, I ____ with you.",a:"will eat",hint:"If",kor:"네가 배고프면 나도 같이 먹을게",desc:"미래"}, {t:"과거진행",q:"Sorry I missed your call. I ____ dinner.",a:"was eating",hint:"missed",kor:"전화 못 받아서 미안. 저녁 먹는 중이었어",desc:"과거진행"}, {t:"현재진행",q:"Where is Tom? He ____ in the kitchen.",a:"is eating",hint:"Where is Tom?",kor:"탐 어디 있어? 부엌에서 밥 먹고 있어",desc:"현재진행"}, {t:"미래진행",q:"Don't call at 6. We ____ dinner then.",a:"will be eating",hint:"at 6",kor:"6시에 전화하지 마. 그때 우리 저녁 먹고 있을 거야",desc:"미래진행"}, {t:"과거완료",q:"I wasn't hungry because I had ____ already.",a:"eaten",hint:"already",kor:"나는 이미 밥을 먹어서 배가 고프지 않았다",desc:"대과거"}, {t:"현재완료",q:"I'm full. I ____ just ____ too much.",a:"have eaten",hint:"just",kor:"배불러. 방금 너무 많이 먹었어",desc:"완료"}, {t:"미래완료",q:"By the time we get there, they ____ all the pizza.",a:"will have eaten",hint:"By the time",kor:"우리가 거기 도착할 때쯤이면 걔네가 피자를 다 먹어치웠을 거야",desc:"미래완료"}, {t:"과거완료진행",q:"His mouth was messy. He had been ____ chocolate.",a:"eating",hint:"was messy",kor:"입가가 지저분했다. 초콜릿을 먹고 있었던 게 분명하다",desc:"과거완료진행"}, {t:"현재완료진행",q:"You look healthy! ____ you been ____ well?",a:"Have eating",hint:"look healthy",kor:"건강해 보이네! 요새 잘 챙겨 먹고 있어?",desc:"현재완료진행"}, {t:"미래완료진행",q:"In 10 minutes, the champion will have been ____ for 3 hours.",a:"eating",hint:"In 10 minutes",kor:"10분 뒤면 챔피언은 3시간 연속으로 먹고 있는 셈이 된다",desc:"미래완료진행"}]
+            },
+            // 2. DO
+            { 
+                word: "do", meaning: "하다", 
+                forms: ["do", "did", "done", "doing", "does"], wrongForms: ["doed", "dided", "done"], 
+                monster: "Golem", 
+                dialogues: ["Execute...", "Power...", "Crush!"], 
+                questions: [{t:"과거",q:"She ____ her homework an hour ago.",a:"did",hint:"ago",kor:"그녀는 1시간 전에 숙제를 했다",desc:"과거"}, {t:"현재",q:"She ____ yoga every morning.",a:"does",hint:"every morning",kor:"그녀는 매일 아침 요가를 한다",desc:"현재"}, {t:"미래",q:"She will ____ her best.",a:"do",hint:"will",kor:"그녀는 최선을 다할 것이다",desc:"미래"}, {t:"과거진행",q:"She was ____ the dishes when it rang.",a:"doing",hint:"was",kor:"전화가 울렸을 때 설거지 중이었다",desc:"과거진행"}, {t:"현재진행",q:"She is ____ the laundry now.",a:"doing",hint:"is|now",kor:"그녀는 지금 빨래를 하고 있다",desc:"현재진행"}, {t:"미래진행",q:"She will be ____ research tomorrow.",a:"doing",hint:"will be",kor:"그녀는 내일 연구를 하고 있을 것이다",desc:"미래진행"}, {t:"과거완료",q:"She had ____ the work before I came.",a:"done",hint:"had|before",kor:"내가 오기 전에 일을 끝냈었다",desc:"대과거"}, {t:"현재완료",q:"She has ____ this task already.",a:"done",hint:"has|already",kor:"그녀는 이미 이 일을 마쳤다",desc:"완료"}, {t:"미래완료",q:"She will have ____ it by Friday.",a:"done",hint:"will have",kor:"금요일까지는 해낼 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"She had been ____ well until the accident.",a:"doing",hint:"had been",kor:"사고 전까지는 잘해오고 있었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"She has been ____ volunteer work.",a:"doing",hint:"has been",kor:"그녀는 봉사활동을 해오고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"She will have been ____ this job for a decade.",a:"doing",hint:"will have been",kor:"이 일을 한 지 10년이 될 것이다",desc:"미래완료진행"}], 
+                hardQuestions: [{t:"과거",q:"I asked him to fix it, and he ____ it.",a:"did",hint:"asked",kor:"부탁했고, 그는 해냈다",desc:"과거"}, {t:"현재",q:"My father is a doctor. He ____ his best.",a:"does",hint:"is a doctor",kor:"아버지는 의사시고 최선을 다하신다",desc:"현재"}, {t:"미래",q:"If you fail, you ____ better next time.",a:"will do",hint:"next time",kor:"실패해도 다음엔 더 잘할 거야",desc:"미래"}, {t:"과거진행",q:"The kids were ____ art projects.",a:"doing",hint:"were",kor:"아이들은 미술 숙제를 하고 있었다",desc:"과거진행"}, {t:"현재진행",q:"Can I call you back? I am ____ my hair.",a:"doing",hint:"am",kor:"나중에 전화할게. 머리 하고 있어",desc:"현재진행"}, {t:"미래진행",q:"I will be ____ nothing all day.",a:"doing",hint:"will be",kor:"하루 종일 아무것도 안 하고 있을 거야",desc:"미래진행"}, {t:"과거완료",q:"He realized he had ____ a mistake.",a:"done",hint:"realized",kor:"그는 실수를 했음을 깨달았다",desc:"대과거"}, {t:"현재완료",q:"You have ____ a great job.",a:"done",hint:"have",kor:"아주 잘했어",desc:"완료"}, {t:"미래완료",q:"We will have ____ everything by then.",a:"done",hint:"will have",kor:"그때쯤이면 다 끝냈을 거야",desc:"미래완료"}, {t:"과거완료진행",q:"He was tired. He had been ____ heavy lifting.",a:"doing",hint:"had been",kor:"그는 지쳤다. 무거운 걸 들고 있었기 때문이다",desc:"과거완료진행"}, {t:"현재완료진행",q:"What have you been ____?",a:"doing",hint:"have you been",kor:"뭐 하고 있었니?",desc:"현재완료진행"}, {t:"미래완료진행",q:"I will have been ____ this research for 2 years.",a:"doing",hint:"will have been",kor:"이 연구를 한 지 2년이 된다",desc:"미래완료진행"}] 
+            },
+            // 3. BRING
+            { 
+                word: "bring", meaning: "가져오다", forms: ["bring", "brought", "bringing", "brings"], wrongForms: ["bringed", "brang", "broughten"], monster: "Bat", dialogues: ["Mine!", "Screech!", "Darkness!"], 
+                questions: [{t:"과거",q:"He ____ a gift yesterday.",a:"brought",kor:"그는 어제 선물을 가져왔다",desc:"과거"}, {t:"현재",q:"He always ____ his laptop.",a:"brings",kor:"그는 항상 노트북을 가져온다",desc:"현재 습관"}, {t:"미래",q:"He will ____ friends.",a:"bring",kor:"친구들을 데려올 것이다",desc:"미래"}, {t:"과거진행",q:"He was ____ the cake.",a:"bringing",kor:"케이크를 가져오던 중이었다",desc:"과거진행"}, {t:"현재진행",q:"He is ____ the car.",a:"bringing",kor:"차를 가져오고 있다",desc:"현재진행"}, {t:"미래진행",q:"He will be ____ documents.",a:"bringing",kor:"서류를 가져오고 있을 것이다",desc:"미래진행"}, {t:"과거완료",q:"He had ____ water.",a:"brought",kor:"물을 가져왔었다",desc:"대과거"}, {t:"현재완료",q:"He has ____ bad news.",a:"brought",kor:"나쁜 소식을 가져왔다",desc:"완료"}, {t:"미래완료",q:"He will have ____ it back.",a:"brought",kor:"다시 가져다 놓을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"He had been ____ lunch.",a:"bringing",kor:"점심을 싸오고 있었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"It has been ____ joy.",a:"bringing",kor:"기쁨을 주고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"He will have been ____ his dog.",a:"bringing",kor:"개를 데려온 지 1년이 된다",desc:"미래완료진행"}], 
+                hardQuestions: [{t:"과거",q:"Luckily he ____ cash.",a:"brought",kor:"다행히 그가 현금을 가져왔다",desc:"과거"}, {t:"현재",q:"Money doesn't always ____ happiness.",a:"bring",kor:"돈이 행복을 가져오진 않는다",desc:"격언"}, {t:"미래",q:"I ____ some food.",a:"will bring",kor:"내가 음식을 좀 가져갈게",desc:"의지"}, {t:"과거진행",q:"The dog was ____ the paper.",a:"bringing",kor:"개가 신문을 가져오고 있었다",desc:"과거진행"}, {t:"현재진행",q:"The wind is ____ a storm.",a:"bringing",kor:"바람이 폭풍을 몰고 오고 있다",desc:"현재진행"}, {t:"미래진행",q:"Guests will be ____ gifts.",a:"bringing",kor:"손님들이 선물을 가져올 것이다",desc:"미래진행"}, {t:"과거완료",q:"No one had ____ music.",a:"brought",kor:"아무도 음악을 안 가져왔었다",desc:"대과거"}, {t:"현재완료",q:"The postman has ____ a package.",a:"brought",kor:"우체부가 소포를 가져왔다",desc:"완료"}, {t:"미래완료",q:"Santa will have ____ presents.",a:"brought",kor:"산타가 선물을 가져다 뒀을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"She had been ____ coffee.",a:"bringing",kor:"그녀는 커피를 나르고 있었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"This has been ____ success.",a:"bringing",kor:"이것은 성공을 가져다주고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"It will have been ____ changes.",a:"bringing",kor:"변화를 가져온 지 오래될 것이다",desc:"미래완료진행"}] 
+            },
+            // 4. FEEL
+            { 
+                word: "feel", meaning: "느끼다", forms: ["feel", "felt", "feeling", "feels"], wrongForms: ["feeled", "feelen", "felt"], monster: "Ghost", dialogues: ["Cold...", "Fear...", "Touch..."], 
+                questions: [{t:"과거",q:"I ____ sick yesterday.",a:"felt",kor:"어제 아팠다",desc:"과거"}, {t:"현재",q:"I ____ great today.",a:"feel",kor:"오늘 기분이 좋다",desc:"현재"}, {t:"미래",q:"You will ____ better.",a:"feel",kor:"나아질 것이다",desc:"미래"}, {t:"과거진행",q:"I was ____ dizzy.",a:"feeling",kor:"어지러움을 느끼고 있었다",desc:"과거진행"}, {t:"현재진행",q:"I am ____ cold.",a:"feeling",kor:"춥게 느껴진다",desc:"현재진행"}, {t:"미래진행",q:"You will be ____ pain.",a:"feeling",kor:"고통을 느끼게 될 것이다",desc:"미래진행"}, {t:"과거완료",q:"I had ____ lonely.",a:"felt",kor:"외로웠었다",desc:"대과거"}, {t:"현재완료",q:"I have ____ this way.",a:"felt",kor:"이런 기분을 느낀 적 있다",desc:"완료"}, {t:"미래완료",q:"It will have ____ like a dream.",a:"felt",kor:"꿈처럼 느껴졌을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"I had been ____ tired.",a:"feeling",kor:"계속 피곤했었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"I have been ____ anxious.",a:"feeling",kor:"계속 불안하다",desc:"현재완료진행"}, {t:"미래완료진행",q:"I will have been ____ sick.",a:"feeling",kor:"계속 아픈 셈이 된다",desc:"미래완료진행"}], 
+                hardQuestions: [{t:"과거",q:"I hardly ____ it.",a:"felt",kor:"거의 못 느꼈다",desc:"과거"}, {t:"현재",q:"This fabric ____ soft.",a:"feels",kor:"이 천은 부드럽다",desc:"감각동사"}, {t:"미래",q:"You ____ better.",a:"will feel",kor:"더 좋아질 거야",desc:"예측"}, {t:"과거진행",q:"He sat down because he was ____ weak.",a:"feeling",kor:"힘이 없어서 주저앉았다",desc:"과거진행"}, {t:"현재진행",q:"You are ____ hot.",a:"feeling",kor:"너 몸이 뜨거워",desc:"현재진행"}, {t:"미래진행",q:"You will be ____ effects.",a:"feeling",kor:"효과를 느끼게 될 것이다",desc:"미래진행"}, {t:"과거완료",q:"She had ____ that way.",a:"felt",kor:"그렇게 느껴왔었다",desc:"대과거"}, {t:"현재완료",q:"I have never ____ insulted.",a:"felt",kor:"모욕감을 느꼈다",desc:"완료"}, {t:"미래완료",q:"I will have ____ at home.",a:"felt",kor:"편안해졌을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"He had been ____ unappreciated.",a:"feeling",kor:"인정받지 못한다고 느꼈었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"I have been ____ guilty.",a:"feeling",kor:"죄책감을 느끼고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"I will have been ____ cold.",a:"feeling",kor:"추위를 느끼고 있는 셈이 된다",desc:"미래완료진행"}] 
+            },
+            // 5. GET
+            { 
+                word: "get", meaning: "얻다 / 되다", 
+                forms: ["get", "got", "gotten", "getting", "gets"], wrongForms: ["getted", "goting", "goten"], 
+                monster: "Goblin", 
+                dialogues: ["It's mine! All mine!", "More... Give me more!", "I take everything that shines!"],
+                questions: [{t:"과거",q:"I ____ a letter yesterday.",a:"got",kor:"나는 어제 편지를 받았다",desc:"과거"}, {t:"현재",q:"She always ____ up early.",a:"gets",kor:"그녀는 항상 일찍 일어난다",desc:"현재"}, {t:"미래",q:"We will ____ there soon.",a:"get",kor:"우리는 곧 거기에 도착할 것이다",desc:"미래"}, {t:"과거진행",q:"It was ____ dark when we left.",a:"getting",kor:"우리가 떠날 때 날이 어두워지고 있었다",desc:"과거진행"}, {t:"현재진행",q:"The weather is ____ colder now.",a:"getting",kor:"날씨가 지금 더 추워지고 있다",desc:"현재진행"}, {t:"미래진행",q:"I will be ____ ready at 8.",a:"getting",kor:"8시에는 준비를 하고 있는 중일 것이다",desc:"미래진행"}, {t:"과거완료",q:"He had ____ the job before I asked.",a:"gotten",kor:"내가 물어보기 전에 그는 이미 그 일자리를 얻었었다",desc:"대과거"}, {t:"현재완료",q:"I have ____ a new car recently.",a:"gotten",kor:"나는 최근에 새 차를 뽑았다",desc:"완료"}, {t:"미래완료",q:"She will have ____ home by then.",a:"gotten",kor:"그때쯤이면 그녀는 집에 도착했을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"They had been ____ along well.",a:"getting",kor:"그들은 잘 지내오고 있었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"It has been ____ worse.",a:"getting",kor:"상황이 악화되고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"We will have been ____ ready.",a:"getting",kor:"우리는 준비 중인 셈이 된다",desc:"미래완료진행"}], 
+                hardQuestions: [{t:"과거",q:"The thief ____ away with the money.",a:"got",kor:"도둑이 돈을 가지고 달아났다",desc:"과거"}, {t:"현재",q:"It usually ____ very hot here in July.",a:"gets",kor:"여기는 7월에 보통 매우 더워진다",desc:"현재"}, {t:"미래",q:"If you try, you ____ the chance.",a:"will get",kor:"시도한다면 기회를 얻게 될 거야",desc:"미래"}, {t:"과거진행",q:"My coffee ____ cold.",a:"was getting",kor:"커피가 식어가고 있었다",desc:"과거진행"}, {t:"현재진행",q:"I don't know what you are ____ at.",a:"getting",kor:"네가 무슨 말을 하려는 건지 모르겠어",desc:"현재진행"}, {t:"미래진행",q:"He will be ____ dressed.",a:"getting",kor:"그는 옷을 갈아입는 중일 거야",desc:"미래진행"}, {t:"과거완료",q:"By the time we arrived, it had ____ dark.",a:"gotten",kor:"우리가 도착했을 땐 이미 어두워져 있었다",desc:"대과거"}, {t:"현재완료",q:"Things have ____ better since then.",a:"gotten",kor:"그때 이후로 상황이 나아졌다",desc:"완료"}, {t:"미래완료",q:"You will have ____ used to it.",a:"gotten",kor:"익숙해져 있을 거야",desc:"미래완료"}, {t:"과거완료진행",q:"He was wet because he had been ____ water.",a:"getting",kor:"물을 길어오고 있었기 때문에 젖어 있었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"I have been ____ tired lately.",a:"getting",kor:"최근 들어 점점 피곤해지고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"I will have been ____ ready for an hour.",a:"getting",kor:"준비한 지 1시간째가 된다",desc:"미래완료진행"}] 
+            },
+            // 6. LOOK
+            { 
+                word: "look", meaning: "보다 / 보이다", 
+                forms: ["look", "looked", "looked", "looking", "looks"], wrongForms: ["lookt", "looking", "looken"], monster: "Watcher", dialogues: ["Where are you hiding?", "You cannot escape my sight.", "I see... everything."], 
+                questions: [{t:"과거",q:"He ____ tired last night.",a:"looked",kor:"그는 어젯밤 피곤해 보였다",desc:"과거"}, {t:"현재",q:"Look! It ____ like rain.",a:"looks",kor:"봐! 비 올 것 같아",desc:"현재"}, {t:"미래",q:"I will ____ at the map.",a:"look",kor:"내가 지도를 볼 것이다",desc:"미래"}, {t:"과거진행",q:"He was ____ at me while eating.",a:"looking",kor:"그는 밥을 먹으면서 나를 쳐다보고 있었다",desc:"과거진행"}, {t:"현재진행",q:"Who are you ____ for now?",a:"looking",kor:"지금 누구를 찾고 있니?",desc:"현재진행"}, {t:"미래진행",q:"We will be ____ around the shop.",a:"looking",kor:"우리는 가게를 둘러보고 있을 것이다",desc:"미래진행"}, {t:"과거완료",q:"I had ____ everywhere before I found it.",a:"looked",kor:"찾기 전까지 나는 모든 곳을 뒤졌었다",desc:"대과거"}, {t:"현재완료",q:"I have never ____ so stupid.",a:"looked",kor:"내가 이렇게 바보같이 보인 적은 없었다",desc:"완료"}, {t:"미래완료",q:"I will have ____ through all files.",a:"looked",kor:"모든 파일을 훑어봤을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"He had been ____ for his dog all day.",a:"looking",kor:"그는 하루 종일 개를 찾고 있었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"What have you been ____ at?",a:"looking",kor:"뭘 그렇게 쳐다보고 있었니?",desc:"현재완료진행"}, {t:"미래완료진행",q:"We will have been ____ for an hour.",a:"looking",kor:"우리는 1시간째 찾고 있는 셈이다",desc:"미래완료진행"}], 
+                hardQuestions: [{t:"과거",q:"The boss ____ angry yesterday.",a:"looked",kor:"어제 사장님이 화나 보였다",desc:"과거"}, {t:"현재",q:"She ____ exactly like her mother.",a:"looks",kor:"그녀는 엄마랑 똑 닮았다",desc:"현재"}, {t:"미래",q:"If you wear this, you ____ great.",a:"will look",kor:"이거 입으면 멋져 보일 거야",desc:"미래"}, {t:"과거진행",q:"I ____ out the window when he called.",a:"was looking",kor:"그가 불렀을 때 나는 창밖을 보고 있었다",desc:"과거진행"}, {t:"현재진행",q:"Don't turn around. Someone ____ at us.",a:"is looking",kor:"뒤돌지 마. 누군가 우릴 보고 있어",desc:"현재진행"}, {t:"미래진행",q:"This time tomorrow, I ____ at the ocean.",a:"will be looking",kor:"내일 이맘때면 난 바다를 보고 있을 거야",desc:"미래진행"}, {t:"과거완료",q:"She realized she had ____ into the wrong room.",a:"looked",kor:"그녀는 잘못된 방을 들여다봤음을 깨달았다",desc:"대과거"}, {t:"현재완료",q:"You ____ tired all day.",a:"have looked",kor:"너 하루 종일 피곤해 보여",desc:"완료"}, {t:"미래완료",q:"The flowers will have ____ their best.",a:"looked",kor:"꽃들이 가장 예쁜 시기는 지났을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"I had been ____ forward to this trip.",a:"looking",kor:"나는 이 여행을 고대해오고 있었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"I have been ____ for you everywhere!",a:"looking",kor:"너를 온 사방에서 찾고 있었어!",desc:"현재완료진행"}, {t:"미래완료진행",q:"I will have been ____ after him for 20 years.",a:"looking",kor:"내년이면 그를 돌본 지 20년이 된다",desc:"미래완료진행"}] 
+            },
+            // 7. SAY
+            { 
+                word: "say", meaning: "말하다", forms: ["say", "said", "said", "saying", "says"], wrongForms: ["sayed", "saied", "sayen"], monster: "Eagle", dialogues: ["Screeeeech!", "My voice pierces the sky!", "Any last words?"], 
+                questions: [{t:"과거",q:"He ____ hello a moment ago.",a:"said",kor:"그는 방금 안녕이라고 했다",desc:"과거"}, {t:"현재",q:"The sign usually ____ 'Stop'.",a:"says",kor:"표지판엔 보통 '멈춤'이라고 적혀있다",desc:"현재"}, {t:"미래",q:"She will ____ yes.",a:"say",kor:"그녀는 '네'라고 할 것이다",desc:"미래"}, {t:"과거진행",q:"He was ____ a prayer when I entered.",a:"saying",kor:"내가 들어갔을 때 그는 기도를 읊고 있었다",desc:"과거진행"}, {t:"현재진행",q:"What is he ____ now?",a:"saying",kor:"그가 지금 뭐라고 하는 거야?",desc:"현재진행"}, {t:"미래진행",q:"They will be ____ their vows soon.",a:"saying",kor:"그들은 곧 서약을 낭독하고 있을 것이다",desc:"미래진행"}, {t:"과거완료",q:"She had already ____ sorry.",a:"said",kor:"그녀는 이미 미안하다고 말했었다",desc:"대과거"}, {t:"현재완료",q:"I have never ____ that.",a:"said",kor:"난 그런 말 한 적 없다",desc:"완료"}, {t:"미래완료",q:"He will have ____ goodbye by then.",a:"said",kor:"그때쯤이면 그는 작별 인사를 했을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"He had been ____ the same thing.",a:"saying",kor:"그는 같은 말을 반복하고 있었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"People have been ____ that for years.",a:"saying",kor:"사람들은 수년간 그렇게 말해오고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"He will have been ____ nothing.",a:"saying",kor:"그는 아무 영양가 없는 말만 계속한 셈이 될 것이다",desc:"미래완료진행"}], 
+                hardQuestions: [{t:"과거",q:"Did you hear what he ____?",a:"said",kor:"그가 뭐라고 말했는지 들었어?",desc:"과거"}, {t:"현재",q:"Rumor ____ that he is rich.",a:"says",kor:"소문에 따르면 그가 부자라고 한다",desc:"현재"}, {t:"미래",q:"If he asks, I ____ no.",a:"will say",kor:"그가 물어보면 난 아니라고 할 거야",desc:"미래"}, {t:"과거진행",q:"I didn't catch what you were ____.",a:"saying",kor:"네가 하던 말을 못 알아들었어",desc:"과거진행"}, {t:"현재진행",q:"Listen! The radio is ____ something important.",a:"saying",kor:"들어봐! 라디오에서 중요한 말을 하고 있어",desc:"현재진행"}, {t:"미래진행",q:"I will be ____ grace at dinner.",a:"saying",kor:"저녁 식사 때 내가 식전 기도를 할 거야",desc:"미래진행"}, {t:"과거완료",q:"I wished I had ____ nothing.",a:"said",kor:"아무 말도 하지 않았더라면 좋았을 텐데",desc:"대과거"}, {t:"현재완료",q:"Much has been ____ about this.",a:"said",kor:"이 문제에 대해 많은 말이 오갔다",desc:"완료"}, {t:"미래완료",q:"Everything will have been ____.",a:"said",kor:"내일이면 모든 말이 다 끝났을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"They had been ____ goodbyes.",a:"saying",kor:"그들은 작별 인사를 나누던 중이었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"Experts have been ____ this.",a:"saying",kor:"전문가들은 이 주장을 해오고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"We will have been ____ 'cheese'.",a:"saying",kor:"곧 있으면 1시간째 '치즈'라고 말하고 있는 셈이다",desc:"미래완료진행"}] 
+            },
+            // 8. WANT
+            { 
+                word: "want", meaning: "원하다", forms: ["want", "wanted", "wanted", "wanting", "wants"], wrongForms: ["wantted", "wanten", "wans"], monster: "Mimic", dialogues: ["What you want is inside...", "Open me...", "Greedy fool!"], 
+                questions: [{t:"과거",q:"I ____ a toy when I was young.",a:"wanted",kor:"어릴 때 장난감을 원했다",desc:"과거"}, {t:"현재",q:"Who ____ some ice cream now?",a:"wants",kor:"누가 지금 아이스크림 원해?",desc:"현재"}, {t:"미래",q:"You will ____ to see this.",a:"want",kor:"너 이거 보고 싶을걸",desc:"미래"}, {t:"과거진행",q:"I was ____ to leave, but I stayed.",a:"wanting",kor:"떠나고 싶어 하던 중이었지만 남았다",desc:"과거진행"}, {t:"현재진행",q:"I am ____ you to listen carefully.",a:"wanting",kor:"네가 잘 듣기를 바라고 있다",desc:"현재진행"}, {t:"미래진행",q:"You will be ____ a coat in winter.",a:"wanting",kor:"겨울엔 코트가 필요해질 것이다",desc:"미래진행"}, {t:"과거완료",q:"He had ____ to go there before he died.",a:"wanted",kor:"죽기 전에 거기 가보길 원했었다",desc:"대과거"}, {t:"현재완료",q:"I have always ____ a dog.",a:"wanted",kor:"난 항상 개를 원해왔다",desc:"완료"}, {t:"미래완료",q:"By then, he will have ____ to quit.",a:"wanted",kor:"그때쯤이면 그만두고 싶어졌을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"I had been ____ to meet him for years.",a:"wanting",kor:"수년 동안 그를 만나고 싶어 해왔었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"I have been ____ this chance.",a:"wanting",kor:"평생 이 기회를 원해왔다",desc:"현재완료진행"}, {t:"미래완료진행",q:"I will have been ____ peace.",a:"wanting",kor:"수십 년간 평화를 갈구해온 셈이 될 것이다",desc:"미래완료진행"}], 
+                hardQuestions: [{t:"과거",q:"He refused because he ____ to go home.",a:"wanted",kor:"집에 가고 싶어서 거절했다",desc:"과거"}, {t:"현재",q:"He ____ what he can't have.",a:"wants",kor:"그는 가질 수 없는 것을 원한다",desc:"현재"}, {t:"미래",q:"If you stay here, you ____ warm clothes.",a:"will want",kor:"여기 있으면 따뜻한 옷이 필요할 거야",desc:"미래"}, {t:"과거진행",q:"The car was ____ repair.",a:"wanting",kor:"그 차는 수리가 필요한 상태였다",desc:"과거진행"}, {t:"현재진행",q:"The garden is ____ weeding.",a:"wanting",kor:"정원에 잡초 제거가 필요하다",desc:"현재진행"}, {t:"미래진행",q:"Soon you will be ____ to rest.",a:"wanting",kor:"곧 쉬고 싶어질 것이다",desc:"미래의 욕구 발생 예측입니다."}, {t:"과거완료",q:"I got exactly what I had ____.",a:"wanted",kor:"나는 내가 원했던 바로 그것을 얻었다",desc:"대과거"}, {t:"현재완료",q:"She has ____ to be a singer.",a:"wanted",kor:"그녀는 가수가 되길 원했다",desc:"완료"}, {t:"미래완료",q:"By next year, I will have ____ everything.",a:"wanted",kor:"내년이면 난 모든 걸 다 가져보고 싶어 했을 것이다",desc:"미래완료"}, {t:"과거완료진행",q:"They had been ____ a child.",a:"wanting",kor:"그들은 아이를 원하고 있었다",desc:"과거완료진행"}, {t:"현재완료진행",q:"We have been ____ clarity.",a:"wanting",kor:"우리는 명확성을 계속 요구하고 있다",desc:"현재완료진행"}, {t:"미래완료진행",q:"She will have been ____ out.",a:"wanting",kor:"그녀는 나가고 싶어 안달이 나 있을 것이다",desc:"미래완료진행"}] 
+            }
+        ];
+
+        /* --- 2. 상태 변수 및 로직 --- */
+        let gameState = {
+            mode: 'easy',        
+            selectedStageId: 0, 
+            qList: [],           
+            qIndex: 0,
+            mMaxHP: 120, mCurHP: 120,
+            heroLives: 5,
+            currentPhase: 1, 
+            clearedStages: { easy: [], hard: [] }, 
+            isRetry: false,
+            wrongLog: [],
+            isEndingSeen: false 
+        };
+
         const modal = document.getElementById('custom-modal');
         const modalMsg = document.getElementById('modal-msg');
         const modalBtns = document.getElementById('modal-btns');
 
-        function showAlert(msg, callback) {
-            modalMsg.innerText = msg;
-            modalBtns.innerHTML = `<button class="modal-btn btn-confirm" id="modal-ok-btn">확인</button>`;
-            modal.style.display = 'flex';
-            document.getElementById('modal-ok-btn').onclick = function() {
-                modal.style.display = 'none';
-                if(callback) callback();
+        /* --- 저장 시스템 --- */
+        function saveGame() {
+            const dataToSave = {
+                cleared: gameState.clearedStages,
+                ending: gameState.isEndingSeen
             };
+            localStorage.setItem('doolgi_save_final_v2', JSON.stringify(dataToSave));
         }
 
-        function showResultModal(msg, confirmCallback, reviewCallback) {
-            modalMsg.innerText = msg;
-            let btnsHtml = `<button class="modal-btn btn-confirm" id="modal-ok-btn">확인</button>`;
+        function loadGame() {
+            const saved = localStorage.getItem('doolgi_save_final_v2');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.cleared && Array.isArray(parsed.cleared.easy)) {
+                        gameState.clearedStages = parsed.cleared;
+                    }
+                    if (parsed.ending !== undefined) {
+                        gameState.isEndingSeen = parsed.ending;
+                    }
+                } catch (e) { console.error(e); }
+            }
+        }
+
+        loadGame();
+
+        /* --- 화면 전환 --- */
+        function showScreen(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => {
+                s.style.opacity = '0';
+                s.classList.remove('active');
+            });
+
+            setTimeout(() => {
+                screens.forEach(s => s.style.display = 'none');
+                
+                const target = document.getElementById(screenId);
+                target.style.display = 'flex'; 
+                
+                if(screenId === 'stage-select-screen') renderStageGrid();
+                if(screenId === 'collection-screen') renderCollection();
+
+                setTimeout(() => {
+                    target.style.opacity = '1';
+                    target.classList.add('active');
+                }, 50);
+            }, 400);
+        }
+
+        /* --- 난이도 선택 --- */
+        function selectDifficulty(mode) {
+            if (mode === 'hard') {
+                if (gameState.clearedStages.easy.length < 9) {
+                    showAlert("🔒 새내기 과정을 모두 수료해야 졸업반에 도전할 수 있습니다!");
+                    return;
+                }
+            }
+            gameState.mode = mode;
+            showScreen('stage-select-screen');
+        }
+
+        /* --- 스테이지 렌더링 --- */
+        function renderStageGrid() {
+            const grid = document.getElementById('stage-grid');
+            grid.innerHTML = "";
+            const currentCleared = gameState.clearedStages[gameState.mode];
+
+            verbsData.forEach((stage, idx) => {
+                const btn = document.createElement('div');
+                const isCleared = currentCleared.includes(idx);
+                const isUnlocked = idx === 0 || currentCleared.includes(idx - 1);
+                
+                let btnClass = 'stage-btn';
+                if (isCleared) btnClass += ' cleared';
+                if (!isUnlocked) btnClass += ' locked';
+                btn.className = btnClass;
+                
+                if (isUnlocked) {
+                    btn.onclick = () => startGame(idx);
+                    btn.innerHTML = `<div class="stage-verb">${stage.word.toUpperCase()}</div><div class="stage-monster">${stage.monster}</div>${isCleared ? '<div>⭐ Clear</div>' : ''}`;
+                } else {
+                    btn.onclick = () => showAlert(`🔒 Locked\n이전 층을 먼저 클리어하세요!`);
+                    btn.innerHTML = `<div style="font-size:1.5rem">🔒</div><div class="stage-verb">???</div>`;
+                }
+                grid.appendChild(btn);
+            });
+            setTimeout(() => { document.getElementById('stage-select-screen').scrollTop = document.getElementById('stage-select-screen').scrollHeight; }, 100);
+        }
+
+        /* --- 게임 로직 --- */
+        function startGame(stageId) {
+            gameState.selectedStageId = stageId;
+            const data = verbsData[stageId];
             
-            if (reviewCallback) {
-                btnsHtml = `<button class="modal-btn btn-cancel" id="modal-review-btn">오답 노트</button>` + btnsHtml;
+            gameState.heroLives = (gameState.mode === 'easy') ? 5 : 3;
+            gameState.isRetry = false; 
+            gameState.wrongLog = []; 
+
+            let questionsSource = data.questions;
+            if (gameState.mode === 'hard' && data.hardQuestions) {
+                questionsSource = data.hardQuestions;
             }
             
-            modalBtns.innerHTML = btnsHtml;
-            modal.style.display = 'flex';
+            gameState.qList = [...questionsSource].sort(() => Math.random() - 0.5);
+            gameState.qIndex = 0;
+            gameState.mMaxHP = 120;
+            gameState.mCurHP = 120;
+            gameState.currentPhase = 1;
             
-            document.getElementById('modal-ok-btn').onclick = function() {
-                modal.style.display = 'none';
-                if(confirmCallback) confirmCallback();
-            };
+            const monsterContainer = document.getElementById('monster-container');
+            monsterContainer.className = 'monster-area';
+            monsterContainer.classList.remove('phase-2', 'phase-3', 'monster-die');
+
+            const heroImgSrc = (gameState.mode === 'easy') ? "assets/hero_easy.png" : "assets/hero_hard.png";
+            document.getElementById('game-hero-img').src = heroImgSrc;
+
+            const monsterImgTag = document.getElementById('game-monster-img');
+            monsterImgTag.src = `assets/mob_${data.word}_1.png`;
+
+            document.getElementById('stage-text').innerText = `STAGE: ${data.word.toUpperCase()}`;
+            document.getElementById('monster-name').innerText = data.monster;
             
-            if (reviewCallback) {
-                document.getElementById('modal-review-btn').onclick = function() {
-                    reviewCallback();
+            showScreen('game-screen');
+            updateUI();
+            showSpeech(data.dialogues[0]);
+            loadQuestion();
+        }
+
+        function updatePhase() {
+            const nextQIndex = gameState.qIndex; 
+            const monsterContainer = document.getElementById('monster-container');
+            const data = verbsData[gameState.selectedStageId];
+            const monsterImgTag = document.getElementById('game-monster-img');
+
+            if (nextQIndex === 4) { 
+                gameState.currentPhase = 2;
+                monsterContainer.classList.add('phase-2');
+                monsterImgTag.src = `assets/mob_${data.word}_2.png`;
+                showSpeech(data.dialogues[1]);
+            } else if (nextQIndex === 8) { 
+                gameState.currentPhase = 3;
+                monsterContainer.classList.add('phase-3');
+                monsterImgTag.src = `assets/mob_${data.word}_3.png`;
+                showSpeech(data.dialogues[2]);
+            }
+        }
+
+        function showSpeech(text) {
+            const bubble = document.getElementById('battle-msg'); 
+            bubble.innerHTML = `<span>${text}</span>`;
+            bubble.classList.add('show');
+            setTimeout(() => { bubble.classList.remove('show'); }, 3000);
+        }
+
+        function getDistractors(correctAnswer) {
+            const data = verbsData[gameState.selectedStageId];
+            let pool = [...data.forms];
+            if(gameState.mode === 'easy' && data.wrongForms) pool = pool.concat(data.wrongForms);
+            let options = pool.filter(f => f.toLowerCase() !== correctAnswer.toLowerCase());
+            options = [...new Set(options)];
+            while(options.length < 3) options.push("dummy");
+            options.sort(() => Math.random() - 0.5);
+            return options.slice(0, 3);
+        }
+
+        function loadQuestion() {
+            if (gameState.qIndex >= gameState.qList.length) {
+                stageClear();
+                return;
+            }
+            updatePhase();
+
+            const q = gameState.qList[gameState.qIndex];
+            const currentStageData = verbsData[gameState.selectedStageId];
+            const tenseLabel = document.getElementById('tense-label');
+            
+            if (gameState.mode === 'easy') {
+                tenseLabel.innerHTML = `<span id="tense-text" class="tense-reveal-btn" onclick="this.innerText='[${q.t}]'; this.classList.remove('tense-reveal-btn'); this.style.borderBottom='none';">[ 시제 보기 (클릭) ]</span>`;
+            } else {
+                tenseLabel.innerHTML = `<span id="tense-text">[???]</span>`;
+            }
+            
+            const hintBtn = document.createElement('button');
+            hintBtn.className = 'hint-btn';
+            hintBtn.innerHTML = '📖';
+            const wordInfo = `${currentStageData.word.toUpperCase()} : ${currentStageData.meaning}`;
+            hintBtn.onclick = () => showHint(wordInfo, q.kor, q.desc);
+            tenseLabel.appendChild(hintBtn);
+
+            if (gameState.mode === 'hard') {
+                hintBtn.style.display = gameState.isRetry ? 'inline-block' : 'none';
+            } else {
+                hintBtn.style.display = 'inline-block';
+            }
+
+            let questionText = q.q;
+            if (q.hint) {
+                const regex = new RegExp(`(${q.hint})`, 'gi');
+                questionText = questionText.replace(regex, '<span class="clue">$1</span>');
+            }
+            document.getElementById('q-text').innerHTML = questionText;
+            
+            document.getElementById('feedback').innerText = "";
+
+            const optionsArea = document.getElementById('options-area');
+            optionsArea.innerHTML = "";
+
+            const correct = q.a;
+            const distractors = getDistractors(correct);
+            const options = [correct, ...distractors];
+            options.sort(() => Math.random() - 0.5);
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = (e) => checkAnswer(opt, e.target); 
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedInput, btnElement) {
+            const currentQ = gameState.qList[gameState.qIndex];
+            const correct = currentQ.a;
+
+            if (selectedInput.toLowerCase() === correct.toLowerCase()) {
+                // 정답
+                gameState.mCurHP -= 10;
+                document.getElementById('feedback').innerText = "HIT!";
+                document.getElementById('feedback').style.color = "#4caf50";
+                gameState.isRetry = false;
+                
+                const clueSpans = document.querySelectorAll('.clue');
+                clueSpans.forEach(span => span.classList.add('correct-glow'));
+
+                const monsterEl = document.getElementById('monster-container');
+                monsterEl.classList.remove('shake-anim');
+                void monsterEl.offsetWidth; 
+                monsterEl.classList.add('shake-anim');
+
+                updateUI();
+                
+                if (gameState.mCurHP <= 0) {
+                    monsterEl.classList.add('monster-die');
+                    document.getElementById('battle-msg').innerHTML = "<span>으아악...!</span>";
+                    document.getElementById('battle-msg').classList.add('show');
+                    setTimeout(stageClear, 1200); 
+                } else {
+                    gameState.qIndex++;
+                    setTimeout(loadQuestion, 800);
+                }
+            } else {
+                // 오답
+                if (gameState.mode === 'hard' && !gameState.isRetry) {
+                    if(!gameState.wrongLog.includes(currentQ)) gameState.wrongLog.push(currentQ);
+                    document.getElementById('feedback').innerText = "틀렸습니다! 힌트를 확인하세요.";
+                    document.getElementById('feedback').style.color = "orange";
+                    
+                    const clueSpans = document.querySelectorAll('.clue');
+                    clueSpans.forEach(span => span.classList.add('wrong-blink'));
+
+                    document.getElementById('game-screen').classList.add('screen-hit');
+                    setTimeout(() => document.getElementById('game-screen').classList.remove('screen-hit'), 400);
+
+                    gameState.isRetry = true;
+                    const tenseLabel = document.getElementById('tense-label');
+                    const hintBtn = tenseLabel.querySelector('.hint-btn');
+                    if(hintBtn) hintBtn.style.display = 'inline-block';
+                    btnElement.disabled = true;
+                    btnElement.style.opacity = "0.5";
+                    return; 
+                }
+
+                if(!gameState.wrongLog.includes(currentQ)) gameState.wrongLog.push(currentQ);
+                gameState.heroLives--;
+                document.getElementById('feedback').innerText = "MISS! (목숨 차감)";
+                document.getElementById('feedback').style.color = "#f44336";
+                
+                const clueSpans = document.querySelectorAll('.clue');
+                clueSpans.forEach(span => span.classList.add('wrong-blink'));
+
+                document.getElementById('game-screen').classList.add('screen-hit');
+                setTimeout(() => document.getElementById('game-screen').classList.remove('screen-hit'), 400);
+
+                if (gameState.mode === 'hard' && gameState.isRetry) {
+                      const tenseSpan = document.getElementById('tense-text');
+                      if(tenseSpan) {
+                        tenseSpan.innerText = `[${currentQ.t}]`; 
+                        tenseSpan.style.color = '#ff4444';
+                        tenseSpan.classList.remove('tense-reveal-btn');
+                        tenseSpan.style.borderBottom = 'none';
+                        tenseSpan.onclick = null;
+                      }
+                }
+
+                btnElement.disabled = true;
+                btnElement.style.opacity = "0.5";
+                updateUI();
+
+                if (gameState.heroLives <= 0) {
+                    setTimeout(() => {
+                        showAlert("패배했습니다. 마을로 귀환합니다.", function() {
+                            showScreen('stage-select-screen');
+                        });
+                    }, 500);
+                }
+            }
+        }
+
+        function stageClear() {
+            const data = verbsData[gameState.selectedStageId];
+            if(!gameState.clearedStages[gameState.mode].includes(gameState.selectedStageId)) {
+                gameState.clearedStages[gameState.mode].push(gameState.selectedStageId);
+                saveGame(); 
+            }
+
+            let msg = `${data.monster} 토벌 완료!`;
+            let reviewCallback = null;
+            
+            if (gameState.wrongLog.length > 0) {
+                msg += `\n(틀린 문제: ${gameState.wrongLog.length}개)`;
+                reviewCallback = function() {
+                    openBook(gameState.wrongLog, "오답 노트 (Wrong Answers)", false);
                 };
             }
+
+            showResultModal(msg, function() {
+                showScreen('stage-select-screen');
+            }, reviewCallback);
         }
 
-        function showConfirm(msg, yesCallback) {
-            modalMsg.innerText = msg;
-            modalBtns.innerHTML = `
-                <button class="modal-btn btn-cancel" id="modal-no-btn">취소</button>
-                <button class="modal-btn btn-confirm" id="modal-yes-btn">확인</button>
-            `;
-            modal.style.display = 'flex';
-            document.getElementById('modal-yes-btn').onclick = function() {
-                modal.style.display = 'none';
-                if(yesCallback) yesCallback();
-            };
-            document.getElementById('modal-no-btn').onclick = function() {
-                modal.style.display = 'none';
-            };
+        function updateUI() {
+            const maxHP = 120;
+            const percent = Math.max(0, (gameState.mCurHP / maxHP) * 100);
+            document.getElementById('monster-hp-bar').style.width = `${percent}%`;
+            document.getElementById('hero-hp-text').innerText = gameState.heroLives;
         }
-        
+
+        function tryQuitGame() {
+            showConfirm("던전을 포기하고 나가시겠습니까?", function() {
+                showScreen('stage-select-screen');
+            });
+        }
+
+        function unlockStages(targetMode) {
+            gameState.clearedStages[targetMode] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+            saveGame();
+            renderStageGrid();
+            const modeName = targetMode === 'easy' ? '새내기' : '졸업반';
+            showAlert(`개발자 모드: ${modeName} 과정이 모두 해금되었습니다!`);
+        }
+
+        function resetGameData() {
+            showConfirm("정말 모든 데이터를 삭제하고 초기화하시겠습니까?", function() {
+                gameState.clearedStages = { easy: [], hard: [] };
+                gameState.isEndingSeen = false;
+                saveGame();
+                showAlert("모든 데이터가 초기화되었습니다.", function() { location.reload(); });
+            });
+        }
+
+        /* --- 도감 & 엔딩 로직 --- */
+        function renderCollection() {
+            const grid = document.getElementById('collection-grid');
+            grid.innerHTML = "";
+            const easyList = gameState.clearedStages.easy;
+            const hardList = gameState.clearedStages.hard;
+            const totalStages = verbsData.length; // 9개
+
+            verbsData.forEach((stage, idx) => {
+                const isEasyCleared = easyList.includes(idx);
+                const isHardCleared = hardList.includes(idx);
+                const slot = document.createElement('div');
+                slot.className = 'card-slot';
+                
+                const imgTag = document.createElement('img');
+                imgTag.src = `assets/card_${stage.word}.png`;
+                imgTag.onerror = function() {
+                    this.remove(); 
+                    slot.innerHTML = `<div style="color: gold; font-size: 0.8rem; font-weight: bold; text-align:center;">${stage.word.toUpperCase()}<br>카드 획득!</div>`;
+                    slot.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                    slot.classList.add('unlocked');
+                };
+                
+                const style = tornStyles[idx % tornStyles.length];
+
+                if (isEasyCleared || isHardCleared) {
+                    slot.onclick = function() {
+                        bookState.stageId = idx;
+                        const initMode = isEasyCleared ? 'easy' : 'hard'; 
+                        bookState.currentMode = 'easy';
+                        document.getElementById('tab-easy').classList.add('active');
+                        document.getElementById('tab-hard').classList.remove('active');
+                        openBook(stage.questions, `${stage.word.toUpperCase()} - ${stage.meaning}`, true);
+                    };
+                }
+
+                if (isEasyCleared && isHardCleared) {
+                    slot.classList.add('unlocked', 'card-full');
+                    imgTag.style.clipPath = 'none';
+                    slot.appendChild(imgTag);
+                } else if (isEasyCleared) {
+                    slot.classList.add('unlocked', 'easy-clear');
+                    imgTag.style.clipPath = style.easy;
+                    slot.appendChild(imgTag);
+                } else if (isHardCleared) {
+                    slot.classList.add('unlocked');
+                    imgTag.style.clipPath = style.hard;
+                    slot.appendChild(imgTag);
+                } else {
+                    slot.classList.add('locked');
+                }
+                grid.appendChild(slot);
+            });
+
+            // [마스코트 및 엔딩 체크]
+            const isAllEasy = easyList.length >= totalStages;
+            const isAllHard = hardList.length >= totalStages;
+            const mascot = document.getElementById('mascot-jjagi');
+
+            if (isAllEasy && isAllHard) {
+                if (!gameState.isEndingSeen) {
+                    // 엔딩 시작
+                    mascot.style.display = 'none';
+                    setTimeout(startEndingSuspense, 500);
+                } else {
+                    // 마스코트 표시
+                    mascot.style.display = 'block';
+                }
+            } else {
+                mascot.style.display = 'none';
+            }
+        }
+
+        // --- 엔딩 진행 변수 및 함수 ---
+        let endingStep = 0; 
+        let isEndingAnimating = false; // 중복 클릭 방지 락
+
+        function startEndingSuspense() {
+            const overlay = document.getElementById('ending-overlay');
+            const bgWrapper = document.getElementById('collection-bg-wrapper'); 
+            
+            // 오버레이 초기화
+            overlay.style.opacity = '1';
+            overlay.style.display = 'flex';
+            overlay.innerHTML = `
+                <div class="ending-bubble" id="ending-text">
+                    <span id="dialogue-content">...</span>
+                    <span class="tap-hint">▼ (Touch to Continue)</span>
+                </div>
+                <div class="jjagi-character" id="ending-jjagi">
+                    <img src="assets/jjagi.png" alt="짝이">
+                </div>
+                <div class="pulse-light" id="ending-light"></div>
+                <div id="suspense-msg" style="color:white; font-size:1.5rem; font-weight:bold; text-shadow:0 0 10px red; animation:pulse 0.5s infinite; text-align:center;">
+                    도감에서 강력한 기운이 느껴진다!<br>
+                    <span style="font-size:1rem; color:#gold;">(화면을 터치하세요!)</span>
+                </div>
+            `;
+
+            // 배경 흔들림 시작
+            bgWrapper.classList.add('rumble-anim'); 
+            
+            endingStep = 0; 
+            isEndingAnimating = false;
+            overlay.onclick = proceedEnding;
+        }
+
+        function proceedEnding() {
+            if (isEndingAnimating) return; // 애니메이션 중 터치 무시
+
+            const overlay = document.getElementById('ending-overlay');
+            const bgWrapper = document.getElementById('collection-bg-wrapper');
+            const light = document.getElementById('ending-light');
+            const jjagi = document.getElementById('ending-jjagi');
+            const bubble = document.getElementById('ending-text');
+            const suspenseMsg = document.getElementById('suspense-msg');
+            const content = document.getElementById('dialogue-content');
+
+            if (endingStep === 0) {
+                // [Step 1] 봉인 해제
+                isEndingAnimating = true; // 락 걸기 (연출 동안 클릭 금지)
+                bgWrapper.classList.remove('rumble-anim'); // 흔들림 멈춤
+                if(suspenseMsg) suspenseMsg.style.display = 'none'; 
+                
+                light.classList.add('light-burst-anim'); // 빛 폭발
+                
+                // 0.8초 후 짝이 등장 및 첫 대사
+                setTimeout(() => {
+                    jjagi.classList.add('jjagi-pop');
+                    bubble.classList.add('show'); // 말풍선 표시
+                    content.innerHTML = "와아...! 드디어 나왔다!<br>드디어 날 구해줬구나!";
+                    
+                    isEndingAnimating = false; // 락 해제 (이제 클릭 가능)
+                    endingStep++; // 다음 단계로
+                }, 800);
+            } 
+            else if (endingStep === 1) {
+                // [Step 1 -> 2] 감사 인사
+                content.innerHTML = "어둡고 답답한 책 속에 갇혀서<br>얼마나 무서웠는지 몰라...<br><br>정말 고마워~~!! ❤️";
+                endingStep++;
+            } 
+            else if (endingStep === 2) {
+                // [Step 2 -> 3] 모험 제안
+                content.innerHTML = "자, 이제 몸도 풀렸으니...<br><span style='color:var(--accent-color); font-weight:bold;'>진짜 영어 문법을 정복하러<br>본격적인 모험을 떠나보자!</span>";
+                endingStep++;
+            } 
+            else if (endingStep === 3) {
+                // [Step 3 -> 종료] 엔딩 종료 처리
+                isEndingAnimating = true;
+                overlay.style.opacity = '0'; // 서서히 사라짐
+                
+                setTimeout(() => {
+                    overlay.style.display = 'none'; // 오버레이 끄기
+                    overlay.style.opacity = '1';
+                    
+                    // 데이터 저장
+                    gameState.isEndingSeen = true;
+                    saveGame();
+                    
+                    // 마스코트 즉시 등장 시키기
+                    const mascot = document.getElementById('mascot-jjagi');
+                    if(mascot) {
+                        mascot.style.display = 'block';
+                        onMascotClick(); // 등장 기념 멘트 한 번 날리기
+                    }
+                    isEndingAnimating = false;
+                }, 500);
+            }
+        }
+
+        function onMascotClick() {
+            const bubble = document.getElementById('mascot-bubble');
+            const msgs = [
+                "오늘도 파이팅이야!",
+                "복습하러 왔어?",
+                "너라면 할 수 있어!",
+                "문법 마스터가 되는 그날까지!",
+                "둘기야 안녕? 난 짝이야!",
+                "모험은 이제 시작이야!"
+            ];
+            // 랜덤 멘트 출력
+            bubble.innerText = msgs[Math.floor(Math.random() * msgs.length)];
+            bubble.classList.add('show');
+            
+            // 2초 뒤 말풍선 사라짐
+            setTimeout(() => {
+                bubble.classList.remove('show');
+            }, 2000);
+        }
+
+        /* --- 힌트북 및 공통 함수 --- */
+        // [FIX] Missing element queries added here
         const hintModal = document.getElementById('hint-modal');
         const bookContent = document.getElementById('book-content');
         const bookNav = document.getElementById('book-nav');
@@ -790,723 +1564,51 @@
 
         function closeHint() { hintModal.style.display = 'none'; }
         
-        function unlockStages(targetMode) {
-            gameState.clearedStages[targetMode] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-            saveGame();
-            renderStageGrid();
-            const modeName = targetMode === 'easy' ? '새내기' : '졸업반';
-            showAlert(`개발자 모드: ${modeName} 과정이 모두 해금되었습니다!`);
+        function showAlert(msg, callback) {
+            modalMsg.innerText = msg;
+            modalBtns.innerHTML = `<button class="modal-btn btn-confirm" id="modal-ok-btn">확인</button>`;
+            modal.style.display = 'flex';
+            document.getElementById('modal-ok-btn').onclick = function() {
+                modal.style.display = 'none';
+                if(callback) callback();
+            };
         }
 
-        function resetGameData() {
-            showConfirm("정말 모든 데이터를 삭제하고 초기화하시겠습니까?", function() {
-                gameState.clearedStages = { easy: [], hard: [] };
-                saveGame();
-                showAlert("모든 데이터가 초기화되었습니다.", function() { location.reload(); });
-            });
-        }
-
-        const highlight = (text) => `<span class="highlight">${text}</span>`;
-        // [3번 개선] 데이터에 hint 필드 추가 (정답의 근거가 되는 단어)
-        // [추가 개선] hint에 조동사(will, have 등) 및 문맥 단어 포함 (파이프로 구분하여 regex 처리)
-        const verbsData = [
-            { 
-                word: "see", meaning: "보다 / 만나다", forms: ["see", "saw", "seen", "seeing", "sees"], wrongForms: ["seed", "sawed", "seen"], monster: "Cyclops", 
-                dialogues: ["You cannot hide from my gaze!", "I see everything...", "I see your weakness!"],
-                questions: [
-                    { t: "과거", q: "I ____ him yesterday.", a: "saw", hint: "yesterday", kor: "나는 어제 그를 보았다.", desc: `문장 속 ${highlight('yesterday(어제)')}는 명확한 과거 시점을 나타냅니다. 따라서 동사의 과거형인 ${highlight('saw')}가 정답입니다.` },
-                    { t: "현재", q: "I ____ my parents every weekend.", a: "see", hint: "every weekend", kor: "나는 매주 주말마다 부모님을 뵌다.", desc: `문장의 ${highlight('every weekend(매주 주말)')}는 반복적인 습관을 나타냅니다. 이럴 때는 동사의 현재형 ${highlight('see')}를 사용합니다.` },
-                    { t: "미래", q: "I will ____ the doctor tomorrow.", a: "see", hint: "will|tomorrow", kor: "나는 내일 의사를 만날 것이다.", desc: `${highlight('tomorrow(내일)')}는 미래를 나타내며, 조동사 will 뒤에는 반드시 동사 원형 ${highlight('see')}가 와야 합니다.` },
-                    { t: "과거진행", q: "I was ____ the sights when it started to rain.", a: "seeing", hint: "was|when", kor: "비가 내리기 시작했을 때, 나는 관광을 하고 있었다.", desc: `과거의 특정 시점(${highlight('when...')})에 진행 중이었던 행동을 묘사하므로 과거진행형 ${highlight('was seeing')}이 적절합니다.` },
-                    { t: "현재진행", q: "I am ____ a friend right now.", a: "seeing", hint: "am|right now", kor: "나는 지금 친구를 만나고 있다.", desc: `${highlight('right now(지금 당장)')} 진행 중인 일은 현재진행형 ${highlight('am seeing')}을 씁니다.` },
-                    { t: "미래진행", q: "I will be ____ him at the party tonight.", a: "seeing", hint: "will be|tonight", kor: "오늘 밤 파티에서 그를 만나고 있을 것이다.", desc: `미래의 특정 시점(${highlight('tonight')})에 진행될 예정인 일을 나타낼 때는 미래진행형 ${highlight('will be seeing')}을 사용합니다.` },
-                    { t: "과거완료", q: "I had ____ the movie before you mentioned it.", a: "seen", hint: "had|before", kor: "네가 말하기 전에 나는 이미 그 영화를 봤었다.", desc: `네가 말한 과거 시점보다 ${highlight('더 이전(대과거)')}에 이미 완료된 일이므로 과거완료 ${highlight('had seen')}을 씁니다.` },
-                    { t: "현재완료", q: "I have ____ this film three times so far.", a: "seen", hint: "have|so far", kor: "나는 지금까지 이 영화를 세 번 봤다.", desc: `과거부터 현재까지(${highlight('so far')})의 경험을 나타낼 때는 현재완료 ${highlight('have seen')}을 사용합니다.` },
-                    { t: "미래완료", q: "I will have ____ all the episodes by next week.", a: "seen", hint: "will have|by next week", kor: "다음 주면 모든 에피소드를 다 봤을 것이다.", desc: `${highlight('by next week(다음 주까지는)')} 미래의 특정 시점에 완료될 것을 예측하므로 미래완료 ${highlight('will have seen')}이 정답입니다.` },
-                    { t: "과거완료진행", q: "I had been ____ her for a year before we broke up.", a: "seeing", hint: "had been|for a year", kor: "우리가 헤어지기 전까지 나는 그녀를 1년 동안 만나오고 있었다.", desc: `과거의 특정 시점(${highlight('broke up')})까지 계속되던 동작의 기간을 강조할 때는 과거완료진행형을 씁니다.` },
-                    { t: "현재완료진행", q: "I have been ____ spots since this morning.", a: "seeing", hint: "have been|since", kor: "오늘 아침부터 눈앞에 점 같은 게 계속 보이고 있다.", desc: `${highlight('since(이후로)')} 지금까지 동작이 계속됨을 강조할 때는 현재완료진행형을 씁니다.` },
-                    { t: "미래완료진행", q: "Next month, I will have been ____ this dentist for 10 years.", a: "seeing", hint: "will have been|for 10 years", kor: "다음 달이면 이 치과에 다닌 지 10년째가 된다.", desc: `미래의 시점(${highlight('Next month')})에 기간이 꽉 차게 됨을 나타낼 때는 미래완료진행형을 사용합니다.` }
-                ],
-                hardQuestions: [
-                    { t: "과거", q: "A: Did you meet Tom?<br>B: No, I ____ no one there.", a: "saw", hint: "Did you meet", kor: "A: 탐 만났어? B: 아니, 거기서 아무도 못 봤어.", desc: "질문이 과거형(Did you meet?)이므로 대답도 과거 시점의 사실을 말해야 합니다." },
-                    { t: "현재", q: "I don't need glasses. I ____ perfectly fine.", a: "see", hint: "don't need", kor: "난 안경 필요 없어. 아주 잘 보여.", desc: "현재의 일반적인 능력이나 상태를 설명하고 있으므로 현재형이 적절합니다." },
-                    { t: "미래", q: "Don't worry. We ____ what happens next.", a: "will see", hint: "next", kor: "걱정 마. 다음에 무슨 일이 일어날지 두고 보자.", desc: "앞으로 일어날 일에 대한 예측이나 의지를 나타내므로 미래형을 사용합니다." },
-                    { t: "과거진행", q: "The police asked what I ____ at 9 PM.", a: "was seeing", hint: "at 9 PM", kor: "경찰은 내가 9시에 무엇을 보고 있었는지 물었다.", desc: "과거의 특정 시점(9 PM)에 진행 중이었던 행동을 묻는 문맥입니다." },
-                    { t: "현재진행", q: "I can't talk right now. I ____ a client.", a: "am seeing", hint: "right now", kor: "지금 통화 못 해. 고객을 만나는 중이야.", desc: "지금 당장(right now) 통화가 불가능한 이유인 현재 진행 중인 약속을 설명합니다." },
-                    { t: "미래진행", q: "This time next year, I ____ the world.", a: "will be seeing", hint: "This time next year", kor: "내년 이맘때쯤이면 난 세상을 구경하고 있을 거야.", desc: "미래의 특정 시점에 하고 있을 것으로 예상되는 진행 상황을 묘사합니다." },
-                    { t: "과거완료", q: "I recognized him because I ____ him before.", a: "had seen", hint: "before", kor: "이전에 그를 본 적이 있어서 그를 알아봤다.", desc: "그를 알아본 과거 시점보다 '더 이전에' 본 경험이 원인이므로 대과거(과거완료)를 씁니다." },
-                    { t: "현재완료", q: "This is the best movie I ____ ever ____.", a: "have seen", hint: "ever", kor: "이건 내가 지금까지 본 영화 중 최고야.", desc: "과거부터 현재까지의 경험 중 최고임을 나타내는 최상급 표현과 함께 쓰이는 현재완료입니다." },
-                    { t: "미래완료", q: "Come at 8. We ____ the sunset by then.", a: "will have seen", hint: "by then", kor: "8시에 와. 그때쯤이면 우린 이미 일몰을 봤을 거야.", desc: "미래의 특정 시점(8시)에는 이미 동작이 완료되어 있을 것임을 나타냅니다." },
-                    { t: "과거완료진행", q: "My eyes hurt because I ____ the screen for too long.", a: "had been seeing", hint: "hurt", kor: "화면을 너무 오래 보고 있어서 눈이 아팠다.", desc: "과거 시점(아팠다) 직전까지 계속된 동작이 원인임을 강조합니다." },
-                    { t: "현재완료진행", q: "I ____ this doctor for 5 years now.", a: "have been seeing", hint: "for 5 years now", kor: "이 의사 선생님께 진료받은 지 5년째다.", desc: "과거부터 현재까지 5년 동안 계속되고 있는 만남/진료 상황을 나타냅니다." },
-                    { t: "미래완료진행", q: "By Christmas, we ____ each other for a year.", a: "will have been seeing", hint: "By Christmas", kor: "크리스마스면 우리가 만난 지 1년이 된다.", desc: "미래의 특정 시점까지 행동이 지속되어 기간이 달성됨을 나타냅니다." }
-                ]
-            },
-            { 
-                word: "eat", meaning: "먹다",
-                forms: ["eat", "ate", "eaten", "eating", "eats"], 
-                wrongForms: ["eated", "ateing", "eaten"], 
-                monster: "Ogre", 
-                dialogues: ["I'm starving... Arrrgh!", "You're not even a mouthful.", "I'll chew you up!"],
-                questions: [
-                    { t: "과거", q: "He ____ a big burger last night.", a: "ate", hint: "last night", kor: "그는 지난밤에 큰 버거를 먹었다.", desc: `${highlight('last night(지난밤)')}은 명확한 과거 시점이므로 동사의 과거형 ${highlight('ate')}가 정답입니다.` },
-                    { t: "현재", q: "He ____ breakfast at 7 AM daily.", a: "eats", hint: "daily", kor: "그는 매일 아침 7시에 아침을 먹는다.", desc: `${highlight('daily(매일)')} 반복되는 일상은 현재형을 씁니다. 주어가 3인칭 단수이므로 ${highlight('eats')}가 됩니다.` },
-                    { t: "미래", q: "He will ____ out tonight.", a: "eat", hint: "will|tonight", kor: "그는 오늘 밤 외식할 것이다.", desc: `${highlight('tonight(오늘 밤)')}의 계획을 나타냅니다. 조동사 will 뒤에는 동사 원형 ${highlight('eat')}이 옵니다.` },
-                    { t: "과거진행", q: "He was ____ lunch when I arrived.", a: "eating", hint: "was|when", kor: "내가 도착했을 때 그는 점심을 먹는 중이었다.", desc: `과거의 특정 시점에 진행 중이던 동작을 나타내므로 과거진행형 ${highlight('was eating')}을 사용합니다.` },
-                    { t: "현재진행", q: "Look! He is ____ vegetables now.", a: "eating", hint: "is|now", kor: "봐! 그는 지금 야채를 먹고 있어.", desc: `${highlight('Look!')} 지금 눈앞에서 벌어지는 일을 묘사하므로 현재진행형 ${highlight('is eating')}이 정답입니다.` },
-                    { t: "미래진행", q: "He will be ____ dinner at this time tomorrow.", a: "eating", hint: "will be|tomorrow", kor: "내일 이맘때면 그는 저녁을 먹고 있을 거야.", desc: `미래의 특정 시간에 진행 중일 동작을 예측하므로 미래진행형 ${highlight('will be eating')}을 씁니다.` },
-                    { t: "과거완료", q: "He had ____ nothing before he came here.", a: "eaten", hint: "had|before", kor: "여기 오기 전까지 그는 아무것도 안 먹었었다.", desc: `오기 전(과거)보다 더 이전에 일어난 일이므로 대과거(과거완료) ${highlight('had eaten')}을 사용합니다.` },
-                    { t: "현재완료", q: "He has ____ snakes before.", a: "eaten", hint: "has|before", kor: "그는 이전에 뱀을 먹어본 적이 있다.", desc: `과거부터 현재까지의 ${highlight('경험')}을 말할 때는 현재완료형 ${highlight('has eaten')}을 씁니다.` },
-                    { t: "미래완료", q: "He will have ____ everything by the time you come.", a: "eaten", hint: "will have|by the time", kor: "네가 올 때쯤이면 그는 다 먹었을 것이다.", desc: `미래의 기준 시점까지 동작이 완료될 것임을 나타내므로 미래완료형 ${highlight('will have eaten')}이 적절합니다.` },
-                    { t: "과거완료진행", q: "He had been ____ for 2 hours when the food ran out.", a: "eating", hint: "had been|for 2 hours", kor: "음식이 동났을 때 그는 2시간째 먹던 중이었다.", desc: `과거 시점까지 동작이 계속 진행되었음을 강조하므로 과거완료진행형을 사용합니다.` },
-                    { t: "현재완료진행", q: "He has been ____ only salad since Monday.", a: "eating", hint: "has been|since", kor: "그는 월요일부터 샐러드만 계속 먹고 있다.", desc: `과거부터 현재까지 계속해오고 있는 동작을 강조할 때 현재완료진행형을 씁니다.` },
-                    { t: "미래완료진행", q: "By 2 PM, he will have been ____ for an hour.", a: "eating", hint: "will have been|for an hour", kor: "2시가 되면 그는 1시간째 먹는 셈이 된다.", desc: `미래 시점까지 동작이 계속될 것임을 나타내므로 미래완료진행형을 사용합니다.` }
-                ],
-                hardQuestions: [
-                    { t: "과거", q: "The plate was empty. He ____ it all.", a: "ate", hint: "was empty", kor: "접시가 비어 있었다. 그가 다 먹어버렸다.", desc: "접시가 비어 있다는 과거의 사실에 대한 원인이 되는 과거의 동작입니다." },
-                    { t: "현재", q: "Vegetarians never ____ meat.", a: "eat", hint: "never", kor: "채식주의자는 고기를 절대 먹지 않는다.", desc: "일반적인 사실이나 변하지 않는 습관을 나타내므로 현재형을 사용합니다." },
-                    { t: "미래", q: "If you are hungry, I ____ with you.", a: "will eat", hint: "If you are hungry", kor: "네가 배고프면 나도 같이 먹을게.", desc: "대화하는 순간 즉석에서 결정한 미래의 행동(의지)을 나타냅니다." },
-                    { t: "과거진행", q: "Sorry I missed your call. I ____ dinner.", a: "was eating", hint: "missed your call", kor: "전화 못 받아서 미안. 저녁 먹는 중이었어.", desc: "과거의 특정 시점에 다른 일을 하고 있어서 전화를 못 받은 상황을 설명합니다." },
-                    { t: "현재진행", q: "Where is Tom? He ____ in the kitchen.", a: "is eating", hint: "Where is Tom?", kor: "탐 어디 있어? 부엌에서 밥 먹고 있어.", desc: "현재 눈앞에서 벌어지고 있거나 진행 중인 동작을 묘사합니다." },
-                    { t: "미래진행", q: "Don't call at 6. We ____ dinner then.", a: "will be eating", hint: "at 6", kor: "6시에 전화하지 마. 그때 우리 저녁 먹고 있을 거야.", desc: "미래의 특정 시점에 진행 중일 예정인 일을 나타냅니다." },
-                    { t: "과거완료", q: "I wasn't hungry because I ____ already ____.", a: "had eaten", hint: "wasn't hungry|already", kor: "나는 이미 밥을 먹어서 배가 고프지 않았다.", desc: "배가 안 고팠던 과거 시점보다 더 이전에 식사를 마쳤으므로 대과거입니다." },
-                    { t: "현재완료", q: "I'm full. I ____ just ____ too much.", a: "have eaten", hint: "just", kor: "배불러. 방금 너무 많이 먹었어.", desc: "방금 완료된 동작이 현재 상태(배부름)에 영향을 미치고 있습니다." },
-                    { t: "미래완료", q: "By the time we get there, they ____ all the pizza.", a: "will have eaten", hint: "By the time we get there", kor: "우리가 거기 도착할 때쯤이면 걔네가 피자를 다 먹어치웠을 거야.", desc: "미래의 시점(도착)에 이미 완료되어 있을 일을 예측합니다." },
-                    { t: "과거완료진행", q: "His mouth was messy. He ____ chocolate.", a: "had been eating", hint: "was messy", kor: "입가가 지저분했다. 초콜릿을 먹고 있었던 게 분명하다.", desc: "과거의 결과(지저분함)를 만든, 그 직전까지 계속된 동작을 나타냅니다." },
-                    { t: "현재완료진행", q: "You look healthy! ____ you ____ well lately?", a: "Have been eating", hint: "lately", kor: "건강해 보이네! 요새 잘 챙겨 먹고 있어?", desc: "최근부터 지금까지의 지속적인 습관이나 상태를 묻고 있습니다." },
-                    { t: "미래완료진행", q: "In 10 minutes, the champion ____ for 3 hours straight.", a: "will have been eating", hint: "In 10 minutes", kor: "10분 뒤면 챔피언은 3시간 연속으로 먹고 있는 셈이 된다.", desc: "미래 시점에 행동의 지속 기간이 달성됨을 강조합니다." }
-                ]
-            },
-             { 
-                word: "do", meaning: "하다",
-                forms: ["do", "did", "done", "doing", "does"], 
-                wrongForms: ["doed", "dided", "done"], 
-                monster: "Golem", 
-                dialogues: ["Mission... execute...", "Obstacle... eliminate...", "System... online..."],
-                questions: [
-                    { t: "과거", q: "She ____ her homework an hour ago.", a: "did", hint: "ago", kor: "그녀는 1시간 전에 숙제를 했다.", desc: `${highlight('ago(전)')}는 과거 시제와 함께 쓰입니다.` },
-                    { t: "현재", q: "She ____ yoga every morning.", a: "does", hint: "every morning", kor: "그녀는 매일 아침 요가를 한다.", desc: `매일 반복되는 습관입니다. 주어가 3인칭 단수(She)이므로 does를 씁니다.` },
-                    { t: "미래", q: "She will ____ her best next time.", a: "do", hint: "will|next time", kor: "그녀는 다음에는 최선을 다할 것이다.", desc: `미래의 다짐입니다. 조동사 will 뒤에는 동사 원형이 옵니다.` },
-                    { t: "과거진행", q: "She was ____ the dishes when the phone rang.", a: "doing", hint: "was|when the phone rang", kor: "전화가 울렸을 때 그녀는 설거지를 하던 중이었다.", desc: `과거에 다른 일이 일어났을 때 진행 중이던 동작을 나타냅니다.` },
-                    { t: "현재진행", q: "She is ____ the laundry at the moment.", a: "doing", hint: "is|at the moment", kor: "그녀는 지금 빨래를 하고 있다.", desc: `${highlight('at the moment(지금)')} 진행 중인 동작은 현재진행형을 씁니다.` },
-                    { t: "미래진행", q: "She will be ____ research all day tomorrow.", a: "doing", hint: "will be|tomorrow", kor: "그녀는 내일 하루 종일 연구를 하고 있을 것이다.", desc: `미래의 기간 동안 계속될 동작을 나타냅니다.` },
-                    { t: "과거완료", q: "She had ____ the work before the boss asked.", a: "done", hint: "had|before", kor: "상사가 묻기 전에 그녀는 이미 일을 끝냈었다.", desc: `과거 시점(묻기 전)에 이미 완료된 일이므로 과거완료를 씁니다.` },
-                    { t: "현재완료", q: "She has ____ this task already.", a: "done", hint: "has|already", kor: "그녀는 이미 이 업무를 마쳤다.", desc: `${highlight('already(이미)')} 완료된 상태를 나타낼 때 현재완료를 씁니다.` },
-                    { t: "미래완료", q: "She will have ____ it by Friday.", a: "done", hint: "will have|by Friday", kor: "그녀는 금요일까지는 그것을 해낼 것이다.", desc: `미래의 특정 시점까지 완료될 일을 예측합니다.` },
-                    { t: "과거완료진행", q: "She had been ____ well until the accident happened.", a: "doing", hint: "had been|until", kor: "사고가 나기 전까지 그녀는 잘해오고 있었다.", desc: `과거의 사건 전까지 계속되던 상태나 동작을 강조합니다.` },
-                    { t: "현재완료진행", q: "She has been ____ volunteer work for 5 years.", a: "doing", hint: "has been|for 5 years", kor: "그녀는 5년째 봉사활동을 해오고 있다.", desc: `과거부터 현재까지 계속하고 있는 일을 나타냅니다.` },
-                    { t: "미래완료진행", q: "Next year, she will have been ____ this job for a decade.", a: "doing", hint: "will have been|Next year", kor: "내년이면 그녀가 이 일을 한 지 10년이 된다.", desc: `미래 시점에 기간이 채워지는 것을 나타냅니다.` }
-                ],
-                hardQuestions: [
-                    { t: "과거", q: "I asked him to fix it, and he ____ it.", a: "did", hint: "I asked", kor: "고쳐달라고 부탁했고, 그는 그걸 해냈다.", desc: "부탁한 후(과거)에 실행한 과거의 동작입니다." },
-                    { t: "현재", q: "My father is a doctor. He ____ his best for patients.", a: "does", hint: "is a doctor", kor: "아버지는 의사시다. 환자를 위해 최선을 다하신다.", desc: "직업적 의무나 일상적인 태도(현재형)입니다." },
-                    { t: "미래", q: "If you fail, don't worry. You ____ better next time.", a: "will do", hint: "next time", kor: "실패해도 걱정 마. 다음엔 더 잘할 거야.", desc: "미래에 대한 격려와 예측입니다." },
-                    { t: "과거진행", q: "The room was messy because the kids ____ art projects.", a: "were doing", hint: "was messy", kor: "아이들이 미술 숙제를 하고 있었기 때문에 방이 지저분했다.", desc: "과거의 상황(지저분함)을 설명하는 진행 중인 동작입니다." },
-                    { t: "현재진행", q: "Can I call you back? I ____ my hair.", a: "am doing", hint: "Can I call you back?", kor: "나중에 전화해도 돼? 나 머리 하고 있어.", desc: "지금 진행 중이라 전화를 못 받는 상황입니다." },
-                    { t: "미래진행", q: "Tomorrow is Sunday, so I ____ nothing all day.", a: "will be doing", hint: "Tomorrow", kor: "내일은 일요일이라 하루 종일 아무것도 안 하고 있을 거야.", desc: "미래의 계획된 상태/진행입니다." },
-                    { t: "과거완료", q: "He realized he ____ a mistake.", a: "had done", hint: "realized", kor: "그는 자신이 실수를 저질렀다는 걸 깨달았다.", desc: "깨달은 시점(과거)보다 이전에 저지른 실수(대과거)입니다." },
-                    { t: "현재완료", q: "It's perfect! You ____ a great job.", a: "have done", hint: "It's perfect!", kor: "완벽해! 아주 잘했어.", desc: "과거의 행동이 현재의 결과(완벽함)로 이어졌습니다." },
-                    { t: "미래완료", q: "By the time the deadline comes, we ____ everything.", a: "will have done", hint: "By the time", kor: "마감 때쯤이면 우리는 모든 걸 끝냈을 거야.", desc: "미래의 기준 시점에 완료될 일입니다." },
-                    { t: "과거완료진행", q: "He was exhausted because he ____ heavy lifting all day.", a: "had been doing", hint: "was exhausted", kor: "하루 종일 무거운 걸 들어서 그는 지쳐 있었다.", desc: "과거의 상태(지침)의 원인이 되는 지속된 동작입니다." },
-                    { t: "현재완료진행", q: "Your hands are dirty. What ____ you ____?", a: "have been doing", hint: "Your hands are dirty", kor: "손이 더럽네. 뭐 하고 있었어?", desc: "방금 전까지 계속하던 행동이 현재(더러운 손)에 영향을 줍니다." },
-                    { t: "미래완료진행", q: "In June, I ____ this research for 2 years.", a: "will have been doing", hint: "In June", kor: "6월이면 이 연구를 한 지 2년이 된다.", desc: "미래 시점에 기간이 채워지는 지속성입니다." }
-                ]
-            },
-            { 
-                word: "bring", meaning: "가져오다",
-                forms: ["bring", "brought", "bringing", "brings"], 
-                wrongForms: ["bringed", "brang", "broughten"], 
-                monster: "Bat", 
-                dialogues: ["Take this!", "Shiny things are all mine!", "I bring the darkness."],
-                questions: [
-                    { t: "과거", q: "He ____ a gift yesterday.", a: "brought", hint: "yesterday", kor: "그는 어제 선물을 가져왔다.", desc: "어제 일어난 일이므로 과거형입니다." },
-                    { t: "현재", q: "He always ____ his laptop to class.", a: "brings", hint: "always", kor: "그는 수업에 항상 노트북을 가져온다.", desc: "항상 하는 행동(빈도부사 always)은 현재형입니다." },
-                    { t: "미래", q: "He will ____ some friends later.", a: "bring", hint: "will|later", kor: "그는 나중에 친구들을 데려올 것이다.", desc: "미래의 계획입니다." },
-                    { t: "과거진행", q: "He was ____ the cake when he slipped.", a: "bringing", hint: "was|when he slipped", kor: "케이크를 가져오다가 그는 미끄러졌다.", desc: "과거에 미끄러졌을 때 하고 있던 행동입니다." },
-                    { t: "현재진행", q: "He is ____ the car around now.", a: "bringing", hint: "is|now", kor: "그는 지금 차를 이쪽으로 가져오고 있다.", desc: "지금 하고 있는 행동입니다." },
-                    { t: "미래진행", q: "He will be ____ the documents tomorrow morning.", a: "bringing", hint: "will be|tomorrow", kor: "내일 아침에 그는 서류를 가져오는 중일 것이다.", desc: "미래의 특정 시간에 진행될 일입니다." },
-                    { t: "과거완료", q: "He had ____ enough water before the hike started.", a: "brought", hint: "had|before", kor: "하이킹 시작 전에 그는 물을 충분히 챙겨왔었다.", desc: "과거(시작 전)보다 이전에 완료된 일입니다." },
-                    { t: "현재완료", q: "He has ____ bad news just now.", a: "brought", hint: "has|just now", kor: "그는 방금 나쁜 소식을 가져왔다.", desc: "방금 완료된 일입니다." },
-                    { t: "미래완료", q: "He will have ____ it back by 6 PM.", a: "brought", hint: "will have|by 6 PM", kor: "오후 6시까지는 그것을 다시 가져다 놓을 것이다.", desc: "미래 시점까지 완료될 일입니다." },
-                    { t: "과거완료진행", q: "He had been ____ lunch every day until the cafeteria opened.", a: "bringing", hint: "had been|until", kor: "식당이 열리기 전까지 그는 매일 점심을 싸오고 있었다.", desc: "과거 시점까지 계속된 행동입니다." },
-                    { t: "현재완료진행", q: "He has been ____ joy to us since he arrived.", a: "bringing", hint: "has been|since", kor: "그가 도착한 이후로 우리에게 기쁨을 주고 있다.", desc: "과거부터 지금까지 계속되는 영향입니다." },
-                    { t: "미래완료진행", q: "By next month, he will have been ____ his dog here for a year.", a: "bringing", hint: "will have been|By next month", kor: "다음 달이면 그가 개를 데려온 지 1년이 된다.", desc: "미래 시점에 기간이 달성됩니다." }
-                ],
-                hardQuestions: [
-                    { t: "과거", q: "I forgot my wallet, but luckily he ____ some cash.", a: "brought", hint: "forgot my wallet", kor: "지갑을 잊었는데 다행히 그가 현금을 좀 가져왔었다.", desc: "과거 시점의 사건입니다." },
-                    { t: "현재", q: "Money doesn't always ____ happiness.", a: "bring", hint: "always", kor: "돈이 항상 행복을 가져다주는 것은 아니다.", desc: "일반적인 진리나 격언은 현재형을 씁니다." },
-                    { t: "미래", q: "Don't worry about food. I ____ some.", a: "will bring", hint: "Don't worry", kor: "음식 걱정 마. 내가 좀 가져갈게.", desc: "미래의 의지입니다." },
-                    { t: "과거진행", q: "The dog ____ the newspaper when it started raining.", a: "was bringing", hint: "when it started raining", kor: "비가 오기 시작했을 때 개가 신문을 가져오고 있었다.", desc: "과거의 사건 발생 시 진행 중이던 동작입니다." },
-                    { t: "현재진행", q: "Look at the clouds. The wind ____ a storm.", a: "is bringing", hint: "Look at the clouds", kor: "저 구름 좀 봐. 바람이 폭풍을 몰고 오고 있어.", desc: "현재 진행 중인 날씨 변화입니다." },
-                    { t: "미래진행", q: "Our guests ____ gifts, so prepare a table.", a: "will be bringing", hint: "prepare a table", kor: "손님들이 선물을 가져오실 테니 테이블을 준비해 둬.", desc: "미래에 일어날 것이 확실한 진행 상황입니다." },
-                    { t: "과거완료", q: "The party was dull because no one ____ any music.", a: "had brought", hint: "was dull", kor: "아무도 음악을 안 가져와서 파티가 지루했다.", desc: "지루했던 과거보다 이전에 음악을 안 가져온(대과거) 상황입니다." },
-                    { t: "현재완료", q: "Look! The postman ____ a package for you.", a: "has brought", hint: "Look!", kor: "봐! 우체부가 네 소포를 가져왔어.", desc: "과거의 배달이 현재의 결과(소포 도착)로 이어집니다." },
-                    { t: "미래완료", q: "By the time you wake up, Santa ____ presents.", a: "will have brought", hint: "By the time you wake up", kor: "네가 일어날 때쯤이면 산타가 선물을 가져다 뒀을 거야.", desc: "미래 시점에 완료될 일입니다." },
-                    { t: "과거완료진행", q: "She ____ coffee to the team until the machine was fixed.", a: "had been bringing", hint: "until the machine was fixed", kor: "커피 머신이 고쳐질 때까지 그녀가 팀에 커피를 타다 나르고 있었다.", desc: "과거 시점까지 반복적으로 지속된 행동입니다." },
-                    { t: "현재완료진행", q: "This strategy ____ us success for years.", a: "has been bringing", hint: "for years", kor: "이 전략은 수년간 우리에게 성공을 가져다주고 있다.", desc: "과거부터 지금까지 계속 효과가 있는 상태입니다." },
-                    { t: "미래완료진행", q: "By 2030, this tech ____ changes for a decade.", a: "will have been bringing", hint: "By 2030", kor: "2030년이면 이 기술이 변화를 가져온 지 10년이 된다.", desc: "미래 시점까지의 지속성을 강조합니다." }
-                ]
-            },
-            { 
-                word: "feel", meaning: "느끼다",
-                forms: ["feel", "felt", "feeling", "feels"], 
-                wrongForms: ["feeled", "feelen", "felt"], 
-                monster: "Ghost", 
-                dialogues: ["Do you feel the chill...", "I can feel your fear.", "Feel my cold touch."],
-                questions: [
-                    { t: "과거", q: "I ____ sick last night.", a: "felt", hint: "last night", kor: "나는 어젯밤에 아팠다(아픔을 느꼈다).", desc: "지난밤의 상태입니다." },
-                    { t: "현재", q: "I ____ great today.", a: "feel", hint: "today", kor: "나는 오늘 기분이 좋다.", desc: "현재의 상태입니다." },
-                    { t: "미래", q: "You will ____ better soon.", a: "feel", hint: "will|soon", kor: "너는 곧 나아질 것이다.", desc: "미래의 추측입니다." },
-                    { t: "과거진행", q: "I was ____ dizzy while standing up.", a: "feeling", hint: "was|while standing up", kor: "일어서는 동안 나는 어지러움을 느끼고 있었다.", desc: "과거에 일어나는 동안의 상태 변화입니다." },
-                    { t: "현재진행", q: "I am ____ a bit cold now.", a: "feeling", hint: "am|now", kor: "나는 지금 약간 춥게 느껴진다.", desc: "지금 느끼고 있는 감각입니다." },
-                    { t: "미래진행", q: "You will be ____ the effects in a few minutes.", a: "feeling", hint: "will be|in a few minutes", kor: "몇 분 뒤면 효과가 느껴질 것이다.", desc: "미래에 진행될 상태입니다." },
-                    { t: "과거완료", q: "I had ____ lonely until I met you.", a: "felt", hint: "had|until", kor: "너를 만나기 전까지 나는 외로움을 느꼈었다.", desc: "과거(만남) 이전의 지속된 감정입니다." },
-                    { t: "현재완료", q: "I have ____ this way before.", a: "felt", hint: "have|before", kor: "전에도 이런 기분을 느낀 적이 있다.", desc: "과거의 경험입니다." },
-                    { t: "미래완료", q: "The pain will have ____ like a dream by tomorrow.", a: "felt", hint: "will have|by tomorrow", kor: "내일이면 그 고통이 꿈처럼 느껴질 것이다.", desc: "미래 시점에서의 완료된 느낌입니다." },
-                    { t: "과거완료진행", q: "I had been ____ tired all week before the vacation.", a: "feeling", hint: "had been|all week", kor: "휴가 전까지 나는 일주일 내내 피곤함을 느끼고 있었다.", desc: "과거 시점까지 계속된 상태입니다." },
-                    { t: "현재완료진행", q: "I have been ____ anxious lately.", a: "feeling", hint: "have been|lately", kor: "나는 최근 들어 계속 불안함을 느끼고 있다.", desc: "최근부터 지금까지 계속되는 감정입니다." },
-                    { t: "미래완료진행", q: "By tonight, I will have been ____ sick for 24 hours.", a: "feeling", hint: "will have been|By tonight", kor: "오늘 밤이면 24시간째 아픈 셈이 된다.", desc: "미래 시점까지 상태가 지속됨을 나타냅니다." }
-                ],
-                hardQuestions: [
-                    { t: "과거", q: "The earthquake was small. I hardly ____ it.", a: "felt", hint: "hardly", kor: "지진은 작았다. 나는 거의 느끼지 못했다.", desc: "과거 사건에 대한 감각입니다." },
-                    { t: "현재", q: "This fabric ____ very soft.", a: "feels", hint: "This fabric", kor: "이 천은 촉감이 아주 부드럽다.", desc: "사물의 현재 속성(감각동사)입니다." },
-                    { t: "미래", q: "Take this medicine. You ____ better.", a: "will feel", hint: "Take this medicine", kor: "이 약 먹어. 더 좋아질 거야.", desc: "결과에 대한 예측입니다." },
-                    { t: "과거진행", q: "He sat down because he ____ weak.", a: "was feeling", hint: "sat down", kor: "그는 몸에 힘이 없어서 주저앉았다.", desc: "과거의 행동 원인이 된 진행 중인 상태입니다." },
-                    { t: "현재진행", q: "Are you okay? You ____ hot.", a: "are feeling", hint: "Are you okay?", kor: "괜찮아? 너 열이 나는 것 같아(몸이 뜨겁게 느껴져).", desc: "현재의 일시적인 상태를 강조합니다." },
-                    { t: "미래진행", q: "After the surgery, you ____ some pain.", a: "will be feeling", hint: "After the surgery", kor: "수술 후에는 통증을 좀 느끼게 될 겁니다.", desc: "미래에 겪게 될 상태입니다." },
-                    { t: "과거완료", q: "She realized she ____ that way for a long time.", a: "had felt", hint: "realized", kor: "그녀는 자신이 오랫동안 그렇게 느껴왔음을 깨달았다.", desc: "깨달음(과거)보다 이전부터 지속된 감정입니다." },
-                    { t: "현재완료", q: "I ____ never ____ so insulted!", a: "have felt", hint: "never", kor: "이런 모욕감은 처음이야!", desc: "지금까지의 경험 중 처음임을 강조합니다." },
-                    { t: "미래완료", q: "By next week, I ____ at home in this city.", a: "will have felt", hint: "By next week", kor: "다음 주면 이 도시가 집처럼 편안하게 느껴질 것이다.", desc: "미래 시점에 완료될 적응(느낌)입니다." },
-                    { t: "과거완료진행", q: "He quit because he ____ unappreciated.", a: "had been feeling", hint: "quit", kor: "그는 인정받지 못한다고 느껴서 그만뒀다.", desc: "그만둔 시점(과거)까지 계속된 감정입니다." },
-                    { t: "현재완료진행", q: "I ____ guilty about lying to her.", a: "have been feeling", hint: "lying to her", kor: "그녀에게 거짓말한 것 때문에 계속 죄책감을 느끼고 있다.", desc: "과거부터 지금까지 마음이 불편한 상태입니다." },
-                    { t: "미래완료진행", q: "In an hour, I ____ cold for a whole day.", a: "will have been feeling", hint: "In an hour", kor: "1시간 뒤면 꼬박 하루 종일 추위에 떤 셈이 된다.", desc: "미래 시점까지 감각이 지속됨을 나타냅니다." }
-                ]
-            },
-            { 
-                word: "get", meaning: "얻다 / 되다 / 도착하다",
-                forms: ["get", "got", "gotten", "getting", "gets"], 
-                wrongForms: ["getted", "goted", "gotten"], 
-                monster: "Thief", 
-                dialogues: ["I'll get your life!", "Got an opening!", "Got you now!"],
-                questions: [
-                    { t: "과거", q: "We ____ home late last night.", a: "got", hint: "last night", kor: "우리는 어젯밤 늦게 집에 도착했다.", desc: "과거의 사건입니다." },
-                    { t: "현재", q: "He ____ angry easily.", a: "gets", hint: "easily", kor: "그는 쉽게 화를 낸다.", desc: "그의 성격(일반적 사실)입니다." },
-                    { t: "미래", q: "I will ____ a promotion next year.", a: "get", hint: "will|next year", kor: "나는 내년에 승진할 것이다.", desc: "미래의 일입니다." },
-                    { t: "과거진행", q: "It was ____ dark when we left.", a: "getting", hint: "was|when we left", kor: "우리가 떠날 때 어두워지고 있었다.", desc: "과거에 진행 중이던 변화입니다." },
-                    { t: "현재진행", q: "It is ____ colder now.", a: "getting", hint: "is|now", kor: "지금 점점 추워지고 있다.", desc: "현재 진행 중인 변화입니다." },
-                    { t: "미래진행", q: "We will be ____ on the train at 5 PM.", a: "getting", hint: "will be|at 5 PM", kor: "5시에 우리는 기차를 타고 있을 것이다.", desc: "미래의 특정 시점에 진행될 동작입니다." },
-                    { t: "과거완료", q: "She had ____ married before she moved.", a: "got", hint: "had|before", kor: "이사가기 전에 그녀는 결혼했었다.", desc: "과거(이사)보다 이전에 완료된 일입니다. (gotten도 가능하지만 got도 쓰입니다)" },
-                    { t: "현재완료", q: "He has ____ a new job recently.", a: "got", hint: "has|recently", kor: "그는 최근에 새 직장을 얻었다.", desc: "최근에 완료된 일입니다." },
-                    { t: "미래완료", q: "You will have ____ used to it by then.", a: "got", hint: "will have|by then", kor: "그때쯤이면 너는 익숙해져 있을 것이다.", desc: "미래에 완료될 상태입니다." },
-                    { t: "과거완료진행", q: "We had been ____ many complaints before the fix.", a: "getting", hint: "had been|before", kor: "수정 전까지 우리는 많은 불만을 받고 있었다.", desc: "과거 시점까지 계속된 일입니다." },
-                    { t: "현재완료진행", q: "I have been ____ up early these days.", a: "getting", hint: "have been|these days", kor: "나는 요즘 계속 일찍 일어나고 있다.", desc: "요즘 반복되고 있는 습관입니다." },
-                    { t: "미래완료진행", q: "By December, we will have been ____ letters for a year.", a: "getting", hint: "will have been|By December", kor: "12월이면 1년째 편지를 받고 있는 셈이다.", desc: "미래 시점까지의 지속을 나타냅니다." }
-                ],
-                hardQuestions: [
-                    { t: "과거", q: "I called him, but I ____ no answer.", a: "got", hint: "I called him", kor: "전화했지만 답을 받지 못했다.", desc: "과거의 결과입니다." },
-                    { t: "현재", q: "How much ____ he ____ paid?", a: "does get", hint: "How much", kor: "그는 급여를 얼마나 받아?", desc: "현재의 일반적 사실(Does he get)입니다. (보기에 get이 없으면 gets로 유추)" },
-                    { t: "미래", q: "Work hard, and you ____ there.", a: "will get", hint: "Work hard", kor: "열심히 해, 그럼 목표를 이룰 거야.", desc: "조건에 따른 미래의 결과입니다." },
-                    { t: "과거진행", q: "The noise ____ louder, so I left.", a: "was getting", hint: "so I left", kor: "소음이 점점 커지고 있어서 나는 자리를 떴다.", desc: "과거의 상태 변화 진행입니다." },
-                    { t: "현재진행", q: "Hurry up! It ____ late.", a: "is getting", hint: "Hurry up!", kor: "서둘러! 늦어지고 있어.", desc: "현재 진행 중인 상태 변화입니다." },
-                    { t: "미래진행", q: "Don't touch that. It ____ hot soon.", a: "will be getting", hint: "soon", kor: "만지지 마. 곧 뜨거워질 거야.", desc: "미래에 진행될 변화입니다." },
-                    { t: "과거완료", q: "By the time police arrived, the thief ____ away.", a: "had got", hint: "By the time police arrived", kor: "경찰이 도착했을 때 도둑은 이미 도망친 뒤였다.", desc: "도착(과거) 이전에 완료된 도주입니다." },
-                    { t: "현재완료", q: "I ____ just ____ a brilliant idea.", a: "have got", hint: "just", kor: "방금 기막힌 아이디어가 떠올랐어.", desc: "방금 생긴 결과(생각)입니다." },
-                    { t: "미래완료", q: "By Friday, I ____ my visa.", a: "will have got", hint: "By Friday", kor: "금요일이면 비자를 받았을 것이다.", desc: "미래 시점의 완료 예측입니다." },
-                    { t: "과거완료진행", q: "He ____ into trouble until he changed schools.", a: "had been getting", hint: "until he changed schools", kor: "전학 가기 전까지 그는 계속 문제를 일으키고 있었다.", desc: "과거 시점까지 반복된 사건입니다." },
-                    { t: "현재완료진행", q: "We ____ too much rain this month.", a: "have been getting", hint: "this month", kor: "이번 달에 비가 너무 많이 오고 있다.", desc: "이번 달 내내 지속되는 날씨입니다." },
-                    { t: "미래완료진행", q: "Next year, I ____ this magazine for 10 years.", a: "will have been getting", hint: "Next year", kor: "내년이면 이 잡지를 구독한 지 10년이 된다.", desc: "미래 시점까지의 지속 기간입니다." }
-                ]
-            },
-            { 
-                word: "say", meaning: "말하다",
-                forms: ["say", "said", "saying", "says"], 
-                wrongForms: ["sayed", "sayd", "saiden"], 
-                monster: "Parrot", 
-                dialogues: ["Shut up! Be quiet!", "Repeat after me!", "Any last words?"],
-                questions: [
-                    { t: "과거", q: "She ____ 'No' yesterday.", a: "said", hint: "yesterday", kor: "그녀는 어제 아니라고 말했다.", desc: "과거의 발언입니다." },
-                    { t: "현재", q: "The sign ____ 'Stop'.", a: "says", hint: "The sign", kor: "표지판에 정지라고 쓰여 있다.", desc: "사물의 상태나 쓰여진 내용은 현재형을 씁니다." },
-                    { t: "미래", q: "He will ____ sorry later.", a: "say", hint: "will|later", kor: "그는 나중에 사과할 것이다.", desc: "미래의 행동입니다." },
-                    { t: "과거진행", q: "He was ____ something when I interrupted.", a: "saying", hint: "was|when I interrupted", kor: "내가 끼어들었을 때 그는 무언가 말하던 중이었다.", desc: "과거에 진행 중이던 말입니다." },
-                    { t: "현재진행", q: "Everyone is ____ good things about you.", a: "saying", hint: "is|Everyone", kor: "모두가 너에 대해 칭찬하고 있다.", desc: "요즘 사람들이 하고 있는 말입니다." },
-                    { t: "미래진행", q: "They will be ____ their vows at noon.", a: "saying", hint: "will be|at noon", kor: "정오에 그들은 서약을 낭독하고 있을 것이다.", desc: "미래에 진행될 행사입니다." },
-                    { t: "과거완료", q: "He had ____ goodbye before he left.", a: "said", hint: "had|before", kor: "떠나기 전에 그는 작별 인사를 했었다.", desc: "과거(떠남)보다 이전에 한 행동입니다." },
-                    { t: "현재완료", q: "She has ____ nothing so far.", a: "said", hint: "has|so far", kor: "그녀는 지금까지 아무 말도 안 했다.", desc: "지금까지의 상태(결과)입니다." },
-                    { t: "미래완료", q: "By tomorrow, the news will have ____ it all.", a: "said", hint: "will have|By tomorrow", kor: "내일이면 뉴스에서 다 말해버렸을 것이다.", desc: "미래에 완료될 일입니다." },
-                    { t: "과거완료진행", q: "She had been ____ that for years before it happened.", a: "saying", hint: "had been|before", kor: "그 일이 일어나기 전까지 그녀는 수년간 그렇게 말해오고 있었다.", desc: "과거 시점까지 반복된 말입니다." },
-                    { t: "현재완료진행", q: "They have been ____ the same thing all day.", a: "saying", hint: "have been|all day", kor: "그들은 하루 종일 똑같은 말만 하고 있다.", desc: "지금까지 계속 반복되는 말입니다." },
-                    { t: "미래완료진행", q: "By the end of speech, he will have been ____ thanks for 10 minutes.", a: "saying", hint: "will have been|By the end", kor: "연설이 끝날 때쯤이면 그는 10분째 감사 인사를 하는 셈일 것이다.", desc: "미래 시점까지 지속될 행동입니다." }
-                ],
-                hardQuestions: [
-                    { t: "과거", q: "Did you hear what I ____?", a: "said", hint: "Did you hear", kor: "내가 한 말 들었어?", desc: "과거에 한 발언입니다." },
-                    { t: "현재", q: "Legend ____ that a dragon lives here.", a: "says", hint: "Legend", kor: "전설에 따르면 여기에 용이 산다고 한다.", desc: "전해 내려오는 이야기(사실)는 현재형을 씁니다." },
-                    { t: "미래", q: "If you ask him, he ____ yes.", a: "will say", hint: "If you ask him", kor: "그에게 물어보면 알겠다고 할 거야.", desc: "조건에 대한 미래의 반응 예측입니다." },
-                    { t: "과거진행", q: "I couldn't hear what they ____.", a: "were saying", hint: "couldn't hear", kor: "그들이 무슨 말을 하고 있는지 들리지 않았다.", desc: "과거 당시에 진행 중이던 대화입니다." },
-                    { t: "현재진행", q: "Why are you ____ that to me?", a: "saying", hint: "Why are you", kor: "나한테 왜 그런 말을 하는 거야?", desc: "지금 현재 하고 있는 말에 대한 반응입니다." },
-                    { t: "미래진행", q: "During the interview, I ____ the same things.", a: "will be saying", hint: "During the interview", kor: "면접 동안 난 똑같은 말만 하고 있을 거야.", desc: "미래의 상황에서 진행될 말입니다." },
-                    { t: "과거완료", q: "She denied that she ____ it.", a: "had said", hint: "denied", kor: "그녀는 자신이 그 말을 했다는 것을 부인했다.", desc: "부인한 것(과거)보다 이전에 말한 사실(대과거)입니다." },
-                    { t: "현재완료", q: "The boss ____ nothing about the bonus yet.", a: "has said", hint: "yet", kor: "상사는 보너스에 대해 아직 아무 말도 없다.", desc: "아직까지 완료되지 않은(말하지 않은) 상태입니다." },
-                    { t: "미래완료", q: "By the time you arrive, I ____ my goodbyes.", a: "will have said", hint: "By the time you arrive", kor: "네가 도착할 때쯤이면 난 작별 인사를 마쳤을 거야.", desc: "미래 시점에 이미 완료되었을 행동입니다." },
-                    { t: "과거완료진행", q: "He ____ he was sorry for hours before I forgave him.", a: "had been saying", hint: "for hours", kor: "내가 용서하기 전까지 그는 몇 시간 동안 미안하다고 말하고 있었다.", desc: "과거 시점까지 계속된 사과입니다." },
-                    { t: "현재완료진행", q: "Scientists ____ this for decades.", a: "have been saying", hint: "for decades", kor: "과학자들은 수십 년간 이 말을 해오고 있다.", desc: "과거부터 지금까지 지속적으로 주장하는 내용입니다." },
-                    { t: "미래완료진행", q: "In 5 minutes, he ____ 'uhm' for an hour.", a: "will have been saying", hint: "In 5 minutes", kor: "5분 뒤면 그는 1시간째 '음...' 소리만 하고 있는 셈이다.", desc: "미래 시점까지의 지속 시간을 나타냅니다." }
-                ]
+        function showResultModal(msg, confirmCallback, reviewCallback) {
+            modalMsg.innerText = msg;
+            let btnsHtml = `<button class="modal-btn btn-confirm" id="modal-ok-btn">확인</button>`;
+            if (reviewCallback) {
+                btnsHtml = `<button class="modal-btn btn-cancel" id="modal-review-btn">오답 노트</button>` + btnsHtml;
             }
-        ];
-
-        /* --- 3. 상태 변수 --- */
-        let gameState = {
-            mode: 'easy',       
-            selectedStageId: 0, 
-            qList: [],          
-            qIndex: 0,
-            mMaxHP: 120, mCurHP: 120,
-            heroLives: 5,
-            currentPhase: 1, 
-            // [초기화] 기존 세이브 충돌 방지를 위해 키 변경 필요
-            clearedStages: { easy: [], hard: [] }, 
-            isRetry: false,
-            wrongLog: [] 
-        };
-
-        // [NEW] 저장소 키 변경 (v42 -> v43: 초기화)
-        function saveGame() {
-            localStorage.setItem('doolgi_save_v43', JSON.stringify(gameState.clearedStages));
-        }
-
-        function loadGame() {
-            const saved = localStorage.getItem('doolgi_save_v43');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    // 데이터 구조 검증
-                    if (parsed && Array.isArray(parsed.easy) && Array.isArray(parsed.hard)) {
-                        gameState.clearedStages = parsed;
-                    }
-                } catch (e) { console.error(e); }
-            }
-        }
-
-        // 초기화 시 로드
-        loadGame();
-
-        // [5번 개선] 부드러운 화면 전환 함수
-        function showScreen(screenId) {
-            const screens = document.querySelectorAll('.screen');
-            // 1. 현재 화면 투명하게 (Fade Out)
-            screens.forEach(s => {
-                s.style.opacity = '0';
-                s.classList.remove('active');
-            });
-
-            // 2. 투명해지는 시간(0.4초)만큼 대기 후 다음 화면 표시
-            setTimeout(() => {
-                screens.forEach(s => s.style.display = 'none');
-                
-                const target = document.getElementById(screenId);
-                target.style.display = 'flex'; // 레이아웃 잡고
-                if(screenId === 'stage-select-screen') renderStageGrid();
-                if(screenId === 'collection-screen') renderCollection();
-
-                // 3. 약간의 딜레이 후 불투명하게 (Fade In)
-                setTimeout(() => {
-                    target.style.opacity = '1';
-                    target.classList.add('active');
-                }, 50);
-            }, 400);
-        }
-
-        // [수정] 하드모드 잠금 로직 적용
-        function selectDifficulty(mode) {
-            if (mode === 'hard') {
-                // 이지모드 9개 스테이지(0~8) 모두 클리어 확인
-                if (gameState.clearedStages.easy.length < 9) {
-                    showAlert("🔒 새내기 과정을 모두 수료해야 졸업반에 도전할 수 있습니다!");
-                    return;
-                }
-            }
-            gameState.mode = mode;
-            showScreen('stage-select-screen');
-        }
-
-        function renderStageGrid() {
-            const grid = document.getElementById('stage-grid');
-            grid.innerHTML = "";
-            const currentCleared = gameState.clearedStages[gameState.mode];
-
-            verbsData.forEach((stage, idx) => {
-                const btn = document.createElement('div');
-                const isCleared = currentCleared.includes(idx);
-                // 1층은 무조건 해금, 그 외엔 이전 층 클리어 시 해금
-                const isUnlocked = idx === 0 || currentCleared.includes(idx - 1);
-                
-                let btnClass = 'stage-btn';
-                if (isCleared) btnClass += ' cleared';
-                if (!isUnlocked) btnClass += ' locked';
-                btn.className = btnClass;
-                
-                if (isUnlocked) {
-                    btn.onclick = () => startGame(idx);
-                    btn.innerHTML = `<div class="stage-verb">${stage.word.toUpperCase()}</div><div class="stage-monster">${stage.monster}</div>${isCleared ? '<div>⭐ Clear</div>' : ''}`;
-                } else {
-                    btn.onclick = () => showAlert(`🔒 Locked\n이전 층을 먼저 클리어하세요!`);
-                    btn.innerHTML = `<div style="font-size:1.5rem">🔒</div><div class="stage-verb">???</div>`;
-                }
-                grid.appendChild(btn);
-            });
-            setTimeout(() => { document.getElementById('stage-select-screen').scrollTop = document.getElementById('stage-select-screen').scrollHeight; }, 100);
-        }
-
-        function startGame(stageId) {
-            gameState.selectedStageId = stageId;
-            const data = verbsData[stageId];
-            
-            gameState.heroLives = (gameState.mode === 'easy') ? 5 : 3;
-            gameState.isRetry = false; 
-            gameState.wrongLog = []; 
-
-            let questionsSource = data.questions;
-            if (gameState.mode === 'hard' && data.hardQuestions) {
-                questionsSource = data.hardQuestions;
-            }
-            
-            gameState.qList = [...questionsSource].sort(() => Math.random() - 0.5);
-            gameState.qIndex = 0;
-            gameState.mMaxHP = 120;
-            gameState.mCurHP = 120;
-            gameState.currentPhase = 1;
-            
-            const monsterContainer = document.getElementById('monster-container');
-            monsterContainer.className = 'monster-area';
-            monsterContainer.classList.remove('phase-2', 'phase-3', 'monster-die'); // 클래스 리셋
-
-            const heroImgSrc = (gameState.mode === 'easy') ? "assets/hero_easy.png" : "assets/hero_hard.png";
-            document.getElementById('game-hero-img').src = heroImgSrc;
-
-            const monsterImgTag = document.getElementById('game-monster-img');
-            monsterImgTag.src = `assets/mob_${data.word}_1.png`;
-
-            document.getElementById('stage-text').innerText = `STAGE: ${data.word.toUpperCase()}`;
-            document.getElementById('monster-name').innerText = data.monster;
-            
-            showScreen('game-screen');
-            updateUI();
-            showSpeech(data.dialogues[0]);
-            loadQuestion();
-        }
-
-        function updatePhase() {
-            const nextQIndex = gameState.qIndex; 
-            const monsterContainer = document.getElementById('monster-container');
-            const data = verbsData[gameState.selectedStageId];
-            const monsterImgTag = document.getElementById('game-monster-img');
-
-            if (nextQIndex === 4) { 
-                gameState.currentPhase = 2;
-                monsterContainer.classList.add('phase-2');
-                monsterImgTag.src = `assets/mob_${data.word}_2.png`;
-                showSpeech(data.dialogues[1]);
-            } else if (nextQIndex === 8) { 
-                gameState.currentPhase = 3;
-                monsterContainer.classList.add('phase-3');
-                monsterImgTag.src = `assets/mob_${data.word}_3.png`;
-                showSpeech(data.dialogues[2]);
-            }
-        }
-
-        function showSpeech(text) {
-            const bubble = document.getElementById('battle-msg'); 
-            bubble.innerHTML = `<span>${text}</span>`;
-            bubble.classList.add('show');
-            setTimeout(() => { bubble.classList.remove('show'); }, 3000);
-        }
-
-        function getDistractors(correctAnswer) {
-            const data = verbsData[gameState.selectedStageId];
-            let pool = [...data.forms];
-            if(gameState.mode === 'easy' && data.wrongForms) pool = pool.concat(data.wrongForms);
-            let options = pool.filter(f => f.toLowerCase() !== correctAnswer.toLowerCase());
-            options = [...new Set(options)];
-            while(options.length < 3) options.push("dummy");
-            options.sort(() => Math.random() - 0.5);
-            return options.slice(0, 3);
-        }
-
-        function loadQuestion() {
-            if (gameState.qIndex >= gameState.qList.length) {
-                stageClear();
-                return;
-            }
-            updatePhase();
-
-            const q = gameState.qList[gameState.qIndex];
-            const currentStageData = verbsData[gameState.selectedStageId];
-            const tenseLabel = document.getElementById('tense-label');
-            
-            // [수정] 이지 모드 시제 숨김/클릭 기능
-            if (gameState.mode === 'easy') {
-                tenseLabel.innerHTML = `<span id="tense-text" class="tense-reveal-btn" onclick="this.innerText='[${q.t}]'; this.classList.remove('tense-reveal-btn'); this.style.borderBottom='none';">[ 시제 보기 (클릭) ]</span>`;
-            } else {
-                // 하드 모드: ???로 표시 (기존 유지)
-                tenseLabel.innerHTML = `<span id="tense-text">[???]</span>`;
-            }
-            
-            const hintBtn = document.createElement('button');
-            hintBtn.className = 'hint-btn';
-            hintBtn.innerHTML = '📖';
-            const wordInfo = `${currentStageData.word.toUpperCase()} : ${currentStageData.meaning}`;
-            hintBtn.onclick = () => showHint(wordInfo, q.kor, q.desc);
-            tenseLabel.appendChild(hintBtn);
-
-            if (gameState.mode === 'hard') {
-                hintBtn.style.display = gameState.isRetry ? 'inline-block' : 'none';
-            } else {
-                hintBtn.style.display = 'inline-block';
-            }
-
-            const tenseSpan = document.getElementById('tense-text');
-            // if (tenseSpan) tenseSpan.style.color = 'var(--gold)'; // Remove this to let class styling work
-
-            // [3번 개선] 문제 출력 시 hint 단어를 span으로 감싸기 (Regex 수정: 파이프 처리)
-            let questionText = q.q;
-            if (q.hint) {
-                // 힌트 단어가 문장에 있으면 span 태그로 교체 (대소문자 구분 없이)
-                const regex = new RegExp(`(${q.hint})`, 'gi');
-                questionText = questionText.replace(regex, '<span class="clue">$1</span>');
-            }
-            document.getElementById('q-text').innerHTML = questionText;
-            
-            document.getElementById('feedback').innerText = "";
-
-            const optionsArea = document.getElementById('options-area');
-            optionsArea.innerHTML = "";
-
-            const correct = q.a;
-            const distractors = getDistractors(correct);
-            const options = [correct, ...distractors];
-            options.sort(() => Math.random() - 0.5);
-
-            options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt;
-                btn.onclick = (e) => checkAnswer(opt, e.target); 
-                optionsArea.appendChild(btn);
-            });
-        }
-
-        function checkAnswer(selectedInput, btnElement) {
-            const currentQ = gameState.qList[gameState.qIndex];
-            const correct = currentQ.a;
-
-            if (selectedInput.toLowerCase() === correct.toLowerCase()) {
-                // 정답
-                gameState.mCurHP -= 10;
-                document.getElementById('feedback').innerText = "HIT!";
-                document.getElementById('feedback').style.color = "#4caf50";
-                gameState.isRetry = false;
-                
-                // [3번 개선] 정답 근거 하이라이트 (Glow Effect)
-                // 모든 clue span을 찾아서 효과 적용 (여러 개일 수 있음)
-                const clueSpans = document.querySelectorAll('.clue');
-                clueSpans.forEach(span => span.classList.add('correct-glow'));
-
-                // [5번 개선] 타격감 효과 (흔들림)
-                const monsterEl = document.getElementById('monster-container');
-                monsterEl.classList.remove('shake-anim');
-                void monsterEl.offsetWidth; // 리플로우 강제 (애니메이션 재시작용)
-                monsterEl.classList.add('shake-anim');
-
-                updateUI();
-                
-                if (gameState.mCurHP <= 0) {
-                    // [5번 개선] 몬스터 사망 연출 (Ghost Effect)
-                    monsterEl.classList.add('monster-die');
-                    document.getElementById('battle-msg').innerHTML = "<span>으아악...!</span>";
-                    document.getElementById('battle-msg').classList.add('show');
-                    
-                    // 연출 시간만큼 대기 후 클리어 처리
-                    setTimeout(stageClear, 1200); 
-                } else {
-                    gameState.qIndex++;
-                    setTimeout(loadQuestion, 800);
-                }
-            } else {
-                // 오답
-                if (gameState.mode === 'hard' && !gameState.isRetry) {
-                    if(!gameState.wrongLog.includes(currentQ)) {
-                        gameState.wrongLog.push(currentQ);
-                    }
-
-                    document.getElementById('feedback').innerText = "틀렸습니다! 힌트를 확인하세요.";
-                    document.getElementById('feedback').style.color = "orange";
-                    
-                    // [3번 개선] 오답 시 힌트 단어 깜빡임 효과
-                    const clueSpans = document.querySelectorAll('.clue');
-                    clueSpans.forEach(span => span.classList.add('wrong-blink'));
-
-                    // [5번 개선] 플레이어 피격 효과 (화면 붉어짐)
-                    document.getElementById('game-screen').classList.add('screen-hit');
-                    setTimeout(() => document.getElementById('game-screen').classList.remove('screen-hit'), 400);
-
-                    gameState.isRetry = true;
-                    const tenseLabel = document.getElementById('tense-label');
-                    const hintBtn = tenseLabel.querySelector('.hint-btn');
-                    if(hintBtn) hintBtn.style.display = 'inline-block';
-                    btnElement.disabled = true;
-                    btnElement.style.opacity = "0.5";
-                    return; 
-                }
-
-                if(!gameState.wrongLog.includes(currentQ)) {
-                    gameState.wrongLog.push(currentQ);
-                }
-
-                gameState.heroLives--;
-                document.getElementById('feedback').innerText = "MISS! (목숨 차감)";
-                document.getElementById('feedback').style.color = "#f44336";
-                
-                // [3번 개선] 오답 시 힌트 단어 깜빡임 효과 (즉시 아웃되는 경우에도 표시)
-                const clueSpans = document.querySelectorAll('.clue');
-                clueSpans.forEach(span => span.classList.add('wrong-blink'));
-
-                // [5번 개선] 플레이어 피격 효과
-                document.getElementById('game-screen').classList.add('screen-hit');
-                setTimeout(() => document.getElementById('game-screen').classList.remove('screen-hit'), 400);
-
-                if (gameState.mode === 'hard' && gameState.isRetry) {
-                     const tenseSpan = document.getElementById('tense-text');
-                     if(tenseSpan) {
-                        tenseSpan.innerText = `[${currentQ.t}]`; 
-                        tenseSpan.style.color = '#ff4444';
-                        tenseSpan.classList.remove('tense-reveal-btn');
-                        tenseSpan.style.borderBottom = 'none';
-                        tenseSpan.onclick = null;
-                     }
-                }
-
-                btnElement.disabled = true;
-                btnElement.style.opacity = "0.5";
-                updateUI();
-
-                if (gameState.heroLives <= 0) {
-                    setTimeout(() => {
-                        showAlert("패배했습니다. 마을로 귀환합니다.", function() {
-                            showScreen('stage-select-screen');
-                        });
-                    }, 500);
-                }
-            }
-        }
-
-        function stageClear() {
-            // 사망 연출 대기 시간이 checkAnswer에서 이미 처리됨
-            const data = verbsData[gameState.selectedStageId];
-            
-            if(!gameState.clearedStages[gameState.mode].includes(gameState.selectedStageId)) {
-                gameState.clearedStages[gameState.mode].push(gameState.selectedStageId);
-                saveGame(); 
-            }
-
-            let msg = `${data.monster} 토벌 완료!`;
-            let reviewCallback = null;
-            
-            if (gameState.wrongLog.length > 0) {
-                msg += `\n(틀린 문제: ${gameState.wrongLog.length}개)`;
-                reviewCallback = function() {
-                    openBook(gameState.wrongLog, "오답 노트 (Wrong Answers)", false);
+            modalBtns.innerHTML = btnsHtml;
+            modal.style.display = 'flex';
+            document.getElementById('modal-ok-btn').onclick = function() {
+                modal.style.display = 'none';
+                if(confirmCallback) confirmCallback();
+            };
+            if (reviewCallback) {
+                document.getElementById('modal-review-btn').onclick = function() {
+                    reviewCallback();
                 };
             }
-
-            showResultModal(msg, function() {
-                showScreen('stage-select-screen');
-            }, reviewCallback);
         }
 
-        function updateUI() {
-            const maxHP = 120;
-            const percent = Math.max(0, (gameState.mCurHP / maxHP) * 100);
-            document.getElementById('monster-hp-bar').style.width = `${percent}%`;
-            document.getElementById('hero-hp-text').innerText = gameState.heroLives;
+        function showConfirm(msg, yesCallback) {
+            modalMsg.innerText = msg;
+            modalBtns.innerHTML = `
+                <button class="modal-btn btn-cancel" id="modal-no-btn">취소</button>
+                <button class="modal-btn btn-confirm" id="modal-yes-btn">확인</button>
+            `;
+            modal.style.display = 'flex';
+            document.getElementById('modal-yes-btn').onclick = function() {
+                modal.style.display = 'none';
+                if(yesCallback) yesCallback();
+            };
+            document.getElementById('modal-no-btn').onclick = function() {
+                modal.style.display = 'none';
+            };
         }
 
-        function tryQuitGame() {
-            showConfirm("던전을 포기하고 나가시겠습니까?", function() {
-                showScreen('stage-select-screen');
-            });
-        }
-
-        function unlockStages(targetMode) {
-            gameState.clearedStages[targetMode] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-            saveGame();
-            renderStageGrid();
-            const modeName = targetMode === 'easy' ? '새내기' : '졸업반';
-            showAlert(`개발자 모드: ${modeName} 과정이 모두 해금되었습니다!`);
-        }
-
-        function resetGameData() {
-            showConfirm("정말 모든 데이터를 삭제하고 초기화하시겠습니까?", function() {
-                gameState.clearedStages = { easy: [], hard: [] };
-                saveGame();
-                showAlert("모든 데이터가 초기화되었습니다.", function() { location.reload(); });
-            });
-        }
-
-        function renderCollection() {
-            const grid = document.getElementById('collection-grid');
-            grid.innerHTML = "";
-            const easyList = gameState.clearedStages.easy;
-            const hardList = gameState.clearedStages.hard;
-
-            verbsData.forEach((stage, idx) => {
-                const isEasyCleared = easyList.includes(idx);
-                const isHardCleared = hardList.includes(idx);
-                const slot = document.createElement('div');
-                slot.className = 'card-slot';
-                
-                const imgTag = document.createElement('img');
-                imgTag.src = `assets/card_${stage.word}.png`;
-                
-                imgTag.onerror = function() {
-                    this.remove(); 
-                    slot.innerHTML = `<div style="color: gold; font-size: 0.8rem; font-weight: bold; text-align:center;">${stage.word.toUpperCase()}<br>카드 획득!</div>`;
-                    slot.style.backgroundColor = 'rgba(0,0,0,0.5)';
-                    slot.classList.add('unlocked');
-                };
-                
-                const style = tornStyles[idx % tornStyles.length];
-
-                if (isEasyCleared || isHardCleared) {
-                    slot.onclick = function() {
-                        bookState.stageId = idx;
-                        const initMode = isEasyCleared ? 'easy' : 'hard'; 
-                        bookState.currentMode = 'easy';
-                        document.getElementById('tab-easy').classList.add('active');
-                        document.getElementById('tab-hard').classList.remove('active');
-                        
-                        openBook(stage.questions, `${stage.word.toUpperCase()} - ${stage.meaning}`, true);
-                    };
-                }
-
-                if (isEasyCleared && isHardCleared) {
-                    slot.classList.add('unlocked', 'card-full');
-                    imgTag.style.clipPath = 'none';
-                    slot.appendChild(imgTag);
-                } else if (isEasyCleared) {
-                    slot.classList.add('unlocked', 'easy-clear');
-                    imgTag.style.clipPath = style.easy;
-                    slot.appendChild(imgTag);
-                } else if (isHardCleared) {
-                    slot.classList.add('unlocked');
-                    imgTag.style.clipPath = style.hard;
-                    slot.appendChild(imgTag);
-                } else {
-                    slot.classList.add('locked');
-                }
-                grid.appendChild(slot);
-            });
-        }
-        
         const tornStyles = [
             { easy: "polygon(0% 0%, 45% 0%, 43% 5%, 46% 12%, 40% 18%, 45% 25%, 37% 32%, 42% 40%, 34% 48%, 39% 55%, 30% 62%, 36% 70%, 27% 78%, 33% 85%, 24% 92%, 28% 100%, 0% 100%)", hard: "polygon(45% 0%, 100% 0%, 100% 100%, 28% 100%, 24% 92%, 33% 85%, 27% 78%, 36% 70%, 30% 62%, 39% 55%, 34% 48%, 42% 40%, 37% 32%, 45% 25%, 40% 18%, 46% 12%, 43% 5%)" },
             { easy: "polygon(0% 65%, 5% 63%, 12% 67%, 18% 61%, 25% 66%, 32% 59%, 40% 65%, 48% 58%, 55% 64%, 62% 57%, 70% 63%, 78% 56%, 85% 62%, 92% 55%, 100% 60%, 100% 100%, 0% 100%)", hard: "polygon(0% 0%, 100% 0%, 100% 60%, 92% 55%, 85% 62%, 78% 56%, 70% 63%, 62% 57%, 55% 64%, 48% 58%, 40% 65%, 32% 59%, 25% 66%, 18% 61%, 12% 67%, 5% 63%, 0% 65%)" },
@@ -1518,7 +1620,6 @@
             { easy: "polygon(0% 0%, 40% 0%, 36% 8%, 44% 16%, 35% 25%, 42% 34%, 34% 44%, 40% 55%, 32% 65%, 42% 75%, 34% 84%, 40% 92%, 35% 100%, 0% 100%)", hard: "polygon(40% 0%, 100% 0%, 100% 100%, 35% 100%, 40% 92%, 34% 84%, 42% 75%, 32% 65%, 40% 55%, 34% 44%, 42% 34%, 35% 25%, 44% 16%, 36% 8%)" },
             { easy: "polygon(100% 0%, 100% 100%, 60% 100%, 64% 92%, 56% 84%, 62% 75%, 54% 65%, 60% 55%, 52% 44%, 62% 34%, 55% 25%, 64% 16%, 60% 8%)", hard: "polygon(0% 0%, 60% 8%, 64% 16%, 55% 25%, 62% 34%, 52% 44%, 60% 55%, 54% 65%, 62% 75%, 56% 84%, 64% 92%, 60% 100%, 0% 100%)" }
         ];
-
     </script>
 </body>
 </html>
