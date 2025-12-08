@@ -2,9 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <!-- 뷰포트 설정을 기본으로 복구 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>둘기의 모험 (Verb Dungeon)</title>
+    <title>시제를 넘나둘기 (Verb Dungeon)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
@@ -31,7 +30,6 @@
             font-family: 'Jua', sans-serif;
             margin: 0; padding: 0;
             display: flex; justify-content: center; align-items: center;
-            /* [롤백] 표준 높이 설정으로 복귀 */
             height: 100vh;
             overflow: hidden;
             font-size: 1.1rem;
@@ -46,6 +44,7 @@
             overflow: hidden;
         }
 
+        /* 화면 전환 애니메이션 */
         .screen {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
@@ -54,27 +53,104 @@
             align-items: center;
             background-size: cover; background-position: center;
             padding: 20px;
-            /* [롤백] 강제 스크롤 제거 */
             overflow: hidden; 
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
         }
 
-        .active { display: flex; }
+        .active { 
+            display: flex; 
+            opacity: 1;
+            z-index: 10;
+        }
 
-        /* --- 시작 화면 --- */
+        /* --- 시작 화면 (디자인 업그레이드) --- */
         #start-screen {
             justify-content: center;
             background-color: #111;
-            background-image: url('assets/bg_start.png');
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('assets/bg_start.png');
             background-size: cover;
             background-position: center;
+            position: relative;
         }
 
+        /* 파티클 효과 */
+        .particles-container {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            overflow: hidden; pointer-events: none; z-index: 1;
+        }
+        .particle {
+            position: absolute;
+            bottom: -20px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            animation: rise 5s infinite linear;
+            opacity: 0;
+        }
+        @keyframes rise {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-80vh) scale(1.5); opacity: 0; }
+        }
+
+        /* 메인 배너 (주인공) */
+        .title-banner {
+            width: 180px; height: 180px;
+            margin-bottom: 10px;
+            z-index: 2;
+            animation: hover-banner 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+        }
+        .title-banner img { width: 100%; height: 100%; object-fit: contain; }
+        @keyframes hover-banner {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        /* 메인 타이틀 (그라데이션 & 효과) */
         .main-title { 
             font-family: 'Jua', sans-serif;
-            font-size: 3.5rem; 
-            color: var(--gold); margin: 0; text-align: center;
-            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 15px rgba(255, 215, 0, 0.5); 
-            line-height: 1.2; letter-spacing: 2px;
+            font-size: 4rem; 
+            text-align: center;
+            line-height: 1.1; 
+            margin: 0;
+            background: linear-gradient(to bottom, #fff7cc 0%, #ffcc00 50%, #ff9900 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 4px 0px #b84d00) drop-shadow(0px 8px 10px rgba(0,0,0,0.6));
+            animation: title-pulse 2s infinite ease-in-out;
+            z-index: 2;
+            position: relative;
+        }
+        .main-title::after {
+            content: '✨';
+            position: absolute;
+            top: -10px; right: -20px;
+            font-size: 2.5rem;
+            animation: sparkle 1.5s infinite alternate;
+            -webkit-text-fill-color: initial;
+            filter: none;
+        }
+        @keyframes title-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        @keyframes sparkle {
+            0% { opacity: 0.5; transform: scale(0.8) rotate(0deg); }
+            100% { opacity: 1; transform: scale(1.2) rotate(20deg); }
+        }
+
+        /* 서브 타이틀 */
+        .sub-title {
+            color: #8be9fd;
+            font-size: 1.2rem;
+            letter-spacing: 6px;
+            font-weight: bold;
+            margin-top: 5px;
+            margin-bottom: 50px;
+            text-shadow: 0 0 10px rgba(139, 233, 253, 0.8);
+            text-transform: uppercase;
+            z-index: 2;
         }
         
         .pulse-btn {
@@ -82,7 +158,13 @@
             background: var(--accent-color); color: white;
             border: 3px solid white; border-radius: 50px; cursor: pointer;
             animation: pulse 1.5s infinite; font-family: 'Jua', sans-serif;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-top: 50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+            z-index: 2;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .pulse-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
@@ -138,7 +220,6 @@
         #stage-select-screen { 
             justify-content: flex-start; background-color: #111; 
             padding-bottom: 50px;
-            /* 스테이지 선택 화면은 목록이 길어서 스크롤 필요 */
             overflow-y: auto; 
         }
         #stage-select-screen::-webkit-scrollbar { display: none; }
@@ -263,27 +344,73 @@
             margin-left: 5px;
         }
         
-        @keyframes screen-shake {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(-5px, 5px); }
-            50% { transform: translate(5px, -5px); }
-            75% { transform: translate(-5px, -5px); }
-            100% { transform: translate(0, 0); }
-        }
-        @keyframes damage-flash {
-            0% { box-shadow: inset 0 0 0 0 red; }
-            50% { box-shadow: inset 0 0 50px 20px red; }
-            100% { box-shadow: inset 0 0 0 0 red; }
-        }
-        @keyframes hit-wobble {
-            0% { transform: scale(1); filter: brightness(1); }
-            50% { transform: scale(1.1) rotate(5deg); filter: brightness(2); }
-            100% { transform: scale(1); filter: brightness(1); }
+        /* [5번 개선] 타격/사망/피격 애니메이션 정의 */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
 
-        .screen-shake-anim { animation: screen-shake 0.3s ease-in-out; }
-        .damage-anim { animation: damage-flash 0.4s ease-in-out; }
-        .hit-anim { animation: hit-wobble 0.3s ease-in-out; }
+        @keyframes die {
+            0% { 
+                opacity: 1; 
+                transform: scale(1) translateY(0);
+                filter: grayscale(0);
+            }
+            100% { 
+                opacity: 0; 
+                transform: scale(0.8) translateY(-100px);
+                filter: grayscale(100%); 
+            }
+        }
+
+        @keyframes redFlash {
+            0% { box-shadow: inset 0 0 0 0 rgba(255, 0, 0, 0); }
+            50% { box-shadow: inset 0 0 50px 20px rgba(220, 20, 60, 0.5); }
+            100% { box-shadow: inset 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+
+        .shake-anim { animation: shake 0.5s; }
+        .monster-die { animation: die 1.2s forwards; }
+        .screen-hit { animation: redFlash 0.4s ease-in-out; }
+
+        /* [3번 개선 수정] 정답 근거 하이라이트 스타일 */
+        /* 평소에는 일반 텍스트와 똑같이 보이게 (티 안 나게) */
+        .clue {
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        /* 정답 시 네온 글로우 효과 */
+        .correct-glow {
+            color: #4caf50;
+            font-weight: bold; /* 정답 공개 시에만 강조 */
+            text-shadow: 0 0 10px #4caf50, 0 0 20px #4caf50;
+        }
+
+        /* 오답 시 빨간색 깜빡임 효과 */
+        @keyframes blink-red-anim {
+            0%, 100% { color: inherit; }
+            50% { color: #f44336; text-shadow: 0 0 8px #f44336; font-weight: bold;}
+        }
+        .wrong-blink {
+            animation: blink-red-anim 0.5s 3;
+        }
+
+        /* 기존 앵그리 모드 쉐이크 */
+        @keyframes angry-shake {
+            0% { transform: scale(1.2) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(-2deg); }
+            75% { transform: scale(1.2) rotate(2deg); }
+            100% { transform: scale(1.2) rotate(0deg); }
+        }
 
         .battle-field { 
             flex-grow: 1; width: 100%;
@@ -292,7 +419,6 @@
             background-color: #222;
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('assets/bg_battle.png');
             background-size: cover; background-position: center; position: relative;
-            /* [롤백] min-height 제거로 자연스럽게 늘어나게 함 */
         }
         
         .status-bar { 
@@ -317,12 +443,6 @@
 
         .phase-2 .sprite { transform: scale(1.1); filter: drop-shadow(0 0 10px gold); }
         .phase-3 .sprite { transform: scale(1.2); filter: drop-shadow(0 0 15px red); animation: angry-shake 2s infinite; }
-        @keyframes angry-shake {
-            0% { transform: scale(1.2) rotate(0deg); }
-            25% { transform: scale(1.2) rotate(-2deg); }
-            75% { transform: scale(1.2) rotate(2deg); }
-            100% { transform: scale(1.2) rotate(0deg); }
-        }
 
         .battle-message {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -341,7 +461,6 @@
         .control-panel { 
             background: var(--ui-bg); width: 100%; padding: 20px; 
             display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;
-            /* [롤백] 복잡한 계산식 패딩 제거, 기본 패딩 사용 */
         }
         #q-area-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 5px; }
         #tense-label { color: var(--gold); font-size: 1.2rem; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
@@ -437,8 +556,22 @@
 
         <!-- 시작 화면 -->
         <div id="start-screen" class="screen active">
-            <h1 class="main-title">둘기's<br>ADVENTURE</h1>
-            <button class="pulse-btn" onclick="showScreen('difficulty-screen')">START</button>
+            <!-- 파티클 효과 -->
+            <div class="particles-container">
+                <div class="particle" style="width: 20px; height: 20px; left: 10%; animation-duration: 7s;"></div>
+                <div class="particle" style="width: 30px; height: 30px; left: 30%; animation-duration: 12s; animation-delay: 1s;"></div>
+                <div class="particle" style="width: 15px; height: 15px; left: 70%; animation-duration: 9s; animation-delay: 3s;"></div>
+                <div class="particle" style="width: 25px; height: 25px; left: 90%; animation-duration: 11s; animation-delay: 0.5s;"></div>
+            </div>
+
+            <!-- 메인 캐릭터 (배너) -->
+            <div class="title-banner">
+                <img src="assets/hero_hard.png" onerror="this.src='assets/hero_easy.png'; this.onerror=null;" alt="Hero">
+            </div>
+
+            <h1 class="main-title">시제를<br>넘나둘기</h1>
+            <div class="sub-title">Verb Dungeon</div>
+            <button class="pulse-btn" onclick="showScreen('difficulty-screen')">GAME START</button>
         </div>
 
         <!-- 난이도 선택 -->
@@ -674,36 +807,39 @@
         }
 
         const highlight = (text) => `<span class="highlight">${text}</span>`;
+        // [3번 개선] 데이터에 hint 필드 추가 (정답의 근거가 되는 단어)
+        // [추가 개선] hint에 조동사(will, have 등) 및 문맥 단어 포함 (파이프로 구분하여 regex 처리)
         const verbsData = [
             { 
-                word: "see", meaning: "보다 / 만나다", forms: ["see", "saw", "seen", "seeing", "sees"], wrongForms: ["seed", "sawed", "seen"], monster: "Cyclops", dialogues: ["내 눈을 피할 순 없다!", "모든 것이 보인다...", "약점이 보이는군!"],
+                word: "see", meaning: "보다 / 만나다", forms: ["see", "saw", "seen", "seeing", "sees"], wrongForms: ["seed", "sawed", "seen"], monster: "Cyclops", 
+                dialogues: ["You cannot hide from my gaze!", "I see everything...", "I see your weakness!"],
                 questions: [
-                    { t: "과거", q: "I ____ him yesterday.", a: "saw", kor: "나는 어제 그를 보았다.", desc: `문장 속 ${highlight('yesterday(어제)')}는 명확한 과거 시점을 나타냅니다. 따라서 동사의 과거형인 ${highlight('saw')}가 정답입니다.` },
-                    { t: "현재", q: "I ____ my parents every weekend.", a: "see", kor: "나는 매주 주말마다 부모님을 뵌다.", desc: `문장의 ${highlight('every weekend(매주 주말)')}는 반복적인 습관을 나타냅니다. 이럴 때는 동사의 현재형 ${highlight('see')}를 사용합니다.` },
-                    { t: "미래", q: "I will ____ the doctor tomorrow.", a: "see", kor: "나는 내일 의사를 만날 것이다.", desc: `${highlight('tomorrow(내일)')}는 미래를 나타내며, 조동사 will 뒤에는 반드시 동사 원형 ${highlight('see')}가 와야 합니다.` },
-                    { t: "과거진행", q: "I was ____ the sights when it started to rain.", a: "seeing", kor: "비가 내리기 시작했을 때, 나는 관광을 하고 있었다.", desc: `과거의 특정 시점(${highlight('when...')})에 진행 중이었던 행동을 묘사하므로 과거진행형 ${highlight('was seeing')}이 적절합니다.` },
-                    { t: "현재진행", q: "I am ____ a friend right now.", a: "seeing", kor: "나는 지금 친구를 만나고 있다.", desc: `${highlight('right now(지금 당장)')} 진행 중인 일은 현재진행형 ${highlight('am seeing')}을 씁니다.` },
-                    { t: "미래진행", q: "I will be ____ him at the party tonight.", a: "seeing", kor: "오늘 밤 파티에서 그를 만나고 있을 것이다.", desc: `미래의 특정 시점(${highlight('tonight')})에 진행될 예정인 일을 나타낼 때는 미래진행형 ${highlight('will be seeing')}을 사용합니다.` },
-                    { t: "과거완료", q: "I had ____ the movie before you mentioned it.", a: "seen", kor: "네가 말하기 전에 나는 이미 그 영화를 봤었다.", desc: `네가 말한 과거 시점보다 ${highlight('더 이전(대과거)')}에 이미 완료된 일이므로 과거완료 ${highlight('had seen')}을 씁니다.` },
-                    { t: "현재완료", q: "I have ____ this film three times so far.", a: "seen", kor: "나는 지금까지 이 영화를 세 번 봤다.", desc: `과거부터 현재까지(${highlight('so far')})의 경험을 나타낼 때는 현재완료 ${highlight('have seen')}을 사용합니다.` },
-                    { t: "미래완료", q: "I will have ____ all the episodes by next week.", a: "seen", kor: "다음 주면 모든 에피소드를 다 봤을 것이다.", desc: `${highlight('by next week(다음 주까지는)')} 미래의 특정 시점에 완료될 것을 예측하므로 미래완료 ${highlight('will have seen')}이 정답입니다.` },
-                    { t: "과거완료진행", q: "I had been ____ her for a year before we broke up.", a: "seeing", kor: "우리가 헤어지기 전까지 나는 그녀를 1년 동안 만나오고 있었다.", desc: `과거의 특정 시점(${highlight('broke up')})까지 계속되던 동작의 기간을 강조할 때는 과거완료진행형을 씁니다.` },
-                    { t: "현재완료진행", q: "I have been ____ spots since this morning.", a: "seeing", kor: "오늘 아침부터 눈앞에 점 같은 게 계속 보이고 있다.", desc: `${highlight('since(이후로)')} 지금까지 동작이 계속됨을 강조할 때는 현재완료진행형을 씁니다.` },
-                    { t: "미래완료진행", q: "Next month, I will have been ____ this dentist for 10 years.", a: "seeing", kor: "다음 달이면 이 치과에 다닌 지 10년째가 된다.", desc: `미래의 시점(${highlight('Next month')})에 기간이 꽉 차게 됨을 나타낼 때는 미래완료진행형을 사용합니다.` }
+                    { t: "과거", q: "I ____ him yesterday.", a: "saw", hint: "yesterday", kor: "나는 어제 그를 보았다.", desc: `문장 속 ${highlight('yesterday(어제)')}는 명확한 과거 시점을 나타냅니다. 따라서 동사의 과거형인 ${highlight('saw')}가 정답입니다.` },
+                    { t: "현재", q: "I ____ my parents every weekend.", a: "see", hint: "every weekend", kor: "나는 매주 주말마다 부모님을 뵌다.", desc: `문장의 ${highlight('every weekend(매주 주말)')}는 반복적인 습관을 나타냅니다. 이럴 때는 동사의 현재형 ${highlight('see')}를 사용합니다.` },
+                    { t: "미래", q: "I will ____ the doctor tomorrow.", a: "see", hint: "will|tomorrow", kor: "나는 내일 의사를 만날 것이다.", desc: `${highlight('tomorrow(내일)')}는 미래를 나타내며, 조동사 will 뒤에는 반드시 동사 원형 ${highlight('see')}가 와야 합니다.` },
+                    { t: "과거진행", q: "I was ____ the sights when it started to rain.", a: "seeing", hint: "was|when", kor: "비가 내리기 시작했을 때, 나는 관광을 하고 있었다.", desc: `과거의 특정 시점(${highlight('when...')})에 진행 중이었던 행동을 묘사하므로 과거진행형 ${highlight('was seeing')}이 적절합니다.` },
+                    { t: "현재진행", q: "I am ____ a friend right now.", a: "seeing", hint: "am|right now", kor: "나는 지금 친구를 만나고 있다.", desc: `${highlight('right now(지금 당장)')} 진행 중인 일은 현재진행형 ${highlight('am seeing')}을 씁니다.` },
+                    { t: "미래진행", q: "I will be ____ him at the party tonight.", a: "seeing", hint: "will be|tonight", kor: "오늘 밤 파티에서 그를 만나고 있을 것이다.", desc: `미래의 특정 시점(${highlight('tonight')})에 진행될 예정인 일을 나타낼 때는 미래진행형 ${highlight('will be seeing')}을 사용합니다.` },
+                    { t: "과거완료", q: "I had ____ the movie before you mentioned it.", a: "seen", hint: "had|before", kor: "네가 말하기 전에 나는 이미 그 영화를 봤었다.", desc: `네가 말한 과거 시점보다 ${highlight('더 이전(대과거)')}에 이미 완료된 일이므로 과거완료 ${highlight('had seen')}을 씁니다.` },
+                    { t: "현재완료", q: "I have ____ this film three times so far.", a: "seen", hint: "have|so far", kor: "나는 지금까지 이 영화를 세 번 봤다.", desc: `과거부터 현재까지(${highlight('so far')})의 경험을 나타낼 때는 현재완료 ${highlight('have seen')}을 사용합니다.` },
+                    { t: "미래완료", q: "I will have ____ all the episodes by next week.", a: "seen", hint: "will have|by next week", kor: "다음 주면 모든 에피소드를 다 봤을 것이다.", desc: `${highlight('by next week(다음 주까지는)')} 미래의 특정 시점에 완료될 것을 예측하므로 미래완료 ${highlight('will have seen')}이 정답입니다.` },
+                    { t: "과거완료진행", q: "I had been ____ her for a year before we broke up.", a: "seeing", hint: "had been|for a year", kor: "우리가 헤어지기 전까지 나는 그녀를 1년 동안 만나오고 있었다.", desc: `과거의 특정 시점(${highlight('broke up')})까지 계속되던 동작의 기간을 강조할 때는 과거완료진행형을 씁니다.` },
+                    { t: "현재완료진행", q: "I have been ____ spots since this morning.", a: "seeing", hint: "have been|since", kor: "오늘 아침부터 눈앞에 점 같은 게 계속 보이고 있다.", desc: `${highlight('since(이후로)')} 지금까지 동작이 계속됨을 강조할 때는 현재완료진행형을 씁니다.` },
+                    { t: "미래완료진행", q: "Next month, I will have been ____ this dentist for 10 years.", a: "seeing", hint: "will have been|for 10 years", kor: "다음 달이면 이 치과에 다닌 지 10년째가 된다.", desc: `미래의 시점(${highlight('Next month')})에 기간이 꽉 차게 됨을 나타낼 때는 미래완료진행형을 사용합니다.` }
                 ],
                 hardQuestions: [
-                    { t: "과거", q: "A: Did you meet Tom?<br>B: No, I ____ no one there.", a: "saw", kor: "A: 탐 만났어? B: 아니, 거기서 아무도 못 봤어.", desc: "질문이 과거형(Did you meet?)이므로 대답도 과거 시점의 사실을 말해야 합니다." },
-                    { t: "현재", q: "I don't need glasses. I ____ perfectly fine.", a: "see", kor: "난 안경 필요 없어. 아주 잘 보여.", desc: "현재의 일반적인 능력이나 상태를 설명하고 있으므로 현재형이 적절합니다." },
-                    { t: "미래", q: "Don't worry. We ____ what happens next.", a: "will see", kor: "걱정 마. 다음에 무슨 일이 일어날지 두고 보자.", desc: "앞으로 일어날 일에 대한 예측이나 의지를 나타내므로 미래형을 사용합니다." },
-                    { t: "과거진행", q: "The police asked what I ____ at 9 PM.", a: "was seeing", kor: "경찰은 내가 9시에 무엇을 보고 있었는지 물었다.", desc: "과거의 특정 시점(9 PM)에 진행 중이었던 행동을 묻는 문맥입니다." },
-                    { t: "현재진행", q: "I can't talk right now. I ____ a client.", a: "am seeing", kor: "지금 통화 못 해. 고객을 만나는 중이야.", desc: "지금 당장(right now) 통화가 불가능한 이유인 현재 진행 중인 약속을 설명합니다." },
-                    { t: "미래진행", q: "This time next year, I ____ the world.", a: "will be seeing", kor: "내년 이맘때쯤이면 난 세상을 구경하고 있을 거야.", desc: "미래의 특정 시점에 하고 있을 것으로 예상되는 진행 상황을 묘사합니다." },
-                    { t: "과거완료", q: "I recognized him because I ____ him before.", a: "had seen", kor: "이전에 그를 본 적이 있어서 그를 알아봤다.", desc: "그를 알아본 과거 시점보다 '더 이전에' 본 경험이 원인이므로 대과거(과거완료)를 씁니다." },
-                    { t: "현재완료", q: "This is the best movie I ____ ever ____.", a: "have seen", kor: "이건 내가 지금까지 본 영화 중 최고야.", desc: "과거부터 현재까지의 경험 중 최고임을 나타내는 최상급 표현과 함께 쓰이는 현재완료입니다." },
-                    { t: "미래완료", q: "Come at 8. We ____ the sunset by then.", a: "will have seen", kor: "8시에 와. 그때쯤이면 우린 이미 일몰을 봤을 거야.", desc: "미래의 특정 시점(8시)에는 이미 동작이 완료되어 있을 것임을 나타냅니다." },
-                    { t: "과거완료진행", q: "My eyes hurt because I ____ the screen for too long.", a: "had been seeing", kor: "화면을 너무 오래 보고 있어서 눈이 아팠다.", desc: "과거 시점(아팠다) 직전까지 계속된 동작이 원인임을 강조합니다." },
-                    { t: "현재완료진행", q: "I ____ this doctor for 5 years now.", a: "have been seeing", kor: "이 의사 선생님께 진료받은 지 5년째다.", desc: "과거부터 현재까지 5년 동안 계속되고 있는 만남/진료 상황을 나타냅니다." },
-                    { t: "미래완료진행", q: "By Christmas, we ____ each other for a year.", a: "will have been seeing", kor: "크리스마스면 우리가 만난 지 1년이 된다.", desc: "미래의 특정 시점까지 행동이 지속되어 기간이 달성됨을 나타냅니다." }
+                    { t: "과거", q: "A: Did you meet Tom?<br>B: No, I ____ no one there.", a: "saw", hint: "Did you meet", kor: "A: 탐 만났어? B: 아니, 거기서 아무도 못 봤어.", desc: "질문이 과거형(Did you meet?)이므로 대답도 과거 시점의 사실을 말해야 합니다." },
+                    { t: "현재", q: "I don't need glasses. I ____ perfectly fine.", a: "see", hint: "don't need", kor: "난 안경 필요 없어. 아주 잘 보여.", desc: "현재의 일반적인 능력이나 상태를 설명하고 있으므로 현재형이 적절합니다." },
+                    { t: "미래", q: "Don't worry. We ____ what happens next.", a: "will see", hint: "next", kor: "걱정 마. 다음에 무슨 일이 일어날지 두고 보자.", desc: "앞으로 일어날 일에 대한 예측이나 의지를 나타내므로 미래형을 사용합니다." },
+                    { t: "과거진행", q: "The police asked what I ____ at 9 PM.", a: "was seeing", hint: "at 9 PM", kor: "경찰은 내가 9시에 무엇을 보고 있었는지 물었다.", desc: "과거의 특정 시점(9 PM)에 진행 중이었던 행동을 묻는 문맥입니다." },
+                    { t: "현재진행", q: "I can't talk right now. I ____ a client.", a: "am seeing", hint: "right now", kor: "지금 통화 못 해. 고객을 만나는 중이야.", desc: "지금 당장(right now) 통화가 불가능한 이유인 현재 진행 중인 약속을 설명합니다." },
+                    { t: "미래진행", q: "This time next year, I ____ the world.", a: "will be seeing", hint: "This time next year", kor: "내년 이맘때쯤이면 난 세상을 구경하고 있을 거야.", desc: "미래의 특정 시점에 하고 있을 것으로 예상되는 진행 상황을 묘사합니다." },
+                    { t: "과거완료", q: "I recognized him because I ____ him before.", a: "had seen", hint: "before", kor: "이전에 그를 본 적이 있어서 그를 알아봤다.", desc: "그를 알아본 과거 시점보다 '더 이전에' 본 경험이 원인이므로 대과거(과거완료)를 씁니다." },
+                    { t: "현재완료", q: "This is the best movie I ____ ever ____.", a: "have seen", hint: "ever", kor: "이건 내가 지금까지 본 영화 중 최고야.", desc: "과거부터 현재까지의 경험 중 최고임을 나타내는 최상급 표현과 함께 쓰이는 현재완료입니다." },
+                    { t: "미래완료", q: "Come at 8. We ____ the sunset by then.", a: "will have seen", hint: "by then", kor: "8시에 와. 그때쯤이면 우린 이미 일몰을 봤을 거야.", desc: "미래의 특정 시점(8시)에는 이미 동작이 완료되어 있을 것임을 나타냅니다." },
+                    { t: "과거완료진행", q: "My eyes hurt because I ____ the screen for too long.", a: "had been seeing", hint: "hurt", kor: "화면을 너무 오래 보고 있어서 눈이 아팠다.", desc: "과거 시점(아팠다) 직전까지 계속된 동작이 원인임을 강조합니다." },
+                    { t: "현재완료진행", q: "I ____ this doctor for 5 years now.", a: "have been seeing", hint: "for 5 years now", kor: "이 의사 선생님께 진료받은 지 5년째다.", desc: "과거부터 현재까지 5년 동안 계속되고 있는 만남/진료 상황을 나타냅니다." },
+                    { t: "미래완료진행", q: "By Christmas, we ____ each other for a year.", a: "will have been seeing", hint: "By Christmas", kor: "크리스마스면 우리가 만난 지 1년이 된다.", desc: "미래의 특정 시점까지 행동이 지속되어 기간이 달성됨을 나타냅니다." }
                 ]
             },
             { 
@@ -711,34 +847,34 @@
                 forms: ["eat", "ate", "eaten", "eating", "eats"], 
                 wrongForms: ["eated", "ateing", "eaten"], 
                 monster: "Ogre", 
-                dialogues: ["배가 고프다... 으어어!", "한 입 거리도 안 되는군.", "우적우적 씹어주마!"],
+                dialogues: ["I'm starving... Arrrgh!", "You're not even a mouthful.", "I'll chew you up!"],
                 questions: [
-                    { t: "과거", q: "He ____ a big burger last night.", a: "ate", kor: "그는 지난밤에 큰 버거를 먹었다.", desc: `${highlight('last night(지난밤)')}은 명확한 과거 시점이므로 동사의 과거형 ${highlight('ate')}가 정답입니다.` },
-                    { t: "현재", q: "He ____ breakfast at 7 AM daily.", a: "eats", kor: "그는 매일 아침 7시에 아침을 먹는다.", desc: `${highlight('daily(매일)')} 반복되는 일상은 현재형을 씁니다. 주어가 3인칭 단수이므로 ${highlight('eats')}가 됩니다.` },
-                    { t: "미래", q: "He will ____ out tonight.", a: "eat", kor: "그는 오늘 밤 외식할 것이다.", desc: `${highlight('tonight(오늘 밤)')}의 계획을 나타냅니다. 조동사 will 뒤에는 동사 원형 ${highlight('eat')}이 옵니다.` },
-                    { t: "과거진행", q: "He was ____ lunch when I arrived.", a: "eating", kor: "내가 도착했을 때 그는 점심을 먹는 중이었다.", desc: `과거의 특정 시점에 진행 중이던 동작을 나타내므로 과거진행형 ${highlight('was eating')}을 사용합니다.` },
-                    { t: "현재진행", q: "Look! He is ____ vegetables now.", a: "eating", kor: "봐! 그는 지금 야채를 먹고 있어.", desc: `${highlight('Look!')} 지금 눈앞에서 벌어지는 일을 묘사하므로 현재진행형 ${highlight('is eating')}이 정답입니다.` },
-                    { t: "미래진행", q: "He will be ____ dinner at this time tomorrow.", a: "eating", kor: "내일 이맘때면 그는 저녁을 먹고 있을 거야.", desc: `미래의 특정 시간에 진행 중일 동작을 예측하므로 미래진행형 ${highlight('will be eating')}을 씁니다.` },
-                    { t: "과거완료", q: "He had ____ nothing before he came here.", a: "eaten", kor: "여기 오기 전까지 그는 아무것도 안 먹었었다.", desc: `오기 전(과거)보다 더 이전에 일어난 일이므로 대과거(과거완료) ${highlight('had eaten')}을 사용합니다.` },
-                    { t: "현재완료", q: "He has ____ snakes before.", a: "eaten", kor: "그는 이전에 뱀을 먹어본 적이 있다.", desc: `과거부터 현재까지의 ${highlight('경험')}을 말할 때는 현재완료형 ${highlight('has eaten')}을 씁니다.` },
-                    { t: "미래완료", q: "He will have ____ everything by the time you come.", a: "eaten", kor: "네가 올 때쯤이면 그는 다 먹었을 것이다.", desc: `미래의 기준 시점까지 동작이 완료될 것임을 나타내므로 미래완료형 ${highlight('will have eaten')}이 적절합니다.` },
-                    { t: "과거완료진행", q: "He had been ____ for 2 hours when the food ran out.", a: "eating", kor: "음식이 동났을 때 그는 2시간째 먹던 중이었다.", desc: `과거 시점까지 동작이 계속 진행되었음을 강조하므로 과거완료진행형을 사용합니다.` },
-                    { t: "현재완료진행", q: "He has been ____ only salad since Monday.", a: "eating", kor: "그는 월요일부터 샐러드만 계속 먹고 있다.", desc: `과거부터 현재까지 계속해오고 있는 동작을 강조할 때 현재완료진행형을 씁니다.` },
-                    { t: "미래완료진행", q: "By 2 PM, he will have been ____ for an hour.", a: "eating", kor: "2시가 되면 그는 1시간째 먹는 셈이 된다.", desc: `미래 시점까지 동작이 계속될 것임을 나타내므로 미래완료진행형을 사용합니다.` }
+                    { t: "과거", q: "He ____ a big burger last night.", a: "ate", hint: "last night", kor: "그는 지난밤에 큰 버거를 먹었다.", desc: `${highlight('last night(지난밤)')}은 명확한 과거 시점이므로 동사의 과거형 ${highlight('ate')}가 정답입니다.` },
+                    { t: "현재", q: "He ____ breakfast at 7 AM daily.", a: "eats", hint: "daily", kor: "그는 매일 아침 7시에 아침을 먹는다.", desc: `${highlight('daily(매일)')} 반복되는 일상은 현재형을 씁니다. 주어가 3인칭 단수이므로 ${highlight('eats')}가 됩니다.` },
+                    { t: "미래", q: "He will ____ out tonight.", a: "eat", hint: "will|tonight", kor: "그는 오늘 밤 외식할 것이다.", desc: `${highlight('tonight(오늘 밤)')}의 계획을 나타냅니다. 조동사 will 뒤에는 동사 원형 ${highlight('eat')}이 옵니다.` },
+                    { t: "과거진행", q: "He was ____ lunch when I arrived.", a: "eating", hint: "was|when", kor: "내가 도착했을 때 그는 점심을 먹는 중이었다.", desc: `과거의 특정 시점에 진행 중이던 동작을 나타내므로 과거진행형 ${highlight('was eating')}을 사용합니다.` },
+                    { t: "현재진행", q: "Look! He is ____ vegetables now.", a: "eating", hint: "is|now", kor: "봐! 그는 지금 야채를 먹고 있어.", desc: `${highlight('Look!')} 지금 눈앞에서 벌어지는 일을 묘사하므로 현재진행형 ${highlight('is eating')}이 정답입니다.` },
+                    { t: "미래진행", q: "He will be ____ dinner at this time tomorrow.", a: "eating", hint: "will be|tomorrow", kor: "내일 이맘때면 그는 저녁을 먹고 있을 거야.", desc: `미래의 특정 시간에 진행 중일 동작을 예측하므로 미래진행형 ${highlight('will be eating')}을 씁니다.` },
+                    { t: "과거완료", q: "He had ____ nothing before he came here.", a: "eaten", hint: "had|before", kor: "여기 오기 전까지 그는 아무것도 안 먹었었다.", desc: `오기 전(과거)보다 더 이전에 일어난 일이므로 대과거(과거완료) ${highlight('had eaten')}을 사용합니다.` },
+                    { t: "현재완료", q: "He has ____ snakes before.", a: "eaten", hint: "has|before", kor: "그는 이전에 뱀을 먹어본 적이 있다.", desc: `과거부터 현재까지의 ${highlight('경험')}을 말할 때는 현재완료형 ${highlight('has eaten')}을 씁니다.` },
+                    { t: "미래완료", q: "He will have ____ everything by the time you come.", a: "eaten", hint: "will have|by the time", kor: "네가 올 때쯤이면 그는 다 먹었을 것이다.", desc: `미래의 기준 시점까지 동작이 완료될 것임을 나타내므로 미래완료형 ${highlight('will have eaten')}이 적절합니다.` },
+                    { t: "과거완료진행", q: "He had been ____ for 2 hours when the food ran out.", a: "eating", hint: "had been|for 2 hours", kor: "음식이 동났을 때 그는 2시간째 먹던 중이었다.", desc: `과거 시점까지 동작이 계속 진행되었음을 강조하므로 과거완료진행형을 사용합니다.` },
+                    { t: "현재완료진행", q: "He has been ____ only salad since Monday.", a: "eating", hint: "has been|since", kor: "그는 월요일부터 샐러드만 계속 먹고 있다.", desc: `과거부터 현재까지 계속해오고 있는 동작을 강조할 때 현재완료진행형을 씁니다.` },
+                    { t: "미래완료진행", q: "By 2 PM, he will have been ____ for an hour.", a: "eating", hint: "will have been|for an hour", kor: "2시가 되면 그는 1시간째 먹는 셈이 된다.", desc: `미래 시점까지 동작이 계속될 것임을 나타내므로 미래완료진행형을 사용합니다.` }
                 ],
                 hardQuestions: [
-                    { t: "과거", q: "The plate was empty. He ____ it all.", a: "ate", kor: "접시가 비어 있었다. 그가 다 먹어버렸다.", desc: "접시가 비어 있다는 과거의 사실에 대한 원인이 되는 과거의 동작입니다." },
-                    { t: "현재", q: "Vegetarians never ____ meat.", a: "eat", kor: "채식주의자는 고기를 절대 먹지 않는다.", desc: "일반적인 사실이나 변하지 않는 습관을 나타내므로 현재형을 사용합니다." },
-                    { t: "미래", q: "If you are hungry, I ____ with you.", a: "will eat", kor: "네가 배고프면 나도 같이 먹을게.", desc: "대화하는 순간 즉석에서 결정한 미래의 행동(의지)을 나타냅니다." },
-                    { t: "과거진행", q: "Sorry I missed your call. I ____ dinner.", a: "was eating", kor: "전화 못 받아서 미안. 저녁 먹는 중이었어.", desc: "과거의 특정 시점에 다른 일을 하고 있어서 전화를 못 받은 상황을 설명합니다." },
-                    { t: "현재진행", q: "Where is Tom? He ____ in the kitchen.", a: "is eating", kor: "탐 어디 있어? 부엌에서 밥 먹고 있어.", desc: "현재 눈앞에서 벌어지고 있거나 진행 중인 동작을 묘사합니다." },
-                    { t: "미래진행", q: "Don't call at 6. We ____ dinner then.", a: "will be eating", kor: "6시에 전화하지 마. 그때 우리 저녁 먹고 있을 거야.", desc: "미래의 특정 시점에 진행 중일 예정인 일을 나타냅니다." },
-                    { t: "과거완료", q: "I wasn't hungry because I ____ already ____.", a: "had eaten", kor: "나는 이미 밥을 먹어서 배가 고프지 않았다.", desc: "배가 안 고팠던 과거 시점보다 더 이전에 식사를 마쳤으므로 대과거입니다." },
-                    { t: "현재완료", q: "I'm full. I ____ just ____ too much.", a: "have eaten", kor: "배불러. 방금 너무 많이 먹었어.", desc: "방금 완료된 동작이 현재 상태(배부름)에 영향을 미치고 있습니다." },
-                    { t: "미래완료", q: "By the time we get there, they ____ all the pizza.", a: "will have eaten", kor: "우리가 거기 도착할 때쯤이면 걔네가 피자를 다 먹어치웠을 거야.", desc: "미래의 시점(도착)에 이미 완료되어 있을 일을 예측합니다." },
-                    { t: "과거완료진행", q: "His mouth was messy. He ____ chocolate.", a: "had been eating", kor: "입가가 지저분했다. 초콜릿을 먹고 있었던 게 분명하다.", desc: "과거의 결과(지저분함)를 만든, 그 직전까지 계속된 동작을 나타냅니다." },
-                    { t: "현재완료진행", q: "You look healthy! ____ you ____ well lately?", a: "Have been eating", kor: "건강해 보이네! 요새 잘 챙겨 먹고 있어?", desc: "최근부터 지금까지의 지속적인 습관이나 상태를 묻고 있습니다." },
-                    { t: "미래완료진행", q: "In 10 minutes, the champion ____ for 3 hours straight.", a: "will have been eating", kor: "10분 뒤면 챔피언은 3시간 연속으로 먹고 있는 셈이 된다.", desc: "미래 시점에 행동의 지속 기간이 달성됨을 강조합니다." }
+                    { t: "과거", q: "The plate was empty. He ____ it all.", a: "ate", hint: "was empty", kor: "접시가 비어 있었다. 그가 다 먹어버렸다.", desc: "접시가 비어 있다는 과거의 사실에 대한 원인이 되는 과거의 동작입니다." },
+                    { t: "현재", q: "Vegetarians never ____ meat.", a: "eat", hint: "never", kor: "채식주의자는 고기를 절대 먹지 않는다.", desc: "일반적인 사실이나 변하지 않는 습관을 나타내므로 현재형을 사용합니다." },
+                    { t: "미래", q: "If you are hungry, I ____ with you.", a: "will eat", hint: "If you are hungry", kor: "네가 배고프면 나도 같이 먹을게.", desc: "대화하는 순간 즉석에서 결정한 미래의 행동(의지)을 나타냅니다." },
+                    { t: "과거진행", q: "Sorry I missed your call. I ____ dinner.", a: "was eating", hint: "missed your call", kor: "전화 못 받아서 미안. 저녁 먹는 중이었어.", desc: "과거의 특정 시점에 다른 일을 하고 있어서 전화를 못 받은 상황을 설명합니다." },
+                    { t: "현재진행", q: "Where is Tom? He ____ in the kitchen.", a: "is eating", hint: "Where is Tom?", kor: "탐 어디 있어? 부엌에서 밥 먹고 있어.", desc: "현재 눈앞에서 벌어지고 있거나 진행 중인 동작을 묘사합니다." },
+                    { t: "미래진행", q: "Don't call at 6. We ____ dinner then.", a: "will be eating", hint: "at 6", kor: "6시에 전화하지 마. 그때 우리 저녁 먹고 있을 거야.", desc: "미래의 특정 시점에 진행 중일 예정인 일을 나타냅니다." },
+                    { t: "과거완료", q: "I wasn't hungry because I ____ already ____.", a: "had eaten", hint: "wasn't hungry|already", kor: "나는 이미 밥을 먹어서 배가 고프지 않았다.", desc: "배가 안 고팠던 과거 시점보다 더 이전에 식사를 마쳤으므로 대과거입니다." },
+                    { t: "현재완료", q: "I'm full. I ____ just ____ too much.", a: "have eaten", hint: "just", kor: "배불러. 방금 너무 많이 먹었어.", desc: "방금 완료된 동작이 현재 상태(배부름)에 영향을 미치고 있습니다." },
+                    { t: "미래완료", q: "By the time we get there, they ____ all the pizza.", a: "will have eaten", hint: "By the time we get there", kor: "우리가 거기 도착할 때쯤이면 걔네가 피자를 다 먹어치웠을 거야.", desc: "미래의 시점(도착)에 이미 완료되어 있을 일을 예측합니다." },
+                    { t: "과거완료진행", q: "His mouth was messy. He ____ chocolate.", a: "had been eating", hint: "was messy", kor: "입가가 지저분했다. 초콜릿을 먹고 있었던 게 분명하다.", desc: "과거의 결과(지저분함)를 만든, 그 직전까지 계속된 동작을 나타냅니다." },
+                    { t: "현재완료진행", q: "You look healthy! ____ you ____ well lately?", a: "Have been eating", hint: "lately", kor: "건강해 보이네! 요새 잘 챙겨 먹고 있어?", desc: "최근부터 지금까지의 지속적인 습관이나 상태를 묻고 있습니다." },
+                    { t: "미래완료진행", q: "In 10 minutes, the champion ____ for 3 hours straight.", a: "will have been eating", hint: "In 10 minutes", kor: "10분 뒤면 챔피언은 3시간 연속으로 먹고 있는 셈이 된다.", desc: "미래 시점에 행동의 지속 기간이 달성됨을 강조합니다." }
                 ]
             },
              { 
@@ -746,34 +882,34 @@
                 forms: ["do", "did", "done", "doing", "does"], 
                 wrongForms: ["doed", "dided", "done"], 
                 monster: "Golem", 
-                dialogues: ["임무.. 수행..", "방해물.. 제거..", "시스템.. 가동.."],
+                dialogues: ["Mission... execute...", "Obstacle... eliminate...", "System... online..."],
                 questions: [
-                    { t: "과거", q: "She ____ her homework an hour ago.", a: "did", kor: "그녀는 1시간 전에 숙제를 했다.", desc: `${highlight('ago(전)')}는 과거 시제와 함께 쓰입니다.` },
-                    { t: "현재", q: "She ____ yoga every morning.", a: "does", kor: "그녀는 매일 아침 요가를 한다.", desc: `매일 반복되는 습관입니다. 주어가 3인칭 단수(She)이므로 does를 씁니다.` },
-                    { t: "미래", q: "She will ____ her best next time.", a: "do", kor: "그녀는 다음에는 최선을 다할 것이다.", desc: `미래의 다짐입니다. 조동사 will 뒤에는 동사 원형이 옵니다.` },
-                    { t: "과거진행", q: "She was ____ the dishes when the phone rang.", a: "doing", kor: "전화가 울렸을 때 그녀는 설거지를 하던 중이었다.", desc: `과거에 다른 일이 일어났을 때 진행 중이던 동작을 나타냅니다.` },
-                    { t: "현재진행", q: "She is ____ the laundry at the moment.", a: "doing", kor: "그녀는 지금 빨래를 하고 있다.", desc: `${highlight('at the moment(지금)')} 진행 중인 동작은 현재진행형을 씁니다.` },
-                    { t: "미래진행", q: "She will be ____ research all day tomorrow.", a: "doing", kor: "그녀는 내일 하루 종일 연구를 하고 있을 것이다.", desc: `미래의 기간 동안 계속될 동작을 나타냅니다.` },
-                    { t: "과거완료", q: "She had ____ the work before the boss asked.", a: "done", kor: "상사가 묻기 전에 그녀는 이미 일을 끝냈었다.", desc: `과거 시점(묻기 전)에 이미 완료된 일이므로 과거완료를 씁니다.` },
-                    { t: "현재완료", q: "She has ____ this task already.", a: "done", kor: "그녀는 이미 이 업무를 마쳤다.", desc: `${highlight('already(이미)')} 완료된 상태를 나타낼 때 현재완료를 씁니다.` },
-                    { t: "미래완료", q: "She will have ____ it by Friday.", a: "done", kor: "그녀는 금요일까지는 그것을 해낼 것이다.", desc: `미래의 특정 시점까지 완료될 일을 예측합니다.` },
-                    { t: "과거완료진행", q: "She had been ____ well until the accident happened.", a: "doing", kor: "사고가 나기 전까지 그녀는 잘해오고 있었다.", desc: `과거의 사건 전까지 계속되던 상태나 동작을 강조합니다.` },
-                    { t: "현재완료진행", q: "She has been ____ volunteer work for 5 years.", a: "doing", kor: "그녀는 5년째 봉사활동을 해오고 있다.", desc: `과거부터 현재까지 계속하고 있는 일을 나타냅니다.` },
-                    { t: "미래완료진행", q: "Next year, she will have been ____ this job for a decade.", a: "doing", kor: "내년이면 그녀가 이 일을 한 지 10년이 된다.", desc: `미래 시점에 기간이 채워지는 것을 나타냅니다.` }
+                    { t: "과거", q: "She ____ her homework an hour ago.", a: "did", hint: "ago", kor: "그녀는 1시간 전에 숙제를 했다.", desc: `${highlight('ago(전)')}는 과거 시제와 함께 쓰입니다.` },
+                    { t: "현재", q: "She ____ yoga every morning.", a: "does", hint: "every morning", kor: "그녀는 매일 아침 요가를 한다.", desc: `매일 반복되는 습관입니다. 주어가 3인칭 단수(She)이므로 does를 씁니다.` },
+                    { t: "미래", q: "She will ____ her best next time.", a: "do", hint: "will|next time", kor: "그녀는 다음에는 최선을 다할 것이다.", desc: `미래의 다짐입니다. 조동사 will 뒤에는 동사 원형이 옵니다.` },
+                    { t: "과거진행", q: "She was ____ the dishes when the phone rang.", a: "doing", hint: "was|when the phone rang", kor: "전화가 울렸을 때 그녀는 설거지를 하던 중이었다.", desc: `과거에 다른 일이 일어났을 때 진행 중이던 동작을 나타냅니다.` },
+                    { t: "현재진행", q: "She is ____ the laundry at the moment.", a: "doing", hint: "is|at the moment", kor: "그녀는 지금 빨래를 하고 있다.", desc: `${highlight('at the moment(지금)')} 진행 중인 동작은 현재진행형을 씁니다.` },
+                    { t: "미래진행", q: "She will be ____ research all day tomorrow.", a: "doing", hint: "will be|tomorrow", kor: "그녀는 내일 하루 종일 연구를 하고 있을 것이다.", desc: `미래의 기간 동안 계속될 동작을 나타냅니다.` },
+                    { t: "과거완료", q: "She had ____ the work before the boss asked.", a: "done", hint: "had|before", kor: "상사가 묻기 전에 그녀는 이미 일을 끝냈었다.", desc: `과거 시점(묻기 전)에 이미 완료된 일이므로 과거완료를 씁니다.` },
+                    { t: "현재완료", q: "She has ____ this task already.", a: "done", hint: "has|already", kor: "그녀는 이미 이 업무를 마쳤다.", desc: `${highlight('already(이미)')} 완료된 상태를 나타낼 때 현재완료를 씁니다.` },
+                    { t: "미래완료", q: "She will have ____ it by Friday.", a: "done", hint: "will have|by Friday", kor: "그녀는 금요일까지는 그것을 해낼 것이다.", desc: `미래의 특정 시점까지 완료될 일을 예측합니다.` },
+                    { t: "과거완료진행", q: "She had been ____ well until the accident happened.", a: "doing", hint: "had been|until", kor: "사고가 나기 전까지 그녀는 잘해오고 있었다.", desc: `과거의 사건 전까지 계속되던 상태나 동작을 강조합니다.` },
+                    { t: "현재완료진행", q: "She has been ____ volunteer work for 5 years.", a: "doing", hint: "has been|for 5 years", kor: "그녀는 5년째 봉사활동을 해오고 있다.", desc: `과거부터 현재까지 계속하고 있는 일을 나타냅니다.` },
+                    { t: "미래완료진행", q: "Next year, she will have been ____ this job for a decade.", a: "doing", hint: "will have been|Next year", kor: "내년이면 그녀가 이 일을 한 지 10년이 된다.", desc: `미래 시점에 기간이 채워지는 것을 나타냅니다.` }
                 ],
                 hardQuestions: [
-                    { t: "과거", q: "I asked him to fix it, and he ____ it.", a: "did", kor: "고쳐달라고 부탁했고, 그는 그걸 해냈다.", desc: "부탁한 후(과거)에 실행한 과거의 동작입니다." },
-                    { t: "현재", q: "My father is a doctor. He ____ his best for patients.", a: "does", kor: "아버지는 의사시다. 환자를 위해 최선을 다하신다.", desc: "직업적 의무나 일상적인 태도(현재형)입니다." },
-                    { t: "미래", q: "If you fail, don't worry. You ____ better next time.", a: "will do", kor: "실패해도 걱정 마. 다음엔 더 잘할 거야.", desc: "미래에 대한 격려와 예측입니다." },
-                    { t: "과거진행", q: "The room was messy because the kids ____ art projects.", a: "were doing", kor: "아이들이 미술 숙제를 하고 있었기 때문에 방이 지저분했다.", desc: "과거의 상황(지저분함)을 설명하는 진행 중인 동작입니다." },
-                    { t: "현재진행", q: "Can I call you back? I ____ my hair.", a: "am doing", kor: "나중에 전화해도 돼? 나 머리 하고 있어.", desc: "지금 진행 중이라 전화를 못 받는 상황입니다." },
-                    { t: "미래진행", q: "Tomorrow is Sunday, so I ____ nothing all day.", a: "will be doing", kor: "내일은 일요일이라 하루 종일 아무것도 안 하고 있을 거야.", desc: "미래의 계획된 상태/진행입니다." },
-                    { t: "과거완료", q: "He realized he ____ a mistake.", a: "had done", kor: "그는 자신이 실수를 저질렀다는 걸 깨달았다.", desc: "깨달은 시점(과거)보다 이전에 저지른 실수(대과거)입니다." },
-                    { t: "현재완료", q: "It's perfect! You ____ a great job.", a: "have done", kor: "완벽해! 아주 잘했어.", desc: "과거의 행동이 현재의 결과(완벽함)로 이어졌습니다." },
-                    { t: "미래완료", q: "By the time the deadline comes, we ____ everything.", a: "will have done", kor: "마감 때쯤이면 우리는 모든 걸 끝냈을 거야.", desc: "미래의 기준 시점에 완료될 일입니다." },
-                    { t: "과거완료진행", q: "He was exhausted because he ____ heavy lifting all day.", a: "had been doing", kor: "하루 종일 무거운 걸 들어서 그는 지쳐 있었다.", desc: "과거의 상태(지침)의 원인이 되는 지속된 동작입니다." },
-                    { t: "현재완료진행", q: "Your hands are dirty. What ____ you ____?", a: "have been doing", kor: "손이 더럽네. 뭐 하고 있었어?", desc: "방금 전까지 계속하던 행동이 현재(더러운 손)에 영향을 줍니다." },
-                    { t: "미래완료진행", q: "In June, I ____ this research for 2 years.", a: "will have been doing", kor: "6월이면 이 연구를 한 지 2년이 된다.", desc: "미래 시점에 기간이 채워지는 지속성입니다." }
+                    { t: "과거", q: "I asked him to fix it, and he ____ it.", a: "did", hint: "I asked", kor: "고쳐달라고 부탁했고, 그는 그걸 해냈다.", desc: "부탁한 후(과거)에 실행한 과거의 동작입니다." },
+                    { t: "현재", q: "My father is a doctor. He ____ his best for patients.", a: "does", hint: "is a doctor", kor: "아버지는 의사시다. 환자를 위해 최선을 다하신다.", desc: "직업적 의무나 일상적인 태도(현재형)입니다." },
+                    { t: "미래", q: "If you fail, don't worry. You ____ better next time.", a: "will do", hint: "next time", kor: "실패해도 걱정 마. 다음엔 더 잘할 거야.", desc: "미래에 대한 격려와 예측입니다." },
+                    { t: "과거진행", q: "The room was messy because the kids ____ art projects.", a: "were doing", hint: "was messy", kor: "아이들이 미술 숙제를 하고 있었기 때문에 방이 지저분했다.", desc: "과거의 상황(지저분함)을 설명하는 진행 중인 동작입니다." },
+                    { t: "현재진행", q: "Can I call you back? I ____ my hair.", a: "am doing", hint: "Can I call you back?", kor: "나중에 전화해도 돼? 나 머리 하고 있어.", desc: "지금 진행 중이라 전화를 못 받는 상황입니다." },
+                    { t: "미래진행", q: "Tomorrow is Sunday, so I ____ nothing all day.", a: "will be doing", hint: "Tomorrow", kor: "내일은 일요일이라 하루 종일 아무것도 안 하고 있을 거야.", desc: "미래의 계획된 상태/진행입니다." },
+                    { t: "과거완료", q: "He realized he ____ a mistake.", a: "had done", hint: "realized", kor: "그는 자신이 실수를 저질렀다는 걸 깨달았다.", desc: "깨달은 시점(과거)보다 이전에 저지른 실수(대과거)입니다." },
+                    { t: "현재완료", q: "It's perfect! You ____ a great job.", a: "have done", hint: "It's perfect!", kor: "완벽해! 아주 잘했어.", desc: "과거의 행동이 현재의 결과(완벽함)로 이어졌습니다." },
+                    { t: "미래완료", q: "By the time the deadline comes, we ____ everything.", a: "will have done", hint: "By the time", kor: "마감 때쯤이면 우리는 모든 걸 끝냈을 거야.", desc: "미래의 기준 시점에 완료될 일입니다." },
+                    { t: "과거완료진행", q: "He was exhausted because he ____ heavy lifting all day.", a: "had been doing", hint: "was exhausted", kor: "하루 종일 무거운 걸 들어서 그는 지쳐 있었다.", desc: "과거의 상태(지침)의 원인이 되는 지속된 동작입니다." },
+                    { t: "현재완료진행", q: "Your hands are dirty. What ____ you ____?", a: "have been doing", hint: "Your hands are dirty", kor: "손이 더럽네. 뭐 하고 있었어?", desc: "방금 전까지 계속하던 행동이 현재(더러운 손)에 영향을 줍니다." },
+                    { t: "미래완료진행", q: "In June, I ____ this research for 2 years.", a: "will have been doing", hint: "In June", kor: "6월이면 이 연구를 한 지 2년이 된다.", desc: "미래 시점에 기간이 채워지는 지속성입니다." }
                 ]
             },
             { 
@@ -781,34 +917,34 @@
                 forms: ["bring", "brought", "bringing", "brings"], 
                 wrongForms: ["bringed", "brang", "broughten"], 
                 monster: "Bat", 
-                dialogues: ["이걸 가져가라!", "반짝이는 건 다 내 거야!", "어둠을 불러오지."],
+                dialogues: ["Take this!", "Shiny things are all mine!", "I bring the darkness."],
                 questions: [
-                    { t: "과거", q: "He ____ a gift yesterday.", a: "brought", kor: "그는 어제 선물을 가져왔다.", desc: "어제 일어난 일이므로 과거형입니다." },
-                    { t: "현재", q: "He always ____ his laptop to class.", a: "brings", kor: "그는 수업에 항상 노트북을 가져온다.", desc: "항상 하는 행동(빈도부사 always)은 현재형입니다." },
-                    { t: "미래", q: "He will ____ some friends later.", a: "bring", kor: "그는 나중에 친구들을 데려올 것이다.", desc: "미래의 계획입니다." },
-                    { t: "과거진행", q: "He was ____ the cake when he slipped.", a: "bringing", kor: "케이크를 가져오다가 그는 미끄러졌다.", desc: "과거에 미끄러졌을 때 하고 있던 행동입니다." },
-                    { t: "현재진행", q: "He is ____ the car around now.", a: "bringing", kor: "그는 지금 차를 이쪽으로 가져오고 있다.", desc: "지금 하고 있는 행동입니다." },
-                    { t: "미래진행", q: "He will be ____ the documents tomorrow morning.", a: "bringing", kor: "내일 아침에 그는 서류를 가져오는 중일 것이다.", desc: "미래의 특정 시간에 진행될 일입니다." },
-                    { t: "과거완료", q: "He had ____ enough water before the hike started.", a: "brought", kor: "하이킹 시작 전에 그는 물을 충분히 챙겨왔었다.", desc: "과거(시작 전)보다 이전에 완료된 일입니다." },
-                    { t: "현재완료", q: "He has ____ bad news just now.", a: "brought", kor: "그는 방금 나쁜 소식을 가져왔다.", desc: "방금 완료된 일입니다." },
-                    { t: "미래완료", q: "He will have ____ it back by 6 PM.", a: "brought", kor: "오후 6시까지는 그것을 다시 가져다 놓을 것이다.", desc: "미래 시점까지 완료될 일입니다." },
-                    { t: "과거완료진행", q: "He had been ____ lunch every day until the cafeteria opened.", a: "bringing", kor: "식당이 열리기 전까지 그는 매일 점심을 싸오고 있었다.", desc: "과거 시점까지 계속된 행동입니다." },
-                    { t: "현재완료진행", q: "He has been ____ joy to us since he arrived.", a: "bringing", kor: "그가 도착한 이후로 우리에게 기쁨을 주고 있다.", desc: "과거부터 지금까지 계속되는 영향입니다." },
-                    { t: "미래완료진행", q: "By next month, he will have been ____ his dog here for a year.", a: "bringing", kor: "다음 달이면 그가 개를 데려온 지 1년이 된다.", desc: "미래 시점에 기간이 달성됩니다." }
+                    { t: "과거", q: "He ____ a gift yesterday.", a: "brought", hint: "yesterday", kor: "그는 어제 선물을 가져왔다.", desc: "어제 일어난 일이므로 과거형입니다." },
+                    { t: "현재", q: "He always ____ his laptop to class.", a: "brings", hint: "always", kor: "그는 수업에 항상 노트북을 가져온다.", desc: "항상 하는 행동(빈도부사 always)은 현재형입니다." },
+                    { t: "미래", q: "He will ____ some friends later.", a: "bring", hint: "will|later", kor: "그는 나중에 친구들을 데려올 것이다.", desc: "미래의 계획입니다." },
+                    { t: "과거진행", q: "He was ____ the cake when he slipped.", a: "bringing", hint: "was|when he slipped", kor: "케이크를 가져오다가 그는 미끄러졌다.", desc: "과거에 미끄러졌을 때 하고 있던 행동입니다." },
+                    { t: "현재진행", q: "He is ____ the car around now.", a: "bringing", hint: "is|now", kor: "그는 지금 차를 이쪽으로 가져오고 있다.", desc: "지금 하고 있는 행동입니다." },
+                    { t: "미래진행", q: "He will be ____ the documents tomorrow morning.", a: "bringing", hint: "will be|tomorrow", kor: "내일 아침에 그는 서류를 가져오는 중일 것이다.", desc: "미래의 특정 시간에 진행될 일입니다." },
+                    { t: "과거완료", q: "He had ____ enough water before the hike started.", a: "brought", hint: "had|before", kor: "하이킹 시작 전에 그는 물을 충분히 챙겨왔었다.", desc: "과거(시작 전)보다 이전에 완료된 일입니다." },
+                    { t: "현재완료", q: "He has ____ bad news just now.", a: "brought", hint: "has|just now", kor: "그는 방금 나쁜 소식을 가져왔다.", desc: "방금 완료된 일입니다." },
+                    { t: "미래완료", q: "He will have ____ it back by 6 PM.", a: "brought", hint: "will have|by 6 PM", kor: "오후 6시까지는 그것을 다시 가져다 놓을 것이다.", desc: "미래 시점까지 완료될 일입니다." },
+                    { t: "과거완료진행", q: "He had been ____ lunch every day until the cafeteria opened.", a: "bringing", hint: "had been|until", kor: "식당이 열리기 전까지 그는 매일 점심을 싸오고 있었다.", desc: "과거 시점까지 계속된 행동입니다." },
+                    { t: "현재완료진행", q: "He has been ____ joy to us since he arrived.", a: "bringing", hint: "has been|since", kor: "그가 도착한 이후로 우리에게 기쁨을 주고 있다.", desc: "과거부터 지금까지 계속되는 영향입니다." },
+                    { t: "미래완료진행", q: "By next month, he will have been ____ his dog here for a year.", a: "bringing", hint: "will have been|By next month", kor: "다음 달이면 그가 개를 데려온 지 1년이 된다.", desc: "미래 시점에 기간이 달성됩니다." }
                 ],
                 hardQuestions: [
-                    { t: "과거", q: "I forgot my wallet, but luckily he ____ some cash.", a: "brought", kor: "지갑을 잊었는데 다행히 그가 현금을 좀 가져왔었다.", desc: "과거 시점의 사건입니다." },
-                    { t: "현재", q: "Money doesn't always ____ happiness.", a: "bring", kor: "돈이 항상 행복을 가져다주는 것은 아니다.", desc: "일반적인 진리나 격언은 현재형을 씁니다." },
-                    { t: "미래", q: "Don't worry about food. I ____ some.", a: "will bring", kor: "음식 걱정 마. 내가 좀 가져갈게.", desc: "미래의 의지입니다." },
-                    { t: "과거진행", q: "The dog ____ the newspaper when it started raining.", a: "was bringing", kor: "비가 오기 시작했을 때 개가 신문을 가져오고 있었다.", desc: "과거의 사건 발생 시 진행 중이던 동작입니다." },
-                    { t: "현재진행", q: "Look at the clouds. The wind ____ a storm.", a: "is bringing", kor: "저 구름 좀 봐. 바람이 폭풍을 몰고 오고 있어.", desc: "현재 진행 중인 날씨 변화입니다." },
-                    { t: "미래진행", q: "Our guests ____ gifts, so prepare a table.", a: "will be bringing", kor: "손님들이 선물을 가져오실 테니 테이블을 준비해 둬.", desc: "미래에 일어날 것이 확실한 진행 상황입니다." },
-                    { t: "과거완료", q: "The party was dull because no one ____ any music.", a: "had brought", kor: "아무도 음악을 안 가져와서 파티가 지루했다.", desc: "지루했던 과거보다 이전에 음악을 안 가져온(대과거) 상황입니다." },
-                    { t: "현재완료", q: "Look! The postman ____ a package for you.", a: "has brought", kor: "봐! 우체부가 네 소포를 가져왔어.", desc: "과거의 배달이 현재의 결과(소포 도착)로 이어집니다." },
-                    { t: "미래완료", q: "By the time you wake up, Santa ____ presents.", a: "will have brought", kor: "네가 일어날 때쯤이면 산타가 선물을 가져다 뒀을 거야.", desc: "미래 시점에 완료될 일입니다." },
-                    { t: "과거완료진행", q: "She ____ coffee to the team until the machine was fixed.", a: "had been bringing", kor: "커피 머신이 고쳐질 때까지 그녀가 팀에 커피를 타다 나르고 있었다.", desc: "과거 시점까지 반복적으로 지속된 행동입니다." },
-                    { t: "현재완료진행", q: "This strategy ____ us success for years.", a: "has been bringing", kor: "이 전략은 수년간 우리에게 성공을 가져다주고 있다.", desc: "과거부터 지금까지 계속 효과가 있는 상태입니다." },
-                    { t: "미래완료진행", q: "By 2030, this tech ____ changes for a decade.", a: "will have been bringing", kor: "2030년이면 이 기술이 변화를 가져온 지 10년이 된다.", desc: "미래 시점까지의 지속성을 강조합니다." }
+                    { t: "과거", q: "I forgot my wallet, but luckily he ____ some cash.", a: "brought", hint: "forgot my wallet", kor: "지갑을 잊었는데 다행히 그가 현금을 좀 가져왔었다.", desc: "과거 시점의 사건입니다." },
+                    { t: "현재", q: "Money doesn't always ____ happiness.", a: "bring", hint: "always", kor: "돈이 항상 행복을 가져다주는 것은 아니다.", desc: "일반적인 진리나 격언은 현재형을 씁니다." },
+                    { t: "미래", q: "Don't worry about food. I ____ some.", a: "will bring", hint: "Don't worry", kor: "음식 걱정 마. 내가 좀 가져갈게.", desc: "미래의 의지입니다." },
+                    { t: "과거진행", q: "The dog ____ the newspaper when it started raining.", a: "was bringing", hint: "when it started raining", kor: "비가 오기 시작했을 때 개가 신문을 가져오고 있었다.", desc: "과거의 사건 발생 시 진행 중이던 동작입니다." },
+                    { t: "현재진행", q: "Look at the clouds. The wind ____ a storm.", a: "is bringing", hint: "Look at the clouds", kor: "저 구름 좀 봐. 바람이 폭풍을 몰고 오고 있어.", desc: "현재 진행 중인 날씨 변화입니다." },
+                    { t: "미래진행", q: "Our guests ____ gifts, so prepare a table.", a: "will be bringing", hint: "prepare a table", kor: "손님들이 선물을 가져오실 테니 테이블을 준비해 둬.", desc: "미래에 일어날 것이 확실한 진행 상황입니다." },
+                    { t: "과거완료", q: "The party was dull because no one ____ any music.", a: "had brought", hint: "was dull", kor: "아무도 음악을 안 가져와서 파티가 지루했다.", desc: "지루했던 과거보다 이전에 음악을 안 가져온(대과거) 상황입니다." },
+                    { t: "현재완료", q: "Look! The postman ____ a package for you.", a: "has brought", hint: "Look!", kor: "봐! 우체부가 네 소포를 가져왔어.", desc: "과거의 배달이 현재의 결과(소포 도착)로 이어집니다." },
+                    { t: "미래완료", q: "By the time you wake up, Santa ____ presents.", a: "will have brought", hint: "By the time you wake up", kor: "네가 일어날 때쯤이면 산타가 선물을 가져다 뒀을 거야.", desc: "미래 시점에 완료될 일입니다." },
+                    { t: "과거완료진행", q: "She ____ coffee to the team until the machine was fixed.", a: "had been bringing", hint: "until the machine was fixed", kor: "커피 머신이 고쳐질 때까지 그녀가 팀에 커피를 타다 나르고 있었다.", desc: "과거 시점까지 반복적으로 지속된 행동입니다." },
+                    { t: "현재완료진행", q: "This strategy ____ us success for years.", a: "has been bringing", hint: "for years", kor: "이 전략은 수년간 우리에게 성공을 가져다주고 있다.", desc: "과거부터 지금까지 계속 효과가 있는 상태입니다." },
+                    { t: "미래완료진행", q: "By 2030, this tech ____ changes for a decade.", a: "will have been bringing", hint: "By 2030", kor: "2030년이면 이 기술이 변화를 가져온 지 10년이 된다.", desc: "미래 시점까지의 지속성을 강조합니다." }
                 ]
             },
             { 
@@ -816,34 +952,34 @@
                 forms: ["feel", "felt", "feeling", "feels"], 
                 wrongForms: ["feeled", "feelen", "felt"], 
                 monster: "Ghost", 
-                dialogues: ["한기가 느껴지느냐...", "공포에 떨어라!", "영혼을 얼려주마!"],
+                dialogues: ["Do you feel the chill...", "I can feel your fear.", "Feel my cold touch."],
                 questions: [
-                    { t: "과거", q: "I ____ sick last night.", a: "felt", kor: "나는 어젯밤에 아팠다(아픔을 느꼈다).", desc: "지난밤의 상태입니다." },
-                    { t: "현재", q: "I ____ great today.", a: "feel", kor: "나는 오늘 기분이 좋다.", desc: "현재의 상태입니다." },
-                    { t: "미래", q: "You will ____ better soon.", a: "feel", kor: "너는 곧 나아질 것이다.", desc: "미래의 추측입니다." },
-                    { t: "과거진행", q: "I was ____ dizzy while standing up.", a: "feeling", kor: "일어서는 동안 나는 어지러움을 느끼고 있었다.", desc: "과거에 일어나는 동안의 상태 변화입니다." },
-                    { t: "현재진행", q: "I am ____ a bit cold now.", a: "feeling", kor: "나는 지금 약간 춥게 느껴진다.", desc: "지금 느끼고 있는 감각입니다." },
-                    { t: "미래진행", q: "You will be ____ the effects in a few minutes.", a: "feeling", kor: "몇 분 뒤면 효과가 느껴질 것이다.", desc: "미래에 진행될 상태입니다." },
-                    { t: "과거완료", q: "I had ____ lonely until I met you.", a: "felt", kor: "너를 만나기 전까지 나는 외로움을 느꼈었다.", desc: "과거(만남) 이전의 지속된 감정입니다." },
-                    { t: "현재완료", q: "I have ____ this way before.", a: "felt", kor: "전에도 이런 기분을 느낀 적이 있다.", desc: "과거의 경험입니다." },
-                    { t: "미래완료", q: "The pain will have ____ like a dream by tomorrow.", a: "felt", kor: "내일이면 그 고통이 꿈처럼 느껴질 것이다.", desc: "미래 시점에서의 완료된 느낌입니다." },
-                    { t: "과거완료진행", q: "I had been ____ tired all week before the vacation.", a: "feeling", kor: "휴가 전까지 나는 일주일 내내 피곤함을 느끼고 있었다.", desc: "과거 시점까지 계속된 상태입니다." },
-                    { t: "현재완료진행", q: "I have been ____ anxious lately.", a: "feeling", kor: "나는 최근 들어 계속 불안함을 느끼고 있다.", desc: "최근부터 지금까지 계속되는 감정입니다." },
-                    { t: "미래완료진행", q: "By tonight, I will have been ____ sick for 24 hours.", a: "feeling", kor: "오늘 밤이면 24시간째 아픈 셈이 된다.", desc: "미래 시점까지 상태가 지속됨을 나타냅니다." }
+                    { t: "과거", q: "I ____ sick last night.", a: "felt", hint: "last night", kor: "나는 어젯밤에 아팠다(아픔을 느꼈다).", desc: "지난밤의 상태입니다." },
+                    { t: "현재", q: "I ____ great today.", a: "feel", hint: "today", kor: "나는 오늘 기분이 좋다.", desc: "현재의 상태입니다." },
+                    { t: "미래", q: "You will ____ better soon.", a: "feel", hint: "will|soon", kor: "너는 곧 나아질 것이다.", desc: "미래의 추측입니다." },
+                    { t: "과거진행", q: "I was ____ dizzy while standing up.", a: "feeling", hint: "was|while standing up", kor: "일어서는 동안 나는 어지러움을 느끼고 있었다.", desc: "과거에 일어나는 동안의 상태 변화입니다." },
+                    { t: "현재진행", q: "I am ____ a bit cold now.", a: "feeling", hint: "am|now", kor: "나는 지금 약간 춥게 느껴진다.", desc: "지금 느끼고 있는 감각입니다." },
+                    { t: "미래진행", q: "You will be ____ the effects in a few minutes.", a: "feeling", hint: "will be|in a few minutes", kor: "몇 분 뒤면 효과가 느껴질 것이다.", desc: "미래에 진행될 상태입니다." },
+                    { t: "과거완료", q: "I had ____ lonely until I met you.", a: "felt", hint: "had|until", kor: "너를 만나기 전까지 나는 외로움을 느꼈었다.", desc: "과거(만남) 이전의 지속된 감정입니다." },
+                    { t: "현재완료", q: "I have ____ this way before.", a: "felt", hint: "have|before", kor: "전에도 이런 기분을 느낀 적이 있다.", desc: "과거의 경험입니다." },
+                    { t: "미래완료", q: "The pain will have ____ like a dream by tomorrow.", a: "felt", hint: "will have|by tomorrow", kor: "내일이면 그 고통이 꿈처럼 느껴질 것이다.", desc: "미래 시점에서의 완료된 느낌입니다." },
+                    { t: "과거완료진행", q: "I had been ____ tired all week before the vacation.", a: "feeling", hint: "had been|all week", kor: "휴가 전까지 나는 일주일 내내 피곤함을 느끼고 있었다.", desc: "과거 시점까지 계속된 상태입니다." },
+                    { t: "현재완료진행", q: "I have been ____ anxious lately.", a: "feeling", hint: "have been|lately", kor: "나는 최근 들어 계속 불안함을 느끼고 있다.", desc: "최근부터 지금까지 계속되는 감정입니다." },
+                    { t: "미래완료진행", q: "By tonight, I will have been ____ sick for 24 hours.", a: "feeling", hint: "will have been|By tonight", kor: "오늘 밤이면 24시간째 아픈 셈이 된다.", desc: "미래 시점까지 상태가 지속됨을 나타냅니다." }
                 ],
                 hardQuestions: [
-                    { t: "과거", q: "The earthquake was small. I hardly ____ it.", a: "felt", kor: "지진은 작았다. 나는 거의 느끼지 못했다.", desc: "과거 사건에 대한 감각입니다." },
-                    { t: "현재", q: "This fabric ____ very soft.", a: "feels", kor: "이 천은 촉감이 아주 부드럽다.", desc: "사물의 현재 속성(감각동사)입니다." },
-                    { t: "미래", q: "Take this medicine. You ____ better.", a: "will feel", kor: "이 약 먹어. 더 좋아질 거야.", desc: "결과에 대한 예측입니다." },
-                    { t: "과거진행", q: "He sat down because he ____ weak.", a: "was feeling", kor: "그는 몸에 힘이 없어서 주저앉았다.", desc: "과거의 행동 원인이 된 진행 중인 상태입니다." },
-                    { t: "현재진행", q: "Are you okay? You ____ hot.", a: "are feeling", kor: "괜찮아? 너 열이 나는 것 같아(몸이 뜨겁게 느껴져).", desc: "현재의 일시적인 상태를 강조합니다." },
-                    { t: "미래진행", q: "After the surgery, you ____ some pain.", a: "will be feeling", kor: "수술 후에는 통증을 좀 느끼게 될 겁니다.", desc: "미래에 겪게 될 상태입니다." },
-                    { t: "과거완료", q: "She realized she ____ that way for a long time.", a: "had felt", kor: "그녀는 자신이 오랫동안 그렇게 느껴왔음을 깨달았다.", desc: "깨달음(과거)보다 이전부터 지속된 감정입니다." },
-                    { t: "현재완료", q: "I ____ never ____ so insulted!", a: "have felt", kor: "이런 모욕감은 처음이야!", desc: "지금까지의 경험 중 처음임을 강조합니다." },
-                    { t: "미래완료", q: "By next week, I ____ at home in this city.", a: "will have felt", kor: "다음 주면 이 도시가 집처럼 편안하게 느껴질 것이다.", desc: "미래 시점에 완료될 적응(느낌)입니다." },
-                    { t: "과거완료진행", q: "He quit because he ____ unappreciated.", a: "had been feeling", kor: "그는 인정받지 못한다고 느껴서 그만뒀다.", desc: "그만둔 시점(과거)까지 계속된 감정입니다." },
-                    { t: "현재완료진행", q: "I ____ guilty about lying to her.", a: "have been feeling", kor: "그녀에게 거짓말한 것 때문에 계속 죄책감을 느끼고 있다.", desc: "과거부터 지금까지 마음이 불편한 상태입니다." },
-                    { t: "미래완료진행", q: "In an hour, I ____ cold for a whole day.", a: "will have been feeling", kor: "1시간 뒤면 꼬박 하루 종일 추위에 떤 셈이 된다.", desc: "미래 시점까지 감각이 지속됨을 나타냅니다." }
+                    { t: "과거", q: "The earthquake was small. I hardly ____ it.", a: "felt", hint: "hardly", kor: "지진은 작았다. 나는 거의 느끼지 못했다.", desc: "과거 사건에 대한 감각입니다." },
+                    { t: "현재", q: "This fabric ____ very soft.", a: "feels", hint: "This fabric", kor: "이 천은 촉감이 아주 부드럽다.", desc: "사물의 현재 속성(감각동사)입니다." },
+                    { t: "미래", q: "Take this medicine. You ____ better.", a: "will feel", hint: "Take this medicine", kor: "이 약 먹어. 더 좋아질 거야.", desc: "결과에 대한 예측입니다." },
+                    { t: "과거진행", q: "He sat down because he ____ weak.", a: "was feeling", hint: "sat down", kor: "그는 몸에 힘이 없어서 주저앉았다.", desc: "과거의 행동 원인이 된 진행 중인 상태입니다." },
+                    { t: "현재진행", q: "Are you okay? You ____ hot.", a: "are feeling", hint: "Are you okay?", kor: "괜찮아? 너 열이 나는 것 같아(몸이 뜨겁게 느껴져).", desc: "현재의 일시적인 상태를 강조합니다." },
+                    { t: "미래진행", q: "After the surgery, you ____ some pain.", a: "will be feeling", hint: "After the surgery", kor: "수술 후에는 통증을 좀 느끼게 될 겁니다.", desc: "미래에 겪게 될 상태입니다." },
+                    { t: "과거완료", q: "She realized she ____ that way for a long time.", a: "had felt", hint: "realized", kor: "그녀는 자신이 오랫동안 그렇게 느껴왔음을 깨달았다.", desc: "깨달음(과거)보다 이전부터 지속된 감정입니다." },
+                    { t: "현재완료", q: "I ____ never ____ so insulted!", a: "have felt", hint: "never", kor: "이런 모욕감은 처음이야!", desc: "지금까지의 경험 중 처음임을 강조합니다." },
+                    { t: "미래완료", q: "By next week, I ____ at home in this city.", a: "will have felt", hint: "By next week", kor: "다음 주면 이 도시가 집처럼 편안하게 느껴질 것이다.", desc: "미래 시점에 완료될 적응(느낌)입니다." },
+                    { t: "과거완료진행", q: "He quit because he ____ unappreciated.", a: "had been feeling", hint: "quit", kor: "그는 인정받지 못한다고 느껴서 그만뒀다.", desc: "그만둔 시점(과거)까지 계속된 감정입니다." },
+                    { t: "현재완료진행", q: "I ____ guilty about lying to her.", a: "have been feeling", hint: "lying to her", kor: "그녀에게 거짓말한 것 때문에 계속 죄책감을 느끼고 있다.", desc: "과거부터 지금까지 마음이 불편한 상태입니다." },
+                    { t: "미래완료진행", q: "In an hour, I ____ cold for a whole day.", a: "will have been feeling", hint: "In an hour", kor: "1시간 뒤면 꼬박 하루 종일 추위에 떤 셈이 된다.", desc: "미래 시점까지 감각이 지속됨을 나타냅니다." }
                 ]
             },
             { 
@@ -851,34 +987,34 @@
                 forms: ["get", "got", "gotten", "getting", "gets"], 
                 wrongForms: ["getted", "goted", "gotten"], 
                 monster: "Thief", 
-                dialogues: ["가진 걸 다 내놔.", "운이 좋군...", "네 목숨을 훔치겠다!"],
+                dialogues: ["I'll get your life!", "Got an opening!", "Got you now!"],
                 questions: [
-                    { t: "과거", q: "We ____ home late last night.", a: "got", kor: "우리는 어젯밤 늦게 집에 도착했다.", desc: "과거의 사건입니다." },
-                    { t: "현재", q: "He ____ angry easily.", a: "gets", kor: "그는 쉽게 화를 낸다.", desc: "그의 성격(일반적 사실)입니다." },
-                    { t: "미래", q: "I will ____ a promotion next year.", a: "get", kor: "나는 내년에 승진할 것이다.", desc: "미래의 일입니다." },
-                    { t: "과거진행", q: "It was ____ dark when we left.", a: "getting", kor: "우리가 떠날 때 어두워지고 있었다.", desc: "과거에 진행 중이던 변화입니다." },
-                    { t: "현재진행", q: "It is ____ colder now.", a: "getting", kor: "지금 점점 추워지고 있다.", desc: "현재 진행 중인 변화입니다." },
-                    { t: "미래진행", q: "We will be ____ on the train at 5 PM.", a: "getting", kor: "5시에 우리는 기차를 타고 있을 것이다.", desc: "미래의 특정 시점에 진행될 동작입니다." },
-                    { t: "과거완료", q: "She had ____ married before she moved.", a: "got", kor: "이사가기 전에 그녀는 결혼했었다.", desc: "과거(이사)보다 이전에 완료된 일입니다. (gotten도 가능하지만 got도 쓰입니다)" },
-                    { t: "현재완료", q: "He has ____ a new job recently.", a: "got", kor: "그는 최근에 새 직장을 얻었다.", desc: "최근에 완료된 일입니다." },
-                    { t: "미래완료", q: "You will have ____ used to it by then.", a: "got", kor: "그때쯤이면 너는 익숙해져 있을 것이다.", desc: "미래에 완료될 상태입니다." },
-                    { t: "과거완료진행", q: "We had been ____ many complaints before the fix.", a: "getting", kor: "수정 전까지 우리는 많은 불만을 받고 있었다.", desc: "과거 시점까지 계속된 일입니다." },
-                    { t: "현재완료진행", q: "I have been ____ up early these days.", a: "getting", kor: "나는 요즘 계속 일찍 일어나고 있다.", desc: "요즘 반복되고 있는 습관입니다." },
-                    { t: "미래완료진행", q: "By December, we will have been ____ letters for a year.", a: "getting", kor: "12월이면 1년째 편지를 받고 있는 셈이다.", desc: "미래 시점까지의 지속을 나타냅니다." }
+                    { t: "과거", q: "We ____ home late last night.", a: "got", hint: "last night", kor: "우리는 어젯밤 늦게 집에 도착했다.", desc: "과거의 사건입니다." },
+                    { t: "현재", q: "He ____ angry easily.", a: "gets", hint: "easily", kor: "그는 쉽게 화를 낸다.", desc: "그의 성격(일반적 사실)입니다." },
+                    { t: "미래", q: "I will ____ a promotion next year.", a: "get", hint: "will|next year", kor: "나는 내년에 승진할 것이다.", desc: "미래의 일입니다." },
+                    { t: "과거진행", q: "It was ____ dark when we left.", a: "getting", hint: "was|when we left", kor: "우리가 떠날 때 어두워지고 있었다.", desc: "과거에 진행 중이던 변화입니다." },
+                    { t: "현재진행", q: "It is ____ colder now.", a: "getting", hint: "is|now", kor: "지금 점점 추워지고 있다.", desc: "현재 진행 중인 변화입니다." },
+                    { t: "미래진행", q: "We will be ____ on the train at 5 PM.", a: "getting", hint: "will be|at 5 PM", kor: "5시에 우리는 기차를 타고 있을 것이다.", desc: "미래의 특정 시점에 진행될 동작입니다." },
+                    { t: "과거완료", q: "She had ____ married before she moved.", a: "got", hint: "had|before", kor: "이사가기 전에 그녀는 결혼했었다.", desc: "과거(이사)보다 이전에 완료된 일입니다. (gotten도 가능하지만 got도 쓰입니다)" },
+                    { t: "현재완료", q: "He has ____ a new job recently.", a: "got", hint: "has|recently", kor: "그는 최근에 새 직장을 얻었다.", desc: "최근에 완료된 일입니다." },
+                    { t: "미래완료", q: "You will have ____ used to it by then.", a: "got", hint: "will have|by then", kor: "그때쯤이면 너는 익숙해져 있을 것이다.", desc: "미래에 완료될 상태입니다." },
+                    { t: "과거완료진행", q: "We had been ____ many complaints before the fix.", a: "getting", hint: "had been|before", kor: "수정 전까지 우리는 많은 불만을 받고 있었다.", desc: "과거 시점까지 계속된 일입니다." },
+                    { t: "현재완료진행", q: "I have been ____ up early these days.", a: "getting", hint: "have been|these days", kor: "나는 요즘 계속 일찍 일어나고 있다.", desc: "요즘 반복되고 있는 습관입니다." },
+                    { t: "미래완료진행", q: "By December, we will have been ____ letters for a year.", a: "getting", hint: "will have been|By December", kor: "12월이면 1년째 편지를 받고 있는 셈이다.", desc: "미래 시점까지의 지속을 나타냅니다." }
                 ],
                 hardQuestions: [
-                    { t: "과거", q: "I called him, but I ____ no answer.", a: "got", kor: "전화했지만 답을 받지 못했다.", desc: "과거의 결과입니다." },
-                    { t: "현재", q: "How much ____ he ____ paid?", a: "does get", kor: "그는 급여를 얼마나 받아?", desc: "현재의 일반적 사실(Does he get)입니다. (보기에 get이 없으면 gets로 유추)" },
-                    { t: "미래", q: "Work hard, and you ____ there.", a: "will get", kor: "열심히 해, 그럼 목표를 이룰 거야.", desc: "조건에 따른 미래의 결과입니다." },
-                    { t: "과거진행", q: "The noise ____ louder, so I left.", a: "was getting", kor: "소음이 점점 커지고 있어서 나는 자리를 떴다.", desc: "과거의 상태 변화 진행입니다." },
-                    { t: "현재진행", q: "Hurry up! It ____ late.", a: "is getting", kor: "서둘러! 늦어지고 있어.", desc: "현재 진행 중인 상태 변화입니다." },
-                    { t: "미래진행", q: "Don't touch that. It ____ hot soon.", a: "will be getting", kor: "만지지 마. 곧 뜨거워질 거야.", desc: "미래에 진행될 변화입니다." },
-                    { t: "과거완료", q: "By the time police arrived, the thief ____ away.", a: "had got", kor: "경찰이 도착했을 때 도둑은 이미 도망친 뒤였다.", desc: "도착(과거) 이전에 완료된 도주입니다." },
-                    { t: "현재완료", q: "I ____ just ____ a brilliant idea.", a: "have got", kor: "방금 기막힌 아이디어가 떠올랐어.", desc: "방금 생긴 결과(생각)입니다." },
-                    { t: "미래완료", q: "By Friday, I ____ my visa.", a: "will have got", kor: "금요일이면 비자를 받았을 것이다.", desc: "미래 시점의 완료 예측입니다." },
-                    { t: "과거완료진행", q: "He ____ into trouble until he changed schools.", a: "had been getting", kor: "전학 가기 전까지 그는 계속 문제를 일으키고 있었다.", desc: "과거 시점까지 반복된 사건입니다." },
-                    { t: "현재완료진행", q: "We ____ too much rain this month.", a: "have been getting", kor: "이번 달에 비가 너무 많이 오고 있다.", desc: "이번 달 내내 지속되는 날씨입니다." },
-                    { t: "미래완료진행", q: "Next year, I ____ this magazine for 10 years.", a: "will have been getting", kor: "내년이면 이 잡지를 구독한 지 10년이 된다.", desc: "미래 시점까지의 지속 기간입니다." }
+                    { t: "과거", q: "I called him, but I ____ no answer.", a: "got", hint: "I called him", kor: "전화했지만 답을 받지 못했다.", desc: "과거의 결과입니다." },
+                    { t: "현재", q: "How much ____ he ____ paid?", a: "does get", hint: "How much", kor: "그는 급여를 얼마나 받아?", desc: "현재의 일반적 사실(Does he get)입니다. (보기에 get이 없으면 gets로 유추)" },
+                    { t: "미래", q: "Work hard, and you ____ there.", a: "will get", hint: "Work hard", kor: "열심히 해, 그럼 목표를 이룰 거야.", desc: "조건에 따른 미래의 결과입니다." },
+                    { t: "과거진행", q: "The noise ____ louder, so I left.", a: "was getting", hint: "so I left", kor: "소음이 점점 커지고 있어서 나는 자리를 떴다.", desc: "과거의 상태 변화 진행입니다." },
+                    { t: "현재진행", q: "Hurry up! It ____ late.", a: "is getting", hint: "Hurry up!", kor: "서둘러! 늦어지고 있어.", desc: "현재 진행 중인 상태 변화입니다." },
+                    { t: "미래진행", q: "Don't touch that. It ____ hot soon.", a: "will be getting", hint: "soon", kor: "만지지 마. 곧 뜨거워질 거야.", desc: "미래에 진행될 변화입니다." },
+                    { t: "과거완료", q: "By the time police arrived, the thief ____ away.", a: "had got", hint: "By the time police arrived", kor: "경찰이 도착했을 때 도둑은 이미 도망친 뒤였다.", desc: "도착(과거) 이전에 완료된 도주입니다." },
+                    { t: "현재완료", q: "I ____ just ____ a brilliant idea.", a: "have got", hint: "just", kor: "방금 기막힌 아이디어가 떠올랐어.", desc: "방금 생긴 결과(생각)입니다." },
+                    { t: "미래완료", q: "By Friday, I ____ my visa.", a: "will have got", hint: "By Friday", kor: "금요일이면 비자를 받았을 것이다.", desc: "미래 시점의 완료 예측입니다." },
+                    { t: "과거완료진행", q: "He ____ into trouble until he changed schools.", a: "had been getting", hint: "until he changed schools", kor: "전학 가기 전까지 그는 계속 문제를 일으키고 있었다.", desc: "과거 시점까지 반복된 사건입니다." },
+                    { t: "현재완료진행", q: "We ____ too much rain this month.", a: "have been getting", hint: "this month", kor: "이번 달에 비가 너무 많이 오고 있다.", desc: "이번 달 내내 지속되는 날씨입니다." },
+                    { t: "미래완료진행", q: "Next year, I ____ this magazine for 10 years.", a: "will have been getting", hint: "Next year", kor: "내년이면 이 잡지를 구독한 지 10년이 된다.", desc: "미래 시점까지의 지속 기간입니다." }
                 ]
             },
             { 
@@ -886,104 +1022,34 @@
                 forms: ["say", "said", "saying", "says"], 
                 wrongForms: ["sayed", "sayd", "saiden"], 
                 monster: "Parrot", 
-                dialogues: ["따라해봐 깍!", "목소리가 작다!", "비명이나 질러라!!"],
+                dialogues: ["Shut up! Be quiet!", "Repeat after me!", "Any last words?"],
                 questions: [
-                    { t: "과거", q: "She ____ 'No' yesterday.", a: "said", kor: "그녀는 어제 아니라고 말했다.", desc: "과거의 발언입니다." },
-                    { t: "현재", q: "The sign ____ 'Stop'.", a: "says", kor: "표지판에 정지라고 쓰여 있다.", desc: "사물의 상태나 쓰여진 내용은 현재형을 씁니다." },
-                    { t: "미래", q: "He will ____ sorry later.", a: "say", kor: "그는 나중에 사과할 것이다.", desc: "미래의 행동입니다." },
-                    { t: "과거진행", q: "He was ____ something when I interrupted.", a: "saying", kor: "내가 끼어들었을 때 그는 무언가 말하던 중이었다.", desc: "과거에 진행 중이던 말입니다." },
-                    { t: "현재진행", q: "Everyone is ____ good things about you.", a: "saying", kor: "모두가 너에 대해 칭찬하고 있다.", desc: "요즘 사람들이 하고 있는 말입니다." },
-                    { t: "미래진행", q: "They will be ____ their vows at noon.", a: "saying", kor: "정오에 그들은 서약을 낭독하고 있을 것이다.", desc: "미래에 진행될 행사입니다." },
-                    { t: "과거완료", q: "He had ____ goodbye before he left.", a: "said", kor: "떠나기 전에 그는 작별 인사를 했었다.", desc: "과거(떠남)보다 이전에 한 행동입니다." },
-                    { t: "현재완료", q: "She has ____ nothing so far.", a: "said", kor: "그녀는 지금까지 아무 말도 안 했다.", desc: "지금까지의 상태(결과)입니다." },
-                    { t: "미래완료", q: "By tomorrow, the news will have ____ it all.", a: "said", kor: "내일이면 뉴스에서 다 말해버렸을 것이다.", desc: "미래에 완료될 일입니다." },
-                    { t: "과거완료진행", q: "She had been ____ that for years before it happened.", a: "saying", kor: "그 일이 일어나기 전까지 그녀는 수년간 그렇게 말해오고 있었다.", desc: "과거 시점까지 반복된 말입니다." },
-                    { t: "현재완료진행", q: "They have been ____ the same thing all day.", a: "saying", kor: "그들은 하루 종일 똑같은 말만 하고 있다.", desc: "지금까지 계속 반복되는 말입니다." },
-                    { t: "미래완료진행", q: "By the end of speech, he will have been ____ thanks for 10 minutes.", a: "saying", kor: "연설이 끝날 때쯤이면 그는 10분째 감사 인사를 하는 셈일 것이다.", desc: "미래 시점까지 지속될 행동입니다." }
+                    { t: "과거", q: "She ____ 'No' yesterday.", a: "said", hint: "yesterday", kor: "그녀는 어제 아니라고 말했다.", desc: "과거의 발언입니다." },
+                    { t: "현재", q: "The sign ____ 'Stop'.", a: "says", hint: "The sign", kor: "표지판에 정지라고 쓰여 있다.", desc: "사물의 상태나 쓰여진 내용은 현재형을 씁니다." },
+                    { t: "미래", q: "He will ____ sorry later.", a: "say", hint: "will|later", kor: "그는 나중에 사과할 것이다.", desc: "미래의 행동입니다." },
+                    { t: "과거진행", q: "He was ____ something when I interrupted.", a: "saying", hint: "was|when I interrupted", kor: "내가 끼어들었을 때 그는 무언가 말하던 중이었다.", desc: "과거에 진행 중이던 말입니다." },
+                    { t: "현재진행", q: "Everyone is ____ good things about you.", a: "saying", hint: "is|Everyone", kor: "모두가 너에 대해 칭찬하고 있다.", desc: "요즘 사람들이 하고 있는 말입니다." },
+                    { t: "미래진행", q: "They will be ____ their vows at noon.", a: "saying", hint: "will be|at noon", kor: "정오에 그들은 서약을 낭독하고 있을 것이다.", desc: "미래에 진행될 행사입니다." },
+                    { t: "과거완료", q: "He had ____ goodbye before he left.", a: "said", hint: "had|before", kor: "떠나기 전에 그는 작별 인사를 했었다.", desc: "과거(떠남)보다 이전에 한 행동입니다." },
+                    { t: "현재완료", q: "She has ____ nothing so far.", a: "said", hint: "has|so far", kor: "그녀는 지금까지 아무 말도 안 했다.", desc: "지금까지의 상태(결과)입니다." },
+                    { t: "미래완료", q: "By tomorrow, the news will have ____ it all.", a: "said", hint: "will have|By tomorrow", kor: "내일이면 뉴스에서 다 말해버렸을 것이다.", desc: "미래에 완료될 일입니다." },
+                    { t: "과거완료진행", q: "She had been ____ that for years before it happened.", a: "saying", hint: "had been|before", kor: "그 일이 일어나기 전까지 그녀는 수년간 그렇게 말해오고 있었다.", desc: "과거 시점까지 반복된 말입니다." },
+                    { t: "현재완료진행", q: "They have been ____ the same thing all day.", a: "saying", hint: "have been|all day", kor: "그들은 하루 종일 똑같은 말만 하고 있다.", desc: "지금까지 계속 반복되는 말입니다." },
+                    { t: "미래완료진행", q: "By the end of speech, he will have been ____ thanks for 10 minutes.", a: "saying", hint: "will have been|By the end", kor: "연설이 끝날 때쯤이면 그는 10분째 감사 인사를 하는 셈일 것이다.", desc: "미래 시점까지 지속될 행동입니다." }
                 ],
                 hardQuestions: [
-                    { t: "과거", q: "Did you hear what I ____?", a: "said", kor: "내가 한 말 들었어?", desc: "과거에 한 발언입니다." },
-                    { t: "현재", q: "Legend ____ that a dragon lives here.", a: "says", kor: "전설에 따르면 여기에 용이 산다고 한다.", desc: "전해 내려오는 이야기(사실)는 현재형을 씁니다." },
-                    { t: "미래", q: "If you ask him, he ____ yes.", a: "will say", kor: "그에게 물어보면 알겠다고 할 거야.", desc: "조건에 대한 미래의 반응 예측입니다." },
-                    { t: "과거진행", q: "I couldn't hear what they ____.", a: "were saying", kor: "그들이 무슨 말을 하고 있는지 들리지 않았다.", desc: "과거 당시에 진행 중이던 대화입니다." },
-                    { t: "현재진행", q: "Why are you ____ that to me?", a: "saying", kor: "나한테 왜 그런 말을 하는 거야?", desc: "지금 현재 하고 있는 말에 대한 반응입니다." },
-                    { t: "미래진행", q: "During the interview, I ____ the same things.", a: "will be saying", kor: "면접 동안 난 똑같은 말만 하고 있을 거야.", desc: "미래의 상황에서 진행될 말입니다." },
-                    { t: "과거완료", q: "She denied that she ____ it.", a: "had said", kor: "그녀는 자신이 그 말을 했다는 것을 부인했다.", desc: "부인한 것(과거)보다 이전에 말한 사실(대과거)입니다." },
-                    { t: "현재완료", q: "The boss ____ nothing about the bonus yet.", a: "has said", kor: "상사는 보너스에 대해 아직 아무 말도 없다.", desc: "아직까지 완료되지 않은(말하지 않은) 상태입니다." },
-                    { t: "미래완료", q: "By the time you arrive, I ____ my goodbyes.", a: "will have said", kor: "네가 도착할 때쯤이면 난 작별 인사를 마쳤을 거야.", desc: "미래 시점에 이미 완료되었을 행동입니다." },
-                    { t: "과거완료진행", q: "He ____ he was sorry for hours before I forgave him.", a: "had been saying", kor: "내가 용서하기 전까지 그는 몇 시간 동안 미안하다고 말하고 있었다.", desc: "과거 시점까지 계속된 사과입니다." },
-                    { t: "현재완료진행", q: "Scientists ____ this for decades.", a: "have been saying", kor: "과학자들은 수십 년간 이 말을 해오고 있다.", desc: "과거부터 지금까지 지속적으로 주장하는 내용입니다." },
-                    { t: "미래완료진행", q: "In 5 minutes, he ____ 'uhm' for an hour.", a: "will have been saying", kor: "5분 뒤면 그는 1시간째 '음...' 소리만 하고 있는 셈이다.", desc: "미래 시점까지의 지속 시간을 나타냅니다." }
-                ]
-            },
-            { 
-                word: "look", meaning: "보다 / 보이다",
-                forms: ["look", "looked", "looking", "looks"], 
-                wrongForms: ["loke", "looken", "looked"], 
-                monster: "Watcher", 
-                dialogues: ["어딜 보는 거냐!", "심연을 들여다보아라.", "눈을 뗄 수 없을걸?"],
-                questions: [
-                    { t: "과거", q: "He ____ at the map a moment ago.", a: "looked", kor: "그는 방금 지도를 보았다.", desc: "조금 전 완료된 동작입니다." },
-                    { t: "현재", q: "She ____ happy today.", a: "looks", kor: "그녀는 오늘 행복해 보인다.", desc: "현재의 상태입니다. (감각동사)" },
-                    { t: "미래", q: "I will ____ into it tomorrow.", a: "look", kor: "내일 그것을 조사해 볼 것이다.", desc: "미래의 계획입니다." },
-                    { t: "과거진행", q: "We were ____ for keys when you entered.", a: "looking", kor: "네가 들어왔을 때 우리는 열쇠를 찾던 중이었다.", desc: "과거에 진행 중이던 행동입니다." },
-                    { t: "현재진행", q: "Why are you ____ at me like that?", a: "looking", kor: "왜 지금 그렇게 쳐다보는 거야?", desc: "지금 하고 있는 행동입니다." },
-                    { t: "미래진행", q: "I will be ____ forward to it.", a: "looking", kor: "기대하고 있겠습니다.", desc: "관용적으로 쓰이는 미래진행 표현입니다." },
-                    { t: "과거완료", q: "She had ____ everywhere before she found it.", a: "looked", kor: "찾기 전까지 그녀는 모든 곳을 다 찾아봤었다.", desc: "과거(찾음)보다 이전에 완료된 동작입니다." },
-                    { t: "현재완료", q: "I have ____ at this picture many times.", a: "looked", kor: "나는 이 사진을 여러 번 본 적이 있다.", desc: "과거의 경험입니다." },
-                    { t: "미래완료", q: "The city will have ____ different by 2030.", a: "looked", kor: "2030년이면 도시는 달라져 보일 것이다.", desc: "미래의 상태 추측입니다." },
-                    { t: "과거완료진행", q: "He had been ____ for a job for months before he got one.", a: "looking", kor: "취직하기 전까지 그는 몇 달간 일자리를 찾고 있었다.", desc: "과거 시점까지의 지속된 노력입니다." },
-                    { t: "현재완료진행", q: "We have been ____ for you all morning.", a: "looking", kor: "우리는 아침 내내 너를 찾고 있다.", desc: "아침부터 지금까지 계속된 행동입니다." },
-                    { t: "미래완료진행", q: "By 6 PM, I will have been ____ at this screen for 8 hours.", a: "looking", kor: "6시가 되면 나는 8시간째 화면을 보고 있는 셈이다.", desc: "미래 시점까지 지속될 행동입니다." }
-                ],
-                hardQuestions: [
-                    { t: "과거", q: "You ____ tired yesterday. Are you okay?", a: "looked", kor: "어제 피곤해 보이더라. 괜찮아?", desc: "과거의 외모/상태에 대한 묘사입니다." },
-                    { t: "현재", q: "That cake ____ delicious!", a: "looks", kor: "저 케이크 맛있어 보인다!", desc: "현재 눈에 보이는 상태(감각)입니다." },
-                    { t: "미래", q: "Don't turn around, or you ____ guilty.", a: "will look", kor: "돌아보지 마, 안 그러면 죄지은 것처럼 보일 거야.", desc: "조건에 따른 미래의 모습 예측입니다." },
-                    { t: "과거진행", q: "I saw you in the store. You ____ at shoes.", a: "were looking", kor: "가게에서 너 봤어. 신발을 보고 있더라.", desc: "과거 목격 당시 진행 중이던 행동입니다." },
-                    { t: "현재진행", q: "I ____ for my glasses. Have you seen them?", a: "am looking", kor: "안경을 찾고 있어. 혹시 봤니?", desc: "지금 현재 찾고 있는 중입니다." },
-                    { t: "미래진행", q: "When you come, I ____ out the window.", a: "will be looking", kor: "네가 올 때쯤 난 창밖을 보고 있을 거야.", desc: "미래 특정 시점에 하고 있을 행동입니다." },
-                    { t: "과거완료", q: "The house was dusty. Nobody ____ after it.", a: "had looked", kor: "집은 먼지투성이였다. 아무도 돌보지 않았던 것이다.", desc: "과거 상태의 원인이 된 그 이전(대과거)의 방치입니다. (look after)" },
-                    { t: "현재완료", q: "You ____ at that page for an hour.", a: "have looked", kor: "너 그 페이지만 한 시간째 보고 있어(완료/결과).", desc: "한 시간 동안 본 결과 아직도 보고 있음을 암시합니다." },
-                    { t: "미래완료", q: "By the time she returns, everything ____ different.", a: "will have looked", kor: "그녀가 돌아올 때쯤이면 모든 게 달라져 보일 것이다.", desc: "미래의 변화된 상태입니다." },
-                    { t: "과거완료진행", q: "They found him. He ____ for a way out for days.", a: "had been looking", kor: "그들이 그를 찾았다. 그는 며칠 동안 출구를 찾고 있었다.", desc: "발견되기 전까지 계속된 행동입니다." },
-                    { t: "현재완료진행", q: "My eyes are tired. I ____ at the sun.", a: "have been looking", kor: "눈이 피곤해. 태양을 쳐다보고 있었거든.", desc: "방금 전까지 지속된 행동의 결과입니다." },
-                    { t: "미래완료진행", q: "By noon, we ____ for clues for 5 hours.", a: "will have been looking", kor: "정오가 되면 우리는 5시간째 단서를 찾고 있는 셈이다.", desc: "미래 시점까지의 행동 지속입니다." }
-                ]
-            },
-            { 
-                word: "want", meaning: "원하다",
-                forms: ["want", "wanted", "wanting", "wants"], 
-                wrongForms: ["wanten", "wont", "wanted"], 
-                monster: "Mimic", 
-                dialogues: ["원해... 더 원해...", "탐욕이 끓어오른다!", "너의 모든 걸 내놔!"],
-                questions: [
-                    { t: "과거", q: "I ____ a bike last year.", a: "wanted", kor: "나는 작년에 자전거를 원했다.", desc: "과거의 소망입니다." },
-                    { t: "현재", q: "She ____ some water now.", a: "wants", kor: "그녀는 지금 물을 좀 원한다.", desc: "현재의 소망입니다. (상태동사이므로 보통 현재형 사용)" },
-                    { t: "미래", q: "You will ____ to see this later.", a: "want", kor: "너는 나중에 이걸 보고 싶어질 것이다.", desc: "미래의 상태 예측입니다." },
-                    { t: "과거진행", q: "I was ____ to leave when he arrived.", a: "wanting", kor: "그가 도착했을 때 나는 떠나고 싶어 하던 참이었다.", desc: "구어체에서 일시적인 감정을 강조할 때 쓰기도 합니다." },
-                    { t: "현재진행", q: "I am ____ you to help me right now.", a: "wanting", kor: "나는 지금 당장 네가 도와줬으면 좋겠다.", desc: "현재의 바람을 강조하는 표현입니다." },
-                    { t: "미래진행", q: "You will be ____ a coat in winter.", a: "wanting", kor: "겨울이 되면 코트가 필요해질 것이다.", desc: "미래에 원하게 될 상태입니다." },
-                    { t: "과거완료", q: "He had ____ to go before plans changed.", a: "wanted", kor: "계획이 바뀌기 전에는 그도 가고 싶어 했었다.", desc: "과거(변경) 이전에 원했던 마음입니다." },
-                    { t: "현재완료", q: "I have ____ this for a long time.", a: "wanted", kor: "나는 오랫동안 이것을 원해왔다.", desc: "과거부터 지금까지 지속된 소망입니다." },
-                    { t: "미래완료", q: "By then, she will have ____ a break.", a: "wanted", kor: "그때쯤이면 그녀는 휴식을 원하게 되었을 것이다.", desc: "미래 시점의 상태입니다." },
-                    { t: "과거완료진행", q: "I had been ____ to visit Paris for years before I finally went.", a: "wanting", kor: "마침내 가기 전까지 나는 수년간 파리에 가고 싶어 해왔었다.", desc: "과거 시점까지 오랫동안 지속된 소망입니다." },
-                    { t: "현재완료진행", q: "I have been ____ to tell you this all day.", a: "wanting", kor: "나는 하루 종일 너에게 이 말을 하고 싶었다.", desc: "하루 종일 계속된 마음입니다." },
-                    { t: "미래완료진행", q: "By next year, I will have been ____ a new car for 5 years.", a: "wanting", kor: "내년이면 새 차를 원한 지 5년째가 된다.", desc: "미래 시점까지 지속될 소망의 기간입니다." }
-                ],
-                hardQuestions: [
-                    { t: "과거", q: "I didn't buy it, although I ____ it.", a: "wanted", kor: "원했지만 사지 않았다.", desc: "사지 않았던(과거) 당시의 마음입니다." },
-                    { t: "현재", q: "What ____ he ____ from me?", a: "does want", kor: "그가 나한테 원하는 게 뭐야?", desc: "현재의 의도를 묻습니다." },
-                    { t: "미래", q: "Trust me, you ____ to hear this.", a: "will want", kor: "내 말 믿어, 이건 듣고 싶어질 걸.", desc: "미래에 생길 호기심 예측입니다." },
-                    { t: "과거진행", q: "He ____ to cry, but held it in.", a: "was wanting", kor: "그는 울고 싶었지만 참았다.", desc: "과거 순간의 강한 충동입니다. (구어체)" },
-                    { t: "현재진행", q: "I ____ to talk to the manager. Is he in?", a: "am wanting", kor: "매니저와 이야기하고 싶은데요. 계신가요?", desc: "지금 당장의 용건을 정중히 혹은 강조하여 표현합니다." },
-                    { t: "미래진행", q: "You ____ a hot drink soon.", a: "will be wanting", kor: "곧 따뜻한 음료가 마시고 싶어질 거야.", desc: "추워질 미래 상황에서의 욕구 예측입니다." },
-                    { t: "과거완료", q: "It was exactly what I ____.", a: "had wanted", kor: "그건 내가 딱 원했던 것이었다.", desc: "그것을 본 시점(과거) 이전에 이미 원했던 것입니다." },
-                    { t: "현재완료", q: "She ____ always ____ to be a pilot.", a: "has wanted", kor: "그녀는 항상 파일럿이 되고 싶어 했다.", desc: "과거부터 지금까지 변치 않는 꿈입니다." },
-                    { t: "미래완료", q: "By the time he retires, he ____ peace for years.", a: "will have wanted", kor: "은퇴할 때쯤이면 그는 수년째 평화를 원해온 상태일 것이다.", desc: "미래 시점에서의 상태 지속입니다." },
-                    { t: "과거완료진행", q: "I ____ to quit for months before I was fired.", a: "had been wanting", kor: "해고되기 전부터 난 몇 달간 그만두고 싶어 했다.", desc: "과거 시점까지 지속된 마음입니다." },
-                    { t: "현재완료진행", q: "He ____ to ask her out all week.", a: "has been wanting", kor: "그는 일주일 내내 그녀에게 데이트 신청을 하고 싶어 하고 있다.", desc: "최근 계속되고 있는 소망입니다." },
-                    { t: "미래완료진행", q: "In December, I ____ this game for a year.", a: "will have been wanting", kor: "12월이면 이 게임을 원한 지 1년이 된다.", desc: "미래 시점까지의 기다림 지속입니다." }
+                    { t: "과거", q: "Did you hear what I ____?", a: "said", hint: "Did you hear", kor: "내가 한 말 들었어?", desc: "과거에 한 발언입니다." },
+                    { t: "현재", q: "Legend ____ that a dragon lives here.", a: "says", hint: "Legend", kor: "전설에 따르면 여기에 용이 산다고 한다.", desc: "전해 내려오는 이야기(사실)는 현재형을 씁니다." },
+                    { t: "미래", q: "If you ask him, he ____ yes.", a: "will say", hint: "If you ask him", kor: "그에게 물어보면 알겠다고 할 거야.", desc: "조건에 대한 미래의 반응 예측입니다." },
+                    { t: "과거진행", q: "I couldn't hear what they ____.", a: "were saying", hint: "couldn't hear", kor: "그들이 무슨 말을 하고 있는지 들리지 않았다.", desc: "과거 당시에 진행 중이던 대화입니다." },
+                    { t: "현재진행", q: "Why are you ____ that to me?", a: "saying", hint: "Why are you", kor: "나한테 왜 그런 말을 하는 거야?", desc: "지금 현재 하고 있는 말에 대한 반응입니다." },
+                    { t: "미래진행", q: "During the interview, I ____ the same things.", a: "will be saying", hint: "During the interview", kor: "면접 동안 난 똑같은 말만 하고 있을 거야.", desc: "미래의 상황에서 진행될 말입니다." },
+                    { t: "과거완료", q: "She denied that she ____ it.", a: "had said", hint: "denied", kor: "그녀는 자신이 그 말을 했다는 것을 부인했다.", desc: "부인한 것(과거)보다 이전에 말한 사실(대과거)입니다." },
+                    { t: "현재완료", q: "The boss ____ nothing about the bonus yet.", a: "has said", hint: "yet", kor: "상사는 보너스에 대해 아직 아무 말도 없다.", desc: "아직까지 완료되지 않은(말하지 않은) 상태입니다." },
+                    { t: "미래완료", q: "By the time you arrive, I ____ my goodbyes.", a: "will have said", hint: "By the time you arrive", kor: "네가 도착할 때쯤이면 난 작별 인사를 마쳤을 거야.", desc: "미래 시점에 이미 완료되었을 행동입니다." },
+                    { t: "과거완료진행", q: "He ____ he was sorry for hours before I forgave him.", a: "had been saying", hint: "for hours", kor: "내가 용서하기 전까지 그는 몇 시간 동안 미안하다고 말하고 있었다.", desc: "과거 시점까지 계속된 사과입니다." },
+                    { t: "현재완료진행", q: "Scientists ____ this for decades.", a: "have been saying", hint: "for decades", kor: "과학자들은 수십 년간 이 말을 해오고 있다.", desc: "과거부터 지금까지 지속적으로 주장하는 내용입니다." },
+                    { t: "미래완료진행", q: "In 5 minutes, he ____ 'uhm' for an hour.", a: "will have been saying", hint: "In 5 minutes", kor: "5분 뒤면 그는 1시간째 '음...' 소리만 하고 있는 셈이다.", desc: "미래 시점까지의 지속 시간을 나타냅니다." }
                 ]
             }
         ];
@@ -1024,11 +1090,30 @@
         // 초기화 시 로드
         loadGame();
 
+        // [5번 개선] 부드러운 화면 전환 함수
         function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            if(screenId === 'stage-select-screen') renderStageGrid();
-            if(screenId === 'collection-screen') renderCollection();
+            const screens = document.querySelectorAll('.screen');
+            // 1. 현재 화면 투명하게 (Fade Out)
+            screens.forEach(s => {
+                s.style.opacity = '0';
+                s.classList.remove('active');
+            });
+
+            // 2. 투명해지는 시간(0.4초)만큼 대기 후 다음 화면 표시
+            setTimeout(() => {
+                screens.forEach(s => s.style.display = 'none');
+                
+                const target = document.getElementById(screenId);
+                target.style.display = 'flex'; // 레이아웃 잡고
+                if(screenId === 'stage-select-screen') renderStageGrid();
+                if(screenId === 'collection-screen') renderCollection();
+
+                // 3. 약간의 딜레이 후 불투명하게 (Fade In)
+                setTimeout(() => {
+                    target.style.opacity = '1';
+                    target.classList.add('active');
+                }, 50);
+            }, 400);
         }
 
         // [수정] 하드모드 잠금 로직 적용
@@ -1093,7 +1178,7 @@
             
             const monsterContainer = document.getElementById('monster-container');
             monsterContainer.className = 'monster-area';
-            monsterContainer.classList.remove('phase-2', 'phase-3'); // 페이즈 초기화
+            monsterContainer.classList.remove('phase-2', 'phase-3', 'monster-die'); // 클래스 리셋
 
             const heroImgSrc = (gameState.mode === 'easy') ? "assets/hero_easy.png" : "assets/hero_hard.png";
             document.getElementById('game-hero-img').src = heroImgSrc;
@@ -1182,7 +1267,15 @@
             const tenseSpan = document.getElementById('tense-text');
             // if (tenseSpan) tenseSpan.style.color = 'var(--gold)'; // Remove this to let class styling work
 
-            document.getElementById('q-text').innerHTML = `${q.q}`;
+            // [3번 개선] 문제 출력 시 hint 단어를 span으로 감싸기 (Regex 수정: 파이프 처리)
+            let questionText = q.q;
+            if (q.hint) {
+                // 힌트 단어가 문장에 있으면 span 태그로 교체 (대소문자 구분 없이)
+                const regex = new RegExp(`(${q.hint})`, 'gi');
+                questionText = questionText.replace(regex, '<span class="clue">$1</span>');
+            }
+            document.getElementById('q-text').innerHTML = questionText;
+            
             document.getElementById('feedback').innerText = "";
 
             const optionsArea = document.getElementById('options-area');
@@ -1213,18 +1306,27 @@
                 document.getElementById('feedback').style.color = "#4caf50";
                 gameState.isRetry = false;
                 
-                // 타격감 효과
-                document.getElementById('game-monster-img').parentElement.classList.add('hit-anim');
-                document.body.classList.add('screen-shake-anim');
-                setTimeout(() => {
-                    document.getElementById('game-monster-img').parentElement.classList.remove('hit-anim');
-                    document.body.classList.remove('screen-shake-anim');
-                }, 300);
+                // [3번 개선] 정답 근거 하이라이트 (Glow Effect)
+                // 모든 clue span을 찾아서 효과 적용 (여러 개일 수 있음)
+                const clueSpans = document.querySelectorAll('.clue');
+                clueSpans.forEach(span => span.classList.add('correct-glow'));
+
+                // [5번 개선] 타격감 효과 (흔들림)
+                const monsterEl = document.getElementById('monster-container');
+                monsterEl.classList.remove('shake-anim');
+                void monsterEl.offsetWidth; // 리플로우 강제 (애니메이션 재시작용)
+                monsterEl.classList.add('shake-anim');
 
                 updateUI();
                 
                 if (gameState.mCurHP <= 0) {
-                    stageClear();
+                    // [5번 개선] 몬스터 사망 연출 (Ghost Effect)
+                    monsterEl.classList.add('monster-die');
+                    document.getElementById('battle-msg').innerHTML = "<span>으아악...!</span>";
+                    document.getElementById('battle-msg').classList.add('show');
+                    
+                    // 연출 시간만큼 대기 후 클리어 처리
+                    setTimeout(stageClear, 1200); 
                 } else {
                     gameState.qIndex++;
                     setTimeout(loadQuestion, 800);
@@ -1239,8 +1341,13 @@
                     document.getElementById('feedback').innerText = "틀렸습니다! 힌트를 확인하세요.";
                     document.getElementById('feedback').style.color = "orange";
                     
-                    document.getElementById('game-screen').classList.add('damage-anim');
-                    setTimeout(() => document.getElementById('game-screen').classList.remove('damage-anim'), 400);
+                    // [3번 개선] 오답 시 힌트 단어 깜빡임 효과
+                    const clueSpans = document.querySelectorAll('.clue');
+                    clueSpans.forEach(span => span.classList.add('wrong-blink'));
+
+                    // [5번 개선] 플레이어 피격 효과 (화면 붉어짐)
+                    document.getElementById('game-screen').classList.add('screen-hit');
+                    setTimeout(() => document.getElementById('game-screen').classList.remove('screen-hit'), 400);
 
                     gameState.isRetry = true;
                     const tenseLabel = document.getElementById('tense-label');
@@ -1259,8 +1366,13 @@
                 document.getElementById('feedback').innerText = "MISS! (목숨 차감)";
                 document.getElementById('feedback').style.color = "#f44336";
                 
-                document.getElementById('game-screen').classList.add('damage-anim');
-                setTimeout(() => document.getElementById('game-screen').classList.remove('damage-anim'), 400);
+                // [3번 개선] 오답 시 힌트 단어 깜빡임 효과 (즉시 아웃되는 경우에도 표시)
+                const clueSpans = document.querySelectorAll('.clue');
+                clueSpans.forEach(span => span.classList.add('wrong-blink'));
+
+                // [5번 개선] 플레이어 피격 효과
+                document.getElementById('game-screen').classList.add('screen-hit');
+                setTimeout(() => document.getElementById('game-screen').classList.remove('screen-hit'), 400);
 
                 if (gameState.mode === 'hard' && gameState.isRetry) {
                      const tenseSpan = document.getElementById('tense-text');
@@ -1288,29 +1400,27 @@
         }
 
         function stageClear() {
-            setTimeout(() => {
-                const data = verbsData[gameState.selectedStageId];
-                
-                if(!gameState.clearedStages[gameState.mode].includes(gameState.selectedStageId)) {
-                    gameState.clearedStages[gameState.mode].push(gameState.selectedStageId);
-                    saveGame(); 
-                }
+            // 사망 연출 대기 시간이 checkAnswer에서 이미 처리됨
+            const data = verbsData[gameState.selectedStageId];
+            
+            if(!gameState.clearedStages[gameState.mode].includes(gameState.selectedStageId)) {
+                gameState.clearedStages[gameState.mode].push(gameState.selectedStageId);
+                saveGame(); 
+            }
 
-                let msg = `${data.monster} 토벌 완료!`;
-                let reviewCallback = null;
-                
-                if (gameState.wrongLog.length > 0) {
-                    msg += `\n(틀린 문제: ${gameState.wrongLog.length}개)`;
-                    reviewCallback = function() {
-                        openBook(gameState.wrongLog, "오답 노트 (Wrong Answers)", false);
-                    };
-                }
+            let msg = `${data.monster} 토벌 완료!`;
+            let reviewCallback = null;
+            
+            if (gameState.wrongLog.length > 0) {
+                msg += `\n(틀린 문제: ${gameState.wrongLog.length}개)`;
+                reviewCallback = function() {
+                    openBook(gameState.wrongLog, "오답 노트 (Wrong Answers)", false);
+                };
+            }
 
-                showResultModal(msg, function() {
-                    showScreen('stage-select-screen');
-                }, reviewCallback);
-
-            }, 300);
+            showResultModal(msg, function() {
+                showScreen('stage-select-screen');
+            }, reviewCallback);
         }
 
         function updateUI() {
