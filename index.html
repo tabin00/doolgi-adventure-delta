@@ -92,7 +92,27 @@
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('assets/bg_start.png');
             background-size: cover; background-position: center;
         }
-        .select-title { margin-bottom: 30px; font-size: 2rem; color: white; text-shadow: 2px 2px 4px black; }
+        .select-title { margin-bottom: 10px; font-size: 2rem; color: white; text-shadow: 2px 2px 4px black; }
+        
+        /* [NEW] 초기화 버튼 스타일 */
+        .reset-data-btn {
+            background: transparent;
+            border: 1px solid #777;
+            color: #aaa;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .reset-data-btn:hover {
+            color: #ff4444;
+            border-color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+        }
+
         .char-container { display: flex; gap: 20px; justify-content: center; width: 100%; margin-bottom: 40px; }
         .char-card {
             width: 45%; height: 280px; background: rgba(44, 44, 44, 0.9);
@@ -371,6 +391,9 @@
         <!-- 난이도 선택 -->
         <div id="difficulty-screen" class="screen">
             <h2 class="select-title">난이도 선택</h2>
+            <!-- [NEW] 데이터 초기화 버튼 -->
+            <button class="reset-data-btn" onclick="resetGameData()">🔄 데이터 초기화</button>
+
             <div class="char-container">
                 <div class="char-card easy-mode" onclick="selectDifficulty('easy')">
                     <div class="char-img-placeholder" id="select-easy-img">
@@ -610,6 +633,27 @@
 
         function closeHint() { hintModal.style.display = 'none'; }
         
+        // 개발자용 치트키 (전체 해금)
+        function unlockAllStages() {
+            gameState.clearedStages[gameState.mode] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+            saveGame();
+            renderStageGrid();
+            showAlert("개발자 모드: 모든 스테이지가 해금되었습니다!");
+        }
+
+        /* [NEW] 게임 데이터 초기화 함수 */
+        function resetGameData() {
+            showConfirm("정말 모든 데이터를 삭제하고 초기화하시겠습니까?", function() {
+                // 데이터 초기화
+                gameState.clearedStages = { easy: [], hard: [] };
+                saveGame();
+                
+                // 화면 새로고침하여 초기 상태로 복구
+                showAlert("모든 데이터가 초기화되었습니다.", function() {
+                    location.reload(); 
+                });
+            });
+        }
 
         /* --- 2. 게임 데이터 --- */
         const highlight = (text) => `<span class="highlight">${text}</span>`;
@@ -947,13 +991,13 @@
             wrongLog: [] 
         };
 
-        // [NEW] 저장소 키 변경 (v36 -> v37: 강제 초기화)
+        // [NEW] 저장소 키 변경 (v37 -> v38: 초기화 및 충돌 방지)
         function saveGame() {
-            localStorage.setItem('doolgi_save_v37', JSON.stringify(gameState.clearedStages));
+            localStorage.setItem('doolgi_save_v38', JSON.stringify(gameState.clearedStages));
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('doolgi_save_v37');
+            const saved = localStorage.getItem('doolgi_save_v38');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -1142,6 +1186,7 @@
             const correct = currentQ.a;
 
             if (selectedInput.toLowerCase() === correct.toLowerCase()) {
+                // 정답
                 gameState.mCurHP -= 10;
                 document.getElementById('feedback').innerText = "HIT!";
                 document.getElementById('feedback').style.color = "#4caf50";
@@ -1155,6 +1200,7 @@
                     setTimeout(loadQuestion, 800);
                 }
             } else {
+                // 오답
                 if (gameState.mode === 'hard' && !gameState.isRetry) {
                     // 하드모드 첫 오답 시 오답노트 기록
                     if(!gameState.wrongLog.includes(currentQ)) {
@@ -1247,6 +1293,20 @@
             showAlert("개발자 모드: 모든 스테이지가 해금되었습니다!");
         }
 
+        /* [NEW] 게임 데이터 초기화 함수 */
+        function resetGameData() {
+            showConfirm("정말 모든 데이터를 삭제하고 초기화하시겠습니까?", function() {
+                // 데이터 초기화
+                gameState.clearedStages = { easy: [], hard: [] };
+                saveGame();
+                
+                // 화면 새로고침하여 초기 상태로 복구
+                showAlert("모든 데이터가 초기화되었습니다.", function() {
+                    location.reload(); 
+                });
+            });
+        }
+
         function renderCollection() {
             const grid = document.getElementById('collection-grid');
             grid.innerHTML = "";
@@ -1275,6 +1335,7 @@
                 if (isEasyCleared || isHardCleared) {
                     slot.onclick = function() {
                         bookState.stageId = idx;
+                        const initMode = isEasyCleared ? 'easy' : 'hard'; 
                         bookState.currentMode = 'easy';
                         document.getElementById('tab-easy').classList.add('active');
                         document.getElementById('tab-hard').classList.remove('active');
