@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- 뷰포트 설정을 기본으로 복구 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>둘기의 모험 (Verb Dungeon)</title>
-    <!-- 폰트: Jua -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
@@ -31,7 +31,8 @@
             font-family: 'Jua', sans-serif;
             margin: 0; padding: 0;
             display: flex; justify-content: center; align-items: center;
-            height: 100vh; height: 100dvh;
+            /* [롤백] 표준 높이 설정으로 복귀 */
+            height: 100vh;
             overflow: hidden;
             font-size: 1.1rem;
         }
@@ -53,10 +54,10 @@
             align-items: center;
             background-size: cover; background-position: center;
             padding: 20px;
-            overflow-y: auto;
-            -ms-overflow-style: none; scrollbar-width: none;
+            /* [롤백] 강제 스크롤 제거 */
+            overflow: hidden; 
         }
-        .screen::-webkit-scrollbar { display: none; }
+
         .active { display: flex; }
 
         /* --- 시작 화면 --- */
@@ -92,26 +93,14 @@
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('assets/bg_start.png');
             background-size: cover; background-position: center;
         }
-        .select-title { margin-bottom: 10px; font-size: 2rem; color: white; text-shadow: 2px 2px 4px black; }
+        .select-title { margin-bottom: 30px; font-size: 2rem; color: white; text-shadow: 2px 2px 4px black; }
         
-        /* [NEW] 초기화 버튼 스타일 */
         .reset-data-btn {
-            background: transparent;
-            border: 1px solid #777;
-            color: #aaa;
-            padding: 5px 12px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            margin-bottom: 25px;
-            border-radius: 15px;
-            font-family: inherit;
-            transition: all 0.2s;
+            background: transparent; border: 1px solid #777; color: #aaa; padding: 5px 12px;
+            font-size: 0.8rem; cursor: pointer; margin-bottom: 25px; border-radius: 15px;
+            font-family: inherit; transition: all 0.2s;
         }
-        .reset-data-btn:hover {
-            color: #ff4444;
-            border-color: #ff4444;
-            background: rgba(255, 68, 68, 0.1);
-        }
+        .reset-data-btn:hover { color: #ff4444; border-color: #ff4444; background: rgba(255, 68, 68, 0.1); }
 
         .char-container { display: flex; gap: 20px; justify-content: center; width: 100%; margin-bottom: 40px; }
         .char-card {
@@ -149,7 +138,10 @@
         #stage-select-screen { 
             justify-content: flex-start; background-color: #111; 
             padding-bottom: 50px;
+            /* 스테이지 선택 화면은 목록이 길어서 스크롤 필요 */
+            overflow-y: auto; 
         }
+        #stage-select-screen::-webkit-scrollbar { display: none; }
         
         .stage-grid {
             display: flex; flex-direction: column-reverse; align-items: center;
@@ -175,12 +167,15 @@
         .stage-btn.locked { border-color: #333; background: #1a1a1d; color: #444; cursor: pointer; }
         .stage-verb { font-size: 1.5rem; margin-bottom: 5px; color:inherit;}
 
-        .dev-btn {
+        .dev-btn-group {
             margin-top: 30px; margin-bottom: 20px;
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+        }
+        .dev-btn {
             background: #222; color: #00ffff;
             border: 1px dashed #00ffff;
-            padding: 10px 20px;
-            border-radius: 5px; cursor: pointer; font-family: inherit; font-size: 0.9rem; opacity: 0.7;
+            padding: 8px 15px;
+            border-radius: 5px; cursor: pointer; font-family: inherit; font-size: 0.8rem; opacity: 0.7;
         }
         .dev-btn:hover { opacity: 1; background: #333; }
 
@@ -220,7 +215,27 @@
             transition: all 0.3s;
         }
         .card-slot.easy-clear img { filter: brightness(0.7) grayscale(0.3); }
-        .card-full img { clip-path: none; filter: none; box-shadow: 0 0 10px gold; }
+        .card-full img { clip-path: none; filter: none; box-shadow: 0 0 15px var(--gold); }
+        .card-full::before {
+            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+            background: linear-gradient(135deg, rgba(255,0,0,0.1), rgba(0,255,0,0.1), rgba(0,0,255,0.1));
+            mix-blend-mode: overlay; pointer-events: none; z-index: 2;
+        }
+        .card-full::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -150%;
+            width: 100%; height: 100%;
+            background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%);
+            transform: skewX(-25deg);
+            animation: shine 3s infinite;
+            pointer-events: none; z-index: 3;
+        }
+        @keyframes shine {
+            0% { left: -150%; }
+            20% { left: 150%; }
+            100% { left: 150%; }
+        }
         
         .back-btn { 
             position: absolute; top: 20px; left: 20px; 
@@ -231,14 +246,53 @@
         /* --- 게임 화면 --- */
         #game-screen { padding: 0; overflow: hidden; }
         
+        /* [NEW] 시제 확인 버튼 스타일 */
+        .tense-reveal-btn {
+            cursor: pointer;
+            border-bottom: 2px dashed var(--gold);
+            transition: color 0.3s, border-color 0.3s;
+            color: #aaa;
+        }
+        .tense-reveal-btn:hover {
+            color: #fff;
+            border-color: #fff;
+        }
+        .tense-reveal-btn small {
+            font-size: 0.8rem;
+            color: #777;
+            margin-left: 5px;
+        }
+        
+        @keyframes screen-shake {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-5px, 5px); }
+            50% { transform: translate(5px, -5px); }
+            75% { transform: translate(-5px, -5px); }
+            100% { transform: translate(0, 0); }
+        }
+        @keyframes damage-flash {
+            0% { box-shadow: inset 0 0 0 0 red; }
+            50% { box-shadow: inset 0 0 50px 20px red; }
+            100% { box-shadow: inset 0 0 0 0 red; }
+        }
+        @keyframes hit-wobble {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1) rotate(5deg); filter: brightness(2); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        .screen-shake-anim { animation: screen-shake 0.3s ease-in-out; }
+        .damage-anim { animation: damage-flash 0.4s ease-in-out; }
+        .hit-anim { animation: hit-wobble 0.3s ease-in-out; }
+
         .battle-field { 
             flex-grow: 1; width: 100%;
-            display: flex; flex-direction: column; justify-content: space-between; 
-            padding: 20px; 
+            display: flex; flex-direction: column; justify-content: space-evenly; 
+            padding: 10px; 
             background-color: #222;
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('assets/bg_battle.png');
             background-size: cover; background-position: center; position: relative;
-            min-height: 250px; 
+            /* [롤백] min-height 제거로 자연스럽게 늘어나게 함 */
         }
         
         .status-bar { 
@@ -252,10 +306,10 @@
         .monster-area, .hero-area { display: flex; flex-direction: column; align-items: center; position: relative; }
         
         .sprite { 
-            width: 150px; height: 150px; max-width: 30vh; max-height: 30vh;
+            width: 150px; height: 150px; max-width: 25vh; max-height: 25vh;
             background: rgba(0,0,0,0.3); 
             display: flex; justify-content: center; align-items: center; 
-            border-radius: 10px; margin: 10px 0; font-size: 3rem; overflow: hidden;
+            border-radius: 10px; margin: 5px 0; font-size: 3rem; overflow: hidden;
             transition: all 0.5s ease; position: relative;
         }
         .sprite img { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; }
@@ -265,14 +319,13 @@
         .phase-3 .sprite { transform: scale(1.2); filter: drop-shadow(0 0 15px red); animation: angry-shake 2s infinite; }
         @keyframes angry-shake {
             0% { transform: scale(1.2) rotate(0deg); }
-            2% { transform: scale(1.2) rotate(-2deg); }
-            4% { transform: scale(1.2) rotate(2deg); }
-            6% { transform: scale(1.2) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(-2deg); }
+            75% { transform: scale(1.2) rotate(2deg); }
             100% { transform: scale(1.2) rotate(0deg); }
         }
 
         .battle-message {
-            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: none; border: none; box-shadow: none;
             color: #fff; width: 100%; text-align: center; z-index: 20;
             opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
@@ -287,20 +340,20 @@
 
         .control-panel { 
             background: var(--ui-bg); width: 100%; padding: 20px; 
-            display: flex; flex-direction: column; gap: 15px; flex-shrink: 0;
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;
+            /* [롤백] 복잡한 계산식 패딩 제거, 기본 패딩 사용 */
         }
         #q-area-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 5px; }
         #tense-label { color: var(--gold); font-size: 1.2rem; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
         .hint-btn { background: none; border: none; cursor: pointer; font-size: 1.5rem; animation: float 2s infinite ease-in-out; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-        #q-text { text-align: center; line-height: 1.6; font-size: 1.4rem; width: 100%; word-break: keep-all; }
+        #q-text { text-align: center; line-height: 1.6; font-size: 1.3rem; width: 100%; word-break: keep-all; }
         
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
         .option-btn { 
             background: #333; border: 2px solid #555; color: white; 
             padding: 15px 5px; border-radius: 10px; cursor: pointer; 
-            font-size: 1.2rem; font-family: inherit; transition: background 0.1s; 
+            font-size: 1.1rem; font-family: inherit; transition: background 0.1s; 
         }
         .option-btn:active { background: #555; transform: scale(0.98); }
         .option-btn:disabled { background: #222; color: #555; border-color: #333; cursor: not-allowed; transform: none; }
@@ -315,7 +368,7 @@
         .btn-confirm { background: var(--accent-color); color: white; }
         .btn-cancel { background: #555; color: white; }
 
-        #hint-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+        #hint-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .book-container { 
             width: 100%; max-width: 380px; height: 80vh; 
             background-color: var(--book-color); color: var(--ink-color); 
@@ -346,7 +399,7 @@
 <body>
 
     <div id="app-container">
-        <!-- 알림 모달 -->
+        <!-- 알림/오답 모달 -->
         <div id="custom-modal">
             <div class="modal-content">
                 <p class="modal-text" id="modal-msg">알림 내용</p>
@@ -356,7 +409,7 @@
             </div>
         </div>
 
-        <!-- 힌트북 모달 -->
+        <!-- 힌트북/학습장 모달 -->
         <div id="hint-modal">
             <div class="book-container">
                 <button class="book-close-btn" onclick="closeHint()">✕</button>
@@ -391,7 +444,6 @@
         <!-- 난이도 선택 -->
         <div id="difficulty-screen" class="screen">
             <h2 class="select-title">난이도 선택</h2>
-            <!-- [NEW] 데이터 초기화 버튼 -->
             <button class="reset-data-btn" onclick="resetGameData()">🔄 데이터 초기화</button>
 
             <div class="char-container">
@@ -424,8 +476,11 @@
                 <h2 class="select-title" style="margin:0 auto 0 20px;">던전 선택</h2>
             </div>
             <div class="stage-grid" id="stage-grid"></div>
-            <!-- 개발자용 전체 해금 버튼 -->
-            <button class="dev-btn" onclick="unlockAllStages()">🔓 개발자: 전체 해금 (Unlock All)</button>
+            <!-- [NEW] 해금 버튼 분리 -->
+            <div class="dev-btn-group">
+                <button class="dev-btn" onclick="unlockStages('easy')">🔓 새내기 해금</button>
+                <button class="dev-btn" onclick="unlockStages('hard')">🔓 졸업반 해금</button>
+            </div>
         </div>
 
         <!-- 도감 -->
@@ -483,7 +538,6 @@
     </div>
 
     <script>
-        /* --- 유틸리티 & 모달 함수 --- */
         const modal = document.getElementById('custom-modal');
         const modalMsg = document.getElementById('modal-msg');
         const modalBtns = document.getElementById('modal-btns');
@@ -498,7 +552,6 @@
             };
         }
 
-        // 결과창 (오답노트 버튼 포함)
         function showResultModal(msg, confirmCallback, reviewCallback) {
             modalMsg.innerText = msg;
             let btnsHtml = `<button class="modal-btn btn-confirm" id="modal-ok-btn">확인</button>`;
@@ -538,20 +591,13 @@
             };
         }
         
-        /* --- 힌트북 & 도감 상세 시스템 --- */
         const hintModal = document.getElementById('hint-modal');
         const bookContent = document.getElementById('book-content');
         const bookNav = document.getElementById('book-nav');
         const bookTabs = document.getElementById('book-tabs');
 
-        let bookState = {
-            questions: [], 
-            currentIndex: 0,
-            stageId: 0,
-            currentMode: 'easy' 
-        };
+        let bookState = { questions: [], currentIndex: 0, stageId: 0, currentMode: 'easy' };
 
-        // 단일 힌트 보기 (게임 중)
         function showHint(word, kor, desc) {
             bookNav.style.display = 'none';
             bookTabs.style.display = 'none';
@@ -563,15 +609,12 @@
             hintModal.style.display = 'flex';
         }
 
-        // 학습 책 보기 (오답노트 / 도감 상세)
         function openBook(questionsList, title, isCollectionMode = false) {
             bookState.questions = questionsList;
             bookState.currentIndex = 0;
-            
             document.getElementById('book-title').innerText = title;
             bookNav.style.display = 'flex';
             bookTabs.style.display = isCollectionMode ? 'flex' : 'none'; 
-
             renderBookPage();
             hintModal.style.display = 'flex';
         }
@@ -579,23 +622,15 @@
         function renderBookPage() {
             const q = bookState.questions[bookState.currentIndex];
             document.getElementById('page-num').innerText = `${bookState.currentIndex + 1} / ${bookState.questions.length}`;
-            
             bookContent.innerHTML = `
                 <div class="book-section">
                     <div class="book-label">Q. [${q.t}]</div>
                     <div class="book-text" style="font-weight:bold;">${q.q}</div>
                     <div class="book-text" style="color:#d32f2f; margin-top:5px;">A: ${q.a}</div>
                 </div>
-                <div class="book-section">
-                    <div class="book-label">📜 해석</div>
-                    <div class="book-text">${q.kor}</div>
-                </div>
-                <div class="book-section">
-                    <div class="book-label">💡 해설</div>
-                    <div class="book-text">${q.desc}</div>
-                </div>
+                <div class="book-section"><div class="book-label">📜 해석</div><div class="book-text">${q.kor}</div></div>
+                <div class="book-section"><div class="book-label">💡 해설</div><div class="book-text">${q.desc}</div></div>
             `;
-
             document.getElementById('prev-page').disabled = bookState.currentIndex === 0;
             document.getElementById('next-page').disabled = bookState.currentIndex === bookState.questions.length - 1;
         }
@@ -608,68 +643,45 @@
             }
         }
 
-        // 도감에서 탭 전환
         function switchBookMode(mode) {
             const isCleared = gameState.clearedStages[mode].includes(bookState.stageId);
-            
-            if (!isCleared) {
-                alert("아직 정복하지 못한 난이도입니다!");
-                return;
-            }
-
+            if (!isCleared) { alert("아직 정복하지 못한 난이도입니다!"); return; }
             bookState.currentMode = mode;
             document.getElementById('tab-easy').classList.toggle('active', mode === 'easy');
             document.getElementById('tab-hard').classList.toggle('active', mode === 'hard');
-
             const data = verbsData[bookState.stageId];
-            if (mode === 'easy') {
-                bookState.questions = data.questions;
-            } else {
-                bookState.questions = data.hardQuestions || data.questions;
-            }
+            bookState.questions = (mode === 'easy') ? data.questions : (data.hardQuestions || data.questions);
             bookState.currentIndex = 0;
             renderBookPage();
         }
 
         function closeHint() { hintModal.style.display = 'none'; }
         
-        // 개발자용 치트키 (전체 해금)
-        function unlockAllStages() {
-            gameState.clearedStages[gameState.mode] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        function unlockStages(targetMode) {
+            gameState.clearedStages[targetMode] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
             saveGame();
             renderStageGrid();
-            showAlert("개발자 모드: 모든 스테이지가 해금되었습니다!");
+            const modeName = targetMode === 'easy' ? '새내기' : '졸업반';
+            showAlert(`개발자 모드: ${modeName} 과정이 모두 해금되었습니다!`);
         }
 
-        /* [NEW] 게임 데이터 초기화 함수 */
         function resetGameData() {
             showConfirm("정말 모든 데이터를 삭제하고 초기화하시겠습니까?", function() {
-                // 데이터 초기화
                 gameState.clearedStages = { easy: [], hard: [] };
                 saveGame();
-                
-                // 화면 새로고침하여 초기 상태로 복구
-                showAlert("모든 데이터가 초기화되었습니다.", function() {
-                    location.reload(); 
-                });
+                showAlert("모든 데이터가 초기화되었습니다.", function() { location.reload(); });
             });
         }
 
-        /* --- 2. 게임 데이터 --- */
         const highlight = (text) => `<span class="highlight">${text}</span>`;
-        
         const verbsData = [
             { 
-                word: "see", meaning: "보다 / 만나다",
-                forms: ["see", "saw", "seen", "seeing", "sees"], 
-                wrongForms: ["seed", "sawed", "seen"],
-                monster: "Cyclops", 
-                dialogues: ["내 눈을 피할 순 없다!", "모든 것이 보인다...", "약점이 보이는군!"],
+                word: "see", meaning: "보다 / 만나다", forms: ["see", "saw", "seen", "seeing", "sees"], wrongForms: ["seed", "sawed", "seen"], monster: "Cyclops", dialogues: ["내 눈을 피할 순 없다!", "모든 것이 보인다...", "약점이 보이는군!"],
                 questions: [
-                    { t: "과거", q: "I ____ him yesterday.", a: "saw", kor: "나는 어제 그를 보았다.", desc: `${highlight('yesterday(어제)')}는 명확한 과거 시점이므로 과거형을 씁니다.` },
-                    { t: "현재", q: "I ____ my parents every weekend.", a: "see", kor: "나는 매주 주말마다 부모님을 뵌다.", desc: `${highlight('every weekend(매주 주말)')}와 같은 반복적인 습관은 현재형을 씁니다.` },
-                    { t: "미래", q: "I will ____ the doctor tomorrow.", a: "see", kor: "나는 내일 의사를 만날 것이다.", desc: `${highlight('tomorrow(내일)')}는 미래의 일이므로 Will 뒤에 동사 원형을 씁니다.` },
-                    { t: "과거진행", q: "I was ____ the sights when it started to rain.", a: "seeing", kor: "비가 내리기 시작했을 때, 나는 관광을 하고 있었다.", desc: `과거의 특정 순간(${highlight('when...')})에 진행 중이었던 행동을 묘사하므로 과거진행형 ${highlight('was seeing')}이 적절합니다.` },
+                    { t: "과거", q: "I ____ him yesterday.", a: "saw", kor: "나는 어제 그를 보았다.", desc: `문장 속 ${highlight('yesterday(어제)')}는 명확한 과거 시점을 나타냅니다. 따라서 동사의 과거형인 ${highlight('saw')}가 정답입니다.` },
+                    { t: "현재", q: "I ____ my parents every weekend.", a: "see", kor: "나는 매주 주말마다 부모님을 뵌다.", desc: `문장의 ${highlight('every weekend(매주 주말)')}는 반복적인 습관을 나타냅니다. 이럴 때는 동사의 현재형 ${highlight('see')}를 사용합니다.` },
+                    { t: "미래", q: "I will ____ the doctor tomorrow.", a: "see", kor: "나는 내일 의사를 만날 것이다.", desc: `${highlight('tomorrow(내일)')}는 미래를 나타내며, 조동사 will 뒤에는 반드시 동사 원형 ${highlight('see')}가 와야 합니다.` },
+                    { t: "과거진행", q: "I was ____ the sights when it started to rain.", a: "seeing", kor: "비가 내리기 시작했을 때, 나는 관광을 하고 있었다.", desc: `과거의 특정 시점(${highlight('when...')})에 진행 중이었던 행동을 묘사하므로 과거진행형 ${highlight('was seeing')}이 적절합니다.` },
                     { t: "현재진행", q: "I am ____ a friend right now.", a: "seeing", kor: "나는 지금 친구를 만나고 있다.", desc: `${highlight('right now(지금 당장)')} 진행 중인 일은 현재진행형 ${highlight('am seeing')}을 씁니다.` },
                     { t: "미래진행", q: "I will be ____ him at the party tonight.", a: "seeing", kor: "오늘 밤 파티에서 그를 만나고 있을 것이다.", desc: `미래의 특정 시점(${highlight('tonight')})에 진행될 예정인 일을 나타낼 때는 미래진행형 ${highlight('will be seeing')}을 사용합니다.` },
                     { t: "과거완료", q: "I had ____ the movie before you mentioned it.", a: "seen", kor: "네가 말하기 전에 나는 이미 그 영화를 봤었다.", desc: `네가 말한 과거 시점보다 ${highlight('더 이전(대과거)')}에 이미 완료된 일이므로 과거완료 ${highlight('had seen')}을 씁니다.` },
@@ -991,13 +1003,13 @@
             wrongLog: [] 
         };
 
-        // [NEW] 저장소 키 변경 (v37 -> v38: 초기화 및 충돌 방지)
+        // [NEW] 저장소 키 변경 (v42 -> v43: 초기화)
         function saveGame() {
-            localStorage.setItem('doolgi_save_v38', JSON.stringify(gameState.clearedStages));
+            localStorage.setItem('doolgi_save_v43', JSON.stringify(gameState.clearedStages));
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('doolgi_save_v38');
+            const saved = localStorage.getItem('doolgi_save_v43');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -1019,7 +1031,15 @@
             if(screenId === 'collection-screen') renderCollection();
         }
 
+        // [수정] 하드모드 잠금 로직 적용
         function selectDifficulty(mode) {
+            if (mode === 'hard') {
+                // 이지모드 9개 스테이지(0~8) 모두 클리어 확인
+                if (gameState.clearedStages.easy.length < 9) {
+                    showAlert("🔒 새내기 과정을 모두 수료해야 졸업반에 도전할 수 있습니다!");
+                    return;
+                }
+            }
             gameState.mode = mode;
             showScreen('stage-select-screen');
         }
@@ -1027,11 +1047,6 @@
         function renderStageGrid() {
             const grid = document.getElementById('stage-grid');
             grid.innerHTML = "";
-            
-            // 안전장치: clearedStages가 없을 경우 대비
-            if (!gameState.clearedStages[gameState.mode]) {
-                gameState.clearedStages[gameState.mode] = [];
-            }
             const currentCleared = gameState.clearedStages[gameState.mode];
 
             verbsData.forEach((stage, idx) => {
@@ -1078,9 +1093,11 @@
             
             const monsterContainer = document.getElementById('monster-container');
             monsterContainer.className = 'monster-area';
+            monsterContainer.classList.remove('phase-2', 'phase-3'); // 페이즈 초기화
 
             const heroImgSrc = (gameState.mode === 'easy') ? "assets/hero_easy.png" : "assets/hero_hard.png";
             document.getElementById('game-hero-img').src = heroImgSrc;
+
             const monsterImgTag = document.getElementById('game-monster-img');
             monsterImgTag.src = `assets/mob_${data.word}_1.png`;
 
@@ -1141,9 +1158,13 @@
             const currentStageData = verbsData[gameState.selectedStageId];
             const tenseLabel = document.getElementById('tense-label');
             
-            let tenseText = `[${q.t}]`;
-            if (gameState.mode === 'hard') tenseText = `[???]`;
-            tenseLabel.innerHTML = `<span id="tense-text">${tenseText}</span>`;
+            // [수정] 이지 모드 시제 숨김/클릭 기능
+            if (gameState.mode === 'easy') {
+                tenseLabel.innerHTML = `<span id="tense-text" class="tense-reveal-btn" onclick="this.innerText='[${q.t}]'; this.classList.remove('tense-reveal-btn'); this.style.borderBottom='none';">[ 시제 보기 (클릭) ]</span>`;
+            } else {
+                // 하드 모드: ???로 표시 (기존 유지)
+                tenseLabel.innerHTML = `<span id="tense-text">[???]</span>`;
+            }
             
             const hintBtn = document.createElement('button');
             hintBtn.className = 'hint-btn';
@@ -1159,7 +1180,7 @@
             }
 
             const tenseSpan = document.getElementById('tense-text');
-            if (tenseSpan) tenseSpan.style.color = 'var(--gold)';
+            // if (tenseSpan) tenseSpan.style.color = 'var(--gold)'; // Remove this to let class styling work
 
             document.getElementById('q-text').innerHTML = `${q.q}`;
             document.getElementById('feedback').innerText = "";
@@ -1191,6 +1212,15 @@
                 document.getElementById('feedback').innerText = "HIT!";
                 document.getElementById('feedback').style.color = "#4caf50";
                 gameState.isRetry = false;
+                
+                // 타격감 효과
+                document.getElementById('game-monster-img').parentElement.classList.add('hit-anim');
+                document.body.classList.add('screen-shake-anim');
+                setTimeout(() => {
+                    document.getElementById('game-monster-img').parentElement.classList.remove('hit-anim');
+                    document.body.classList.remove('screen-shake-anim');
+                }, 300);
+
                 updateUI();
                 
                 if (gameState.mCurHP <= 0) {
@@ -1202,13 +1232,16 @@
             } else {
                 // 오답
                 if (gameState.mode === 'hard' && !gameState.isRetry) {
-                    // 하드모드 첫 오답 시 오답노트 기록
                     if(!gameState.wrongLog.includes(currentQ)) {
                         gameState.wrongLog.push(currentQ);
                     }
 
                     document.getElementById('feedback').innerText = "틀렸습니다! 힌트를 확인하세요.";
                     document.getElementById('feedback').style.color = "orange";
+                    
+                    document.getElementById('game-screen').classList.add('damage-anim');
+                    setTimeout(() => document.getElementById('game-screen').classList.remove('damage-anim'), 400);
+
                     gameState.isRetry = true;
                     const tenseLabel = document.getElementById('tense-label');
                     const hintBtn = tenseLabel.querySelector('.hint-btn');
@@ -1226,10 +1259,18 @@
                 document.getElementById('feedback').innerText = "MISS! (목숨 차감)";
                 document.getElementById('feedback').style.color = "#f44336";
                 
+                document.getElementById('game-screen').classList.add('damage-anim');
+                setTimeout(() => document.getElementById('game-screen').classList.remove('damage-anim'), 400);
+
                 if (gameState.mode === 'hard' && gameState.isRetry) {
                      const tenseSpan = document.getElementById('tense-text');
-                    tenseSpan.innerText = `[${currentQ.t}]`; 
-                    tenseSpan.style.color = '#ff4444';
+                     if(tenseSpan) {
+                        tenseSpan.innerText = `[${currentQ.t}]`; 
+                        tenseSpan.style.color = '#ff4444';
+                        tenseSpan.classList.remove('tense-reveal-btn');
+                        tenseSpan.style.borderBottom = 'none';
+                        tenseSpan.onclick = null;
+                     }
                 }
 
                 btnElement.disabled = true;
@@ -1250,7 +1291,6 @@
             setTimeout(() => {
                 const data = verbsData[gameState.selectedStageId];
                 
-                // [중요] 클리어 로직 강화: 현재 모드의 클리어 목록에 확실히 추가
                 if(!gameState.clearedStages[gameState.mode].includes(gameState.selectedStageId)) {
                     gameState.clearedStages[gameState.mode].push(gameState.selectedStageId);
                     saveGame(); 
@@ -1286,24 +1326,19 @@
             });
         }
 
-        function unlockAllStages() {
-            gameState.clearedStages[gameState.mode] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        function unlockStages(targetMode) {
+            gameState.clearedStages[targetMode] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
             saveGame();
             renderStageGrid();
-            showAlert("개발자 모드: 모든 스테이지가 해금되었습니다!");
+            const modeName = targetMode === 'easy' ? '새내기' : '졸업반';
+            showAlert(`개발자 모드: ${modeName} 과정이 모두 해금되었습니다!`);
         }
 
-        /* [NEW] 게임 데이터 초기화 함수 */
         function resetGameData() {
             showConfirm("정말 모든 데이터를 삭제하고 초기화하시겠습니까?", function() {
-                // 데이터 초기화
                 gameState.clearedStages = { easy: [], hard: [] };
                 saveGame();
-                
-                // 화면 새로고침하여 초기 상태로 복구
-                showAlert("모든 데이터가 초기화되었습니다.", function() {
-                    location.reload(); 
-                });
+                showAlert("모든 데이터가 초기화되었습니다.", function() { location.reload(); });
             });
         }
 
@@ -1322,7 +1357,6 @@
                 const imgTag = document.createElement('img');
                 imgTag.src = `assets/card_${stage.word}.png`;
                 
-                // [안전장치] 이미지가 없으면 텍스트로 대체
                 imgTag.onerror = function() {
                     this.remove(); 
                     slot.innerHTML = `<div style="color: gold; font-size: 0.8rem; font-weight: bold; text-align:center;">${stage.word.toUpperCase()}<br>카드 획득!</div>`;
@@ -1363,7 +1397,6 @@
             });
         }
         
-        // 찢는 스타일 정의 (약 1/3 영역만 남기는 폴리곤)
         const tornStyles = [
             { easy: "polygon(0% 0%, 45% 0%, 43% 5%, 46% 12%, 40% 18%, 45% 25%, 37% 32%, 42% 40%, 34% 48%, 39% 55%, 30% 62%, 36% 70%, 27% 78%, 33% 85%, 24% 92%, 28% 100%, 0% 100%)", hard: "polygon(45% 0%, 100% 0%, 100% 100%, 28% 100%, 24% 92%, 33% 85%, 27% 78%, 36% 70%, 30% 62%, 39% 55%, 34% 48%, 42% 40%, 37% 32%, 45% 25%, 40% 18%, 46% 12%, 43% 5%)" },
             { easy: "polygon(0% 65%, 5% 63%, 12% 67%, 18% 61%, 25% 66%, 32% 59%, 40% 65%, 48% 58%, 55% 64%, 62% 57%, 70% 63%, 78% 56%, 85% 62%, 92% 55%, 100% 60%, 100% 100%, 0% 100%)", hard: "polygon(0% 0%, 100% 0%, 100% 60%, 92% 55%, 85% 62%, 78% 56%, 70% 63%, 62% 57%, 55% 64%, 48% 58%, 40% 65%, 32% 59%, 25% 66%, 18% 61%, 12% 67%, 5% 63%, 0% 65%)" },
